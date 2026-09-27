@@ -27,3 +27,12 @@ The accompanying checker accepts only `propext`, `Classical.choice`, and
 #print axioms OR.full_abstraction_op_eq
 #print axioms OR.full_abstraction_termination
 #print axioms OR.Examples.no_parallel_or
+#print axioms OR.Sieber.Tm.code_inj
+#print axioms OR.Sieber.Tm.obs_eq_den
+#print axioms OR.Sieber.finite_car
+#print axioms OR.Sieber.universal_fully_abstract
+#print axioms OR.Sieber.Tm.nf_sound
+#print axioms OR.Sieber.Check.verdict_sound
+#print axioms OR.Sieber.Check.complete
+#print axioms OR.Sieber.Check.verdict_prim
+#print axioms OR.Sieber.sieber_not_universal

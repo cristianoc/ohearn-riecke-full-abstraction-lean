@@ -72,6 +72,10 @@ Each type denotes a domain together with, for every test and world, a relation o
 
 `Examples` checks, among other things, that parallel-or is not in the model (`no_parallel_or`): the uniform arrow carrier excludes it, as the full Scott function space would not.
 
+## Sieber's relations do not suffice
+
+The paper leaves open whether Sieber's ordinary (single-world) sequentiality relations already give full abstraction. They do not: combining Loader's undecidability theorem with a search argument shows that Sieber's model has non-definable elements. `OR/Sieber/` proves this for finitary PCF, with Loader's theorem as an explicit hypothesis (`sieber_not_universal`); [`SIEBER.md`](SIEBER.md) gives the argument and the transfer to the natural numbers.
+
 ## Layout
 
 | Files | Contents |
@@ -86,6 +90,7 @@ Each type denotes a domain together with, for every test and world, a relation o
 | `OR/FullAbstraction.lean` | Contexts, separation, denotational full abstraction. |
 | `OR/Operational.lean`, `OR/Adequacy.lean`, `OR/Observations.lean` | Operational semantics, adequacy, operational full abstraction. |
 | `OR/Examples.lean`, `OR/AxiomAudit.lean` | Regression examples; axiom audit. |
+| `OR/Sieber/` | Finitary PCF, Sieber's model, and the statement that it is not universal (see `SIEBER.md`). |
 | `paper/` | The paper (SURFACE copy). |
 | `scripts/` | `check.sh` and the two audit scripts. |
 
