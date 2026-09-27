@@ -172,8 +172,8 @@ instance stabilizingPi {ι : Type u} {A : ι → Type v} [Finite ι]
     letI : Fintype ι := Fintype.ofFinite ι
     have hx : ∀ i, ∃ f ∈ s, f i = dSup s hs i := by
       intro i
-      have h := Stabilizing.sup_mem ((fun f => f i) '' s)
-        (hs.image _ (fun _ _ h => h i))
+      have h := Stabilizing.sup_mem ((fun f : ∀ j, A j => f i) '' s)
+        (hs.image (fun f : ∀ j, A j => f i) (fun _ _ h => h i))
       rcases h with ⟨f, hf, he⟩
       exact ⟨f, hf, he.trans (OR.dSup_apply s hs i).symm⟩
     choose f hf he using hx
@@ -237,6 +237,10 @@ namespace Ground
 
  theorem ifz_mono : Monotone (fun p : Ground × (Ground × Ground) => ifz p.1 p.2.1 p.2.2) := by
   rintro ⟨c, a, b⟩ ⟨d, u, v⟩ ⟨hcd, hau, hbv⟩
+  change c ≤ d at hcd
+  change a ≤ u at hau
+  change b ≤ v at hbv
+  change ifz c a b ≤ ifz d u v
   rcases hcd with rfl | hcd
   · exact bot_le
   · subst d
