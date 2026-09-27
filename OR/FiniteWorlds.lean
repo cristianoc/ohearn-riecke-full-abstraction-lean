@@ -12,6 +12,10 @@ namespace OR
   | [] => PUnit
   | σ :: Γ => FEnv n Γ × Level σ n
 
+instance fenvEmptySubsingleton (n : ℕ) : Subsingleton (FEnv n []) := by
+  change Subsingleton PUnit
+  infer_instance
+
 instance fenvFinite (n : ℕ) (Γ : Ctx) : Finite (FEnv n Γ) := by
   induction Γ with
   | nil => change Finite PUnit; infer_instance
@@ -37,13 +41,13 @@ instance fenvInhabited (n : ℕ) (Γ : Ctx) : Inhabited (FEnv n Γ) := by
 @[simp] theorem flookup_fenvOf {n : ℕ} {Γ : Ctx} {τ : Ty}
     (x : Var Γ τ) (f : ∀ {τ : Ty}, Var Γ τ → Level τ n) :
     flookup x (fenvOf f) = f x := by
-  induction x generalizing f with
+  induction x with
   | vz => rfl
   | vs x ih => exact ih (fun x => f (.vs x))
 
  theorem fenv_ext {n : ℕ} {Γ : Ctx} {ρ η : FEnv n Γ}
     (h : ∀ {τ : Ty}, ∀ x : Var Γ τ, flookup x ρ = flookup x η) : ρ = η := by
-  induction Γ generalizing ρ η with
+  induction Γ with
   | nil => exact Subsingleton.elim _ _
   | cons σ Γ ih => exact Prod.ext (ih (fun x => h (.vs x))) (h .vz)
 
@@ -77,7 +81,7 @@ instance fenvInhabited (n : ℕ) (Γ : Ctx) : Inhabited (FEnv n Γ) := by
 
 @[simp] theorem lookup_includeEnv {n : ℕ} {Γ : Ctx} {τ : Ty} (x : Var Γ τ) (ρ : FEnv n Γ) :
     lookup x (includeEnv ρ) = (flookup x ρ).val := by
-  induction x generalizing ρ with
+  induction x with
   | vz => rfl
   | vs x ih => exact ih ρ.1
 

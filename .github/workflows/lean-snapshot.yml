@@ -1,0 +1,68 @@
+name: Lean development snapshot
+
+# Export only public compiler/dependency files and tracked repository sources.
+# This is a development aid, not a proof-validation job. Lean CI remains the gate.
+on:
+  push:
+    paths:
+      - '.github/workflows/lean-snapshot.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean and dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -sSfL https://github.com/leanprover/elan/releases/download/v4.2.2/elan-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          ./elan-init -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          lean --version
+          lake update
+          lake exe cache get
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Package development environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p snapshot
+          root="$(lean --print-prefix)"
+          (cd "$root"; find bin lib -type f \( -name lean -o -name lake -o -name '*.olean' -o -name '*.so' -o -name '*.so.*' \) -print0) > /tmp/lean-files
+          tar -C "$root" --null -T /tmp/lean-files -I 'zstd -T0 -3' -cf snapshot/lean-runtime.tar.zst
+          find .lake/packages -type d -name .git -prune -o -type f \( -name '*.olean' -o -name '*.so' -o -name '*.lean' -o -name LICENSE -o -name LICENSE.md \) -print0 > /tmp/mathlib-files
+          tar --null -T /tmp/mathlib-files -I 'zstd -T0 -3' -cf snapshot/mathlib-environment.tar.zst
+          git ls-files -z > /tmp/source-files
+          tar --null -T /tmp/source-files -I 'zstd -T0 -3' -cf snapshot/project-source.tar.zst
+          cp lake-manifest.json snapshot/lake-manifest.json
+          git rev-parse HEAD > snapshot/COMMIT
+          sha256sum snapshot/*.tar.zst > snapshot/SHA256SUMS
+          du -h snapshot/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lean-runtime
+          path: snapshot/lean-runtime.tar.zst
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mathlib-environment
+          path: snapshot/mathlib-environment.tar.zst
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: project-source
+          path: |
+            snapshot/project-source.tar.zst
+            snapshot/lake-manifest.json
+            snapshot/COMMIT
+            snapshot/SHA256SUMS
+          compression-level: 0
+          retention-days: 3
