@@ -39,16 +39,17 @@ The repair iterations were overwhelmingly proof-engineering and elaboration repa
 - the selected test uses actual typed finite environments as worlds; its morphisms are now exactly the paper's prefix projections (represented by typed context-extension witnesses);
 - in the reverse arrow case an arbitrary related argument tuple is explicitly projected to finite level before invoking the induction hypothesis, and input absorption then removes the projection;
 - separation is organized by induction on result type rather than by introducing a separate semantic-spine datatype, while constructing the same finite definable witnesses and an actual closing PCF context;
+- a ground test carries a small world type and finite element types at each world, so `Test` lives in `Type 1` while carriers stay in `Type 0`; preserving every test is a proposition, so `Hom A B` remains small enough to serve at the next arrow type, with no resizing axiom or universe-encoding theorem;
 - the operational semantics and adequacy proof are developed explicitly rather than imported as a standard metatheorem; and
 - the finite interpolation / primitive-closure characterization needed for the ground tests is proved inside the development rather than treated as an external characterization result.
 
-These are presently intended as **explications or proof-representation changes, not changes to the full-abstraction claim**.
+These are presently intended as **explications or proof-representation changes, not changes to the full-abstraction claim**. No external formalisation of O'Hearn--Riecke is imported: apart from Mathlib, every result above has a local proof.
 
 One point needs careful wording. **Lemma 12 itself is stated as the closed finite-definability theorem, but its proof immediately strengthens the induction hypothesis.** On printed pp. 12--13 the paper says, after stating Lemma 12, “We prove the following claim by induction on the type t,” and quantifies over an arbitrary finite world `w = [Dⁿ_s₁, …, Dⁿ_sₘ]` and tuple `g : w → ⟦t⟧`, proving relatedness iff representability. The Lean theorem `strong_finite_definability` is therefore not an invention needed to repair the paper: it formalizes the stronger claim that the paper itself uses inside the proof. The closed theorem `finite_definability` corresponds to Lemma 12's stated conclusion.
 
 ### Source audit against the paper
 
-The authoritative comparison source is the **SURFACE copy committed at [`paper/OHearn-Riecke-Kripke-Logical-Relations-and-PCF.pdf`](paper/OHearn-Riecke-Kripke-Logical-Relations-and-PCF.pdf)** (from https://surface.syr.edu/lcsmith_other/3): Peter W. O'Hearn and Jon G. Riecke, *Kripke Logical Relations and PCF*. Its title page says “To appear in Information and Computation” and “Accepted, October 1994”; SURFACE catalogs it as the 1995 article. The paper text has its own printed pagination 1--18; the SURFACE PDF has an additional repository cover page, so PDF page numbers are offset by one.
+The authoritative comparison source is the **SURFACE copy committed at [`paper/OHearn-Riecke-Kripke-Logical-Relations-and-PCF.pdf`](paper/OHearn-Riecke-Kripke-Logical-Relations-and-PCF.pdf)** (from https://surface.syr.edu/lcsmith_other/3): Peter W. O'Hearn and Jon G. Riecke, *Kripke Logical Relations and PCF*, Information and Computation 120(1):107--116, 1995, DOI [10.1006/inco.1995.1103](https://doi.org/10.1006/inco.1995.1103). Its title page says “To appear in Information and Computation” and “Accepted, October 1994”; SURFACE catalogs it as the 1995 article. The paper text has its own printed pagination 1--18; the SURFACE PDF has an additional repository cover page, so PDF page numbers are offset by one.
 
 The correspondence now uses exact numbered statements and printed pages:
 
@@ -522,18 +523,16 @@ Combining adequacy with the denotational separator yields operational full abstr
 | `OR/Definability.lean`, `OR/Compactness.lean` | Strong higher-type definability, closed definability, compactness, definable density/algebraicity. |
 | `OR/FullAbstraction.lean` | Typed one-hole contexts, context monotonicity, explicit separation, denotational full abstraction. |
 | `OR/Operational.lean`, `OR/Adequacy.lean` | Call-by-name semantics, logical relation, adequacy, operational full abstraction. |
-| `OR/Observations.lean`, `OR/Examples.lean` | Numeral/termination observations and regression examples, including exclusion of parallel-or. |
+| `OR/Observations.lean`, `OR/Examples.lean` | Numeral/termination observations and regression examples, including exclusion of parallel-or (a regression test for the uniform arrow carrier: it would fail for the full Scott-continuous function space). |
 | `OR/AxiomAudit.lean` | Selected theorem axiom inspection. |
-| `PROOF_MAP.md` | Dependency/proof map. |
-| `THEOREM_INDEX.md` | Named theorem inventory. |
-| `SOURCES.md` | Source references used while drafting. |
+| `paper/` | The SURFACE copy of the paper used for the source audit. |
+| `scripts/` | `check.sh` (full local check), the static source audit, and the axiom-audit checker. |
 
 ## Build and validation
 
-The project currently targets Lean/Mathlib `v4.19.0`, as pinned in `lean-toolchain` and `lakefile.toml`.
+The project currently targets Lean/Mathlib `v4.19.0`, as pinned in `lean-toolchain`, `lakefile.toml` and `lake-manifest.json`.
 
 ```sh
-lake update
 lake exe cache get
 lake build
 lake env lean OR/AxiomAudit.lean
