@@ -74,7 +74,9 @@ namespace Extension
   | _, _, _, e, .cons σ f => .cons σ (comp e f)
 
 @[simp] theorem ren_refl {Γ : Ctx} {τ : Ty} (x : Var Γ τ) :
-    ren (.refl Γ) x = x := rfl
+    ren (.refl Γ) x = x := by
+  change x = x
+  rfl
 
 @[simp] theorem ren_cons {Γ Δ : Ctx} {τ : Ty}
     (σ : Ty) (e : Extension Γ Δ) (x : Var Γ τ) :
@@ -211,7 +213,7 @@ O'Hearn--Riecke; arbitrary renamings are deliberately not admitted here.
     rcases hψ with ⟨f, rfl⟩
     refine ⟨Extension.comp f e, ?_⟩
     funext ρ
-    exact (fpull_extension_comp f e ρ).symm
+    simpa only [Function.comp_apply] using fpull_extension_comp f e ρ
   ground Γ := Def n Γ .nat
   ground_bottom Γ := (defPrimitive n Γ).bottom
   ground_sup Γ s hs h := h _ (Stabilizing.sup_mem (α := FEnv n Γ → Ground) s hs)
