@@ -122,6 +122,14 @@ end Extension
   intro τ x
   simp only [flookup_fpull, Ren.wk, flookup]
 
+
+@[simp] theorem fpull_extension_one {n : ℕ} {Γ : Ctx} {σ : Ty}
+    (ρ : FEnv n (σ :: Γ)) :
+    fpull (Extension.ren (.cons σ (.refl Γ))) ρ = ρ.1 := by
+  apply fenv_ext
+  intro τ x
+  simp only [flookup_fpull, Extension.ren_cons, Extension.ren_refl, flookup]
+
  def includeEnv {n : ℕ} : {Γ : Ctx} → FEnv n Γ → Env Γ
   | [], _ => PUnit.unit
   | _ :: _, ρ => (includeEnv ρ.1, ρ.2.val)
