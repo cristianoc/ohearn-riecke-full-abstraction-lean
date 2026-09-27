@@ -33,9 +33,8 @@ namespace Examples
   cases hd
 
  theorem empty_context_world_unique (n : ℕ) (ρ : (finiteTest n).El []) :
-    ρ = PUnit.unit := by
-  change (ρ : PUnit) = PUnit.unit
-  exact Subsingleton.elim _ _
+    ρ = PUnit.unit :=
+  @Subsingleton.elim PUnit inferInstance ρ PUnit.unit
 
  theorem projection_includes_boundary (n : ℕ) :
     projection .nat n (.val n) = .val n := by
