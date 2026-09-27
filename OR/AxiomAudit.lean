@@ -39,3 +39,4 @@ The accompanying checker accepts only `propext`, `Classical.choice`, and
 #print axioms OR.NS.omegaAlgebraic
 #print axioms OR.Sieber.Tm.lrel
 #print axioms OR.Sieber.natural_sieber_not_inequationally_fully_abstract
+#print axioms OR.Sieber.mullerGrade1

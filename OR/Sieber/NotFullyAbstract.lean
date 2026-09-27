@@ -1,7 +1,7 @@
 import OR.Adequacy
 import OR.Sieber.Main
 import OR.Sieber.Algebraic
-import OR.Sieber.Reinterpret
+import OR.Sieber.GameTerms
 
 /-!
 # The ordinary Sieber model over `ℕ⊥` is not inequationally fully abstract
@@ -13,10 +13,11 @@ here as hypotheses:
   model of PCF, inequational full abstraction makes every compact element definable
   (R. Milner, *Fully abstract models of typed λ-calculi*, TCS 4, 1977), specialised
   to `D^N`.  Its premises are proved for `D^N` in `Algebraic` and are discharged below.
-* `MullerGrade1`: Müller's Game Term Theorem at grade 1 (F. Müller, *On Berry's
-  conjectures about the stable order in PCF*, LMCS 8(4), 2012, Theorem 4.12 with
-  `M = N`, `i = j = 1`): a closed term `M` with `Ψ¹ M ≃ M` (a finite term of grade 1,
-  Definition 3.1) is observationally equivalent to a game term of grade 1.
+* `MullerGameTermTheorem`: Müller's Game Term Theorem at grade 1 (F. Müller, *On
+  Berry's conjectures about the stable order in PCF*, LMCS 8(4), 2012, Theorem 4.12
+  with `M = N`, `i = j = 1`), transcribed in `GameTerms`: a closed term `M` with
+  `Ψ₁ M ≃ M` is observationally equivalent to a game term of grade 1.  From it,
+  `MullerGrade1` (the form used in the proof) is derived in Lean.
 
 Then `D^N` is not inequationally fully abstract.  Otherwise every Boolean element `h`
 would give the compact element `i h`, a term `M` denoting it, a game term `G` with
@@ -43,20 +44,26 @@ end OR.NS
 
 namespace OR.Sieber
 
-/-- Müller's Game Term Theorem at grade 1.  Grade-1 game terms (`λx⃗. m` with
-`m ∈ {0, 1}`, `⊥`, and `λx⃗. case₁ (y M⃗) N₀ N₁`) are, up to `⊥^σ ≃ λx⃗. ⊥`, images
-`embed G` of Boolean terms; allowing every Boolean term only weakens the hypothesis. -/
+/-- The form of Müller's theorem used in the proof: a closed term `M` with `Ψ¹ M ≃ M`
+is equivalent to `embed G` for a Boolean term `G`. -/
 def MullerGrade1 : Prop :=
   ∀ (τ : Ty) (M : OR.Tm [] (natTy τ)),
     ContextualOpEq (.app (projectionTerm (natTy τ) 1) M) M →
       ∃ G : Tm [] τ, ContextualOpEq (embed G) M
 
+theorem mullerGrade1 (h : MullerGameTermTheorem) : MullerGrade1 := by
+  intro τ M hM
+  obtain ⟨G, hG⟩ := h τ M ((MullerPsi_equiv M).trans hM)
+  exact ⟨G.toBool, G.equiv_embed.symm.trans hG⟩
+
 /-- **Theorem.** Assuming Loader's theorem, Milner's compact-definability theorem and
 Müller's Game Term Theorem, the ordinary Sieber model over `ℕ⊥` is not inequationally
 fully abstract for PCF. -/
 theorem natural_sieber_not_inequationally_fully_abstract (hL : Loader)
-    (hMP : NS.MilnerPlotkin) (hMu : MullerGrade1) : ¬ NS.InequationallyFullyAbstract := by
+    (hMP : NS.MilnerPlotkin) (hMu : MullerGameTermTheorem) :
+    ¬ NS.InequationallyFullyAbstract := by
   intro hFA
+  have hMu := mullerGrade1 hMu
   obtain ⟨τ, h, hnd⟩ := sieber_not_universal hL
   apply hnd
   have hc : Compact ((tr τ).i h) := NS.level_compact (natTy τ) 1 _ (psi_i τ h)
