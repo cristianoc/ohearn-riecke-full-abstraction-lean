@@ -75,8 +75,7 @@ namespace Extension
 
 @[simp] theorem ren_refl {Γ : Ctx} {τ : Ty} (x : Var Γ τ) :
     ren (.refl Γ) x = x := by
-  change x = x
-  rfl
+  cases x <;> rfl
 
 @[simp] theorem ren_cons {Γ Δ : Ctx} {τ : Ty}
     (σ : Ty) (e : Extension Γ Δ) (x : Var Γ τ) :
