@@ -82,7 +82,7 @@ Types are
 Terms are intrinsically typed and include variables, abstraction, application, fixed points, zero, successor, predecessor, and a ground-result conditional. The development follows the paper’s convention
 
 ```math
-\operatorname{pred}(0)=\bot,
+\mathrm{pred}(0)=\bot,
 ```
 
 rather than truncated predecessor.
@@ -102,10 +102,10 @@ The goal is
 \boxed{
 M \preceq_{\mathrm{ctx}} N
 \quad\Longleftrightarrow\quad
-\forall\rho\in\llbracket\Gamma\rrbracket,
-\llbracket M\rrbracket\rho
+\forall\rho\in⟦\Gamma⟧,
+⟦M⟧\rho
 \sqsubseteq
-\llbracket N\rrbracket\rho.
+⟦N⟧\rho.
 }
 ```
 
@@ -157,7 +157,7 @@ A morphism `f : A → B` is Scott-continuous and uniformly preserves every groun
 Thus the carrier of an exponential is
 
 ```math
-|B^A| = \operatorname{Hom}_{\mathsf{SR}}(A,B)
+|B^A| = \mathrm{Hom}_{\mathsf{SR}}(A,B)
 ```
 
 with pointwise order.
@@ -259,7 +259,7 @@ The naive closed statement
 ```math
 p_\tau^n(d)=d
 \Rightarrow
-\exists M:\varnothing\vdash\tau,\ \llbracket M\rrbracket=d
+\exists M:\varnothing\vdash\tau,\ ⟦M⟧=d
 ```
 
 is too weak to support induction at higher type. The formalisation instead uses a stronger tuple theorem with arbitrary finite environments.
@@ -283,7 +283,7 @@ The empty context yields a singleton world. World maps are context projections.
 Let
 
 ```math
-\iota_\Gamma:W_{n,\Gamma}\to\llbracket\Gamma\rrbracket
+\iota_\Gamma:W_{n,\Gamma}\to⟦\Gamma⟧
 ```
 
 be componentwise inclusion. Define the selected ground relation by representability:
@@ -293,7 +293,7 @@ R_n^\Gamma(g)
 \Longleftrightarrow
 \exists M:\Gamma\vdash\mathsf{nat},
 \forall\rho\in W_{n,\Gamma},
-\llbracket M\rrbracket(\iota_\Gamma\rho)=g(\rho).
+⟦M⟧(\iota_\Gamma\rho)=g(\rho).
 ```
 
 The range of `g` is the whole flat natural domain; only the environments are finite-level. Restricting outputs to `D_nat^n` would break closure under successor.
@@ -302,10 +302,10 @@ The strong theorem proved by induction on type is, schematically:
 
 ```math
 \boxed{
-\operatorname{Rel}_{n,\Gamma,\tau}(g)
+\mathrm{Rel}_{n,\Gamma,\tau}(g)
 \Longleftrightarrow
 \exists M:\Gamma\vdash\tau,
-\forall\rho,\ \llbracket M\rrbracket(\iota_\Gamma\rho)=g(\rho)
+\forall\rho,\ ⟦M⟧(\iota_\Gamma\rho)=g(\rho)
 }
 ```
 
@@ -351,8 +351,8 @@ For arbitrary semantic `d`,
 
 ```math
 \begin{aligned}
-\llbracket Q\rrbracket(\iota_\Gamma\rho)(d)
-&=\llbracket L\rrbracket(\iota_\Gamma\rho,p_\sigma^n(d))\\
+⟦Q⟧(\iota_\Gamma\rho)(d)
+&=⟦L⟧(\iota_\Gamma\rho,p_\sigma^n(d))\\
 &=g(\rho)(p_\sigma^n(d))\\
 &=g(\rho)(d),
 \end{aligned}
@@ -380,9 +380,9 @@ Uniformity of the projection preserves relatedness, while idempotence gives poin
 
 ```math
 \rho\mapsto
- g(\operatorname{drop}\rho)(p_\sigma^n(h(\rho)))
+ g(\mathrm{drop}\rho)(p_\sigma^n(h(\rho)))
  =
- g(\operatorname{drop}\rho)(h(\rho)),
+ g(\mathrm{drop}\rho)(h(\rho)),
 ```
 
 again by input absorption. The result is pointwise fixed by output fixedness, so the reverse induction hypothesis at `τ` yields relatedness.
@@ -394,19 +394,19 @@ The closed finite-definability theorem is recovered from this stronger theorem b
 To prove reflection of contextual approximation, suppose
 
 ```math
-\llbracket M\rrbracket\not\sqsubseteq\llbracket N\rrbracket.
+⟦M⟧\not\sqsubseteq⟦N⟧.
 ```
 
 Pointwise order gives an environment witnessing the failure. Unfolding function order repeatedly produces a finite sequence of semantic arguments and a natural `q` such that
 
 ```math
-\llbracket M\rrbracket\rho\,a_1\cdots a_k = \uparrow q,
+⟦M⟧\rho\,a_1\cdots a_k = \uparrow q,
 ```
 
 but
 
 ```math
-\llbracket N\rrbracket\rho\,a_1\cdots a_k \ne \uparrow q.
+⟦N⟧\rho\,a_1\cdots a_k \ne \uparrow q.
 ```
 
 Collect the environment and arguments into one product element `z`, and let `z_n` be its componentwise finite projection. Then
@@ -452,9 +452,9 @@ U_1\cdots U_k.
 Substitution and interpretation laws give
 
 ```math
-\llbracket C[M]\rrbracket=\uparrow q,
+⟦C[M]⟧=\uparrow q,
 \qquad
-\llbracket C[N]\rrbracket\ne\uparrow q.
+⟦C[N]⟧\ne\uparrow q.
 ```
 
 Thus semantic order failure yields an explicit contextual separator. Preservation in the other direction is a structural induction on contexts using monotonicity of every semantic constructor.
@@ -485,19 +485,19 @@ For each term this relation contains bottom and is closed under directed suprema
 The fixed-point case is explicit: from `f △ F`, prove by induction that
 
 ```math
-f^k(\bot)\triangleleft \operatorname{fix}F.
+f^k(\bot)\triangleleft \mathrm{fix}F.
 ```
 
 The successor step uses
 
 ```math
-\operatorname{fix}F\longrightarrow F(\operatorname{fix}F),
+\mathrm{fix}F\longrightarrow F(\mathrm{fix}F),
 ```
 
 and directed closure yields
 
 ```math
-Y(f)\triangleleft\operatorname{fix}F.
+Y(f)\triangleleft\mathrm{fix}F.
 ```
 
 Together with reduction soundness, this proves ground adequacy:
@@ -505,7 +505,7 @@ Together with reduction soundness, this proves ground adequacy:
 ```math
 M\Downarrow n
 \Longleftrightarrow
-\llbracket M\rrbracket=\uparrow n.
+⟦M⟧=\uparrow n.
 ```
 
 Combining adequacy with the denotational separator yields operational full abstraction.
