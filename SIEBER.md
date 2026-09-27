@@ -1,4 +1,4 @@
-# Sieber's relations do not give full abstraction
+# Sieber's ordinary relations fail inequational full abstraction
 
 O'Hearn and Riecke (*Kripke logical relations and PCF*, 1995) obtain a fully abstract model of PCF with *Kripke* logical relations. In their conclusion (printed p. 14) they leave open whether Sieber's fixed-arity sequentiality relations already suffice for full abstraction. This note proves two results.
 
