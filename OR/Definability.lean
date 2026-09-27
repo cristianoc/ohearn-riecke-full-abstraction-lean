@@ -19,12 +19,12 @@ namespace OR
     subenv (projectLastSub n σ) (ρ, a) = (ρ, projection σ n a) := by
   apply env_ext
   intro τ x
+  rw [lookup_subenv]
   cases x with
   | vz =>
-      simp only [lookup_subenv, projectLastSub, denote_app, denote_closed, denote_var, lookup]
-      rfl
+      simp only [projectLastSub, denote_app, denote_closed, denote_var, lookup] <;> rfl
   | vs x =>
-      simp only [lookup_subenv, projectLastSub, denote_var, lookup]
+      simp only [projectLastSub, denote_var, lookup]
 
 /--
 The strengthened definability theorem. Both implications are proved together,
@@ -100,6 +100,7 @@ with arbitrary contexts and arbitrary related argument tuples in the arrow case.
   choose M hM using (fun n => approximant_definable τ n d)
   have hmono : Monotone (fun n => denoteClosed (M n)) := by
     intro n m hnm
+    change denoteClosed (M n) ≤ denoteClosed (M m)
     rw [hM n, hM m]
     exact projection_index_mono τ d hnm
   refine ⟨M, hM, hmono, hmono, ?_⟩
