@@ -28,10 +28,14 @@ namespace Examples
  theorem omega_diverges (n : ℕ) : ¬ Eval (Tm.omega .nat) n := by
   intro h
   have hd := h.sound
-  simp only [denoteClosed, denote_omega, Flat.bottom_eq, reduceCtorEq] at hd
+  simp only [denoteClosed, denote_omega] at hd
+  change (Flat.bot : Ground) = .val n at hd
+  cases hd
 
  theorem empty_context_world_unique (n : ℕ) (ρ : (finiteTest n).El []) :
-    ρ = PUnit.unit := Subsingleton.elim _ _
+    ρ = PUnit.unit := by
+  change (ρ : PUnit) = PUnit.unit
+  exact Subsingleton.elim _ _
 
  theorem projection_includes_boundary (n : ℕ) :
     projection .nat n (.val n) = .val n := by
