@@ -54,6 +54,41 @@ instance fenvInhabited (n : ℕ) (Γ : Ctx) : Inhabited (FEnv n Γ) := by
  def fpull {n : ℕ} {Γ Δ : Ctx} (r : Ren Γ Δ) (ρ : FEnv n Δ) : FEnv n Γ :=
   fenvOf (fun x => flookup (r x) ρ)
 
+
+/-- Paper §4, p. 12: a world morphism in C_n is exactly a projection from
+an extended context back to its prefix.  Because contexts are represented
+newest-variable first, `Extension Γ Δ` means that `Δ` is obtained from `Γ`
+by repeatedly consing new types. -/
+inductive Extension : Ctx → Ctx → Type
+  | refl (Γ : Ctx) : Extension Γ Γ
+  | cons {Γ Δ : Ctx} (σ : Ty) : Extension Γ Δ → Extension Γ (σ :: Δ)
+
+namespace Extension
+
+ def ren : {Γ Δ : Ctx} → Extension Γ Δ → Ren Γ Δ
+  | _, _, .refl _ => Ren.id
+  | _, _, .cons _ e => Ren.comp Ren.wk e.ren
+
+ def comp {Γ Δ Θ : Ctx} (e : Extension Γ Δ) : Extension Δ Θ → Extension Γ Θ
+  | .refl _ => e
+  | .cons σ f => .cons σ (e.comp f)
+
+@[simp] theorem ren_refl (Γ : Ctx) : (Extension.refl Γ).ren = Ren.id := rfl
+
+@[simp] theorem ren_cons {Γ Δ : Ctx} (σ : Ty) (e : Extension Γ Δ) :
+    (Extension.cons σ e).ren = Ren.comp Ren.wk e.ren := rfl
+
+ theorem ren_comp {Γ Δ Θ : Ctx} (e : Extension Γ Δ) (f : Extension Δ Θ) :
+    (e.comp f).ren = Ren.comp f.ren e.ren := by
+  induction f with
+  | refl => rfl
+  | cons σ f ih =>
+      simp only [comp, ren_cons, ih]
+      funext τ x
+      rfl
+
+end Extension
+
 @[simp] theorem flookup_fpull {n : ℕ} {Γ Δ : Ctx} {τ : Ty}
     (r : Ren Γ Δ) (x : Var Γ τ) (ρ : FEnv n Δ) :
     flookup x (fpull r ρ) = flookup (r x) ρ := flookup_fenvOf x _
@@ -130,21 +165,24 @@ namespace Def
 end Def
 
 /--
-A selected ground test. Its arrows are finite-environment maps induced by all
-well-typed renamings. Context extensions are included, but need no coded transports.
-This is one test inside the independently defined type `Test`.
+The selected test R_n over the paper's category C_n (paper §4, p. 12).
+Worlds are finite products D^n_s encoded by typed contexts.  Its morphisms are
+*only* the projections from an extended context to its prefix, exactly as in
+O'Hearn--Riecke; arbitrary renamings are deliberately not admitted here.
 -/
  def finiteTest (n : ℕ) : Test where
   World := Ctx
   El := FEnv n
   finite Γ := fenvFinite n Γ
-  Hom {Δ Γ} φ := ∃ r : Ren Γ Δ, φ = fpull r
-  identity Γ := ⟨Ren.id, funext (fun ρ => (fpull_id ρ).symm)⟩
+  Hom {Δ Γ} φ := ∃ e : Extension Γ Δ, φ = fpull e.ren
+  identity Γ := ⟨Extension.refl Γ, funext (fun ρ => (fpull_id ρ).symm)⟩
   composition := by
     intro u v w φ ψ hφ hψ
-    rcases hφ with ⟨r, rfl⟩
-    rcases hψ with ⟨s, rfl⟩
-    exact ⟨Ren.comp r s, funext (fun ρ => fpull_comp s r ρ)⟩
+    rcases hφ with ⟨e, rfl⟩
+    rcases hψ with ⟨f, rfl⟩
+    refine ⟨e.comp f, ?_⟩
+    funext ρ
+    rw [Extension.ren_comp, fpull_comp]
   ground Γ := Def n Γ .nat
   primitive Γ := {
     zero := ⟨.zero, fun _ => rfl⟩
@@ -158,8 +196,8 @@ This is one test inside the independently defined type `Test`.
       rintro c a b ⟨C, hC⟩ ⟨M, hM⟩ ⟨N, hN⟩
       exact ⟨.ifz C M N, fun ρ => by rw [denote_ifz, hC, hM, hN]⟩ }
   reindex := by
-    rintro Δ Γ φ ⟨r, rfl⟩ g hg
-    exact hg.rename r
+    rintro Δ Γ φ ⟨e, rfl⟩ g hg
+    exact hg.rename e.ren
 
 /-- Relations displayed directly on finite environments. No encoding casts occur here. -/
 def Rel (n : ℕ) (Γ : Ctx) (τ : Ty) (g : FEnv n Γ → D τ) : Prop :=
@@ -170,14 +208,14 @@ def Rel (n : ℕ) (Γ : Ctx) (τ : Ty) (g : FEnv n Γ → D τ) : Prop :=
 
  theorem rel_arr (n : ℕ) (Γ : Ctx) (σ τ : Ty) (g : FEnv n Γ → D (σ ⇒ τ)) :
     Rel n Γ (σ ⇒ τ) g ↔
-      ∀ (Δ : Ctx) (r : Ren Γ Δ) (a : FEnv n Δ → D σ),
-        Rel n Δ σ a → Rel n Δ τ (fun ρ => g (fpull r ρ) (a ρ)) := by
+      ∀ (Δ : Ctx) (e : Extension Γ Δ) (a : FEnv n Δ → D σ),
+        Rel n Δ σ a → Rel n Δ τ (fun ρ => g (fpull e.ren ρ) (a ρ)) := by
   constructor
-  · intro hg Δ r a ha
-    exact hg Δ (fpull r) ⟨r, rfl⟩ a ha
+  · intro hg Δ e a ha
+    exact hg Δ (fpull e.ren) ⟨e, rfl⟩ a ha
   · intro hg Δ φ hφ a ha
-    rcases hφ with ⟨r, rfl⟩
-    exact hg Δ r a ha
+    rcases hφ with ⟨e, rfl⟩
+    exact hg Δ e a ha
 
  theorem rel_constant (n : ℕ) (Γ : Ctx) (τ : Ty) (d : D τ) :
     Rel n Γ τ (fun _ => d) := (typeObj τ).concrete (finiteTest n) Γ d
@@ -187,7 +225,8 @@ def Rel (n : ℕ) (Γ : Ctx) (τ : Ty) (g : FEnv n Γ → D τ) : Prop :=
   (projection τ n).uniform (finiteTest n) Γ g hg
 
  theorem rel_reindex {n : ℕ} {Γ Δ : Ctx} {τ : Ty} {g : FEnv n Γ → D τ}
-    (hg : Rel n Γ τ g) (r : Ren Γ Δ) : Rel n Δ τ (fun ρ => g (fpull r ρ)) :=
-  ((typeObj τ).rel (finiteTest n)).reindex ⟨r, rfl⟩ g hg
+    (hg : Rel n Γ τ g) (e : Extension Γ Δ) :
+    Rel n Δ τ (fun ρ => g (fpull e.ren ρ)) :=
+  ((typeObj τ).rel (finiteTest n)).reindex ⟨e, rfl⟩ g hg
 
 end OR
