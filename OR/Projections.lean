@@ -30,7 +30,8 @@ namespace OR
  theorem projection_nat_zero (d : Ground) :
     projection .nat 0 d = Ground.ifz d (.val 0) .bot := by
   simp [projection, projectionTerm, groundProjectionTerm, denoteClosed, denote_lam,
-    denote_ifz, denote_var, lookup, denote_omega] <;> rfl
+    denote_ifz, denote_var, lookup, denote_omega]
+  rfl
 
  theorem projection_nat_succ (n : ℕ) (d : Ground) :
     projection .nat (n + 1) d =

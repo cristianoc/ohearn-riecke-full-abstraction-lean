@@ -113,8 +113,8 @@ variable {ι : Type u} {A B : Finset ι}
 
  theorem primitiveClosed (hAB : A ⊆ B) : PrimitiveClosed (Elementary A B) where
   zero := constant A B (.val 0)
-  succ g hg := strict_map hg Ground.succ rfl
-  pred g hg := strict_map hg Ground.pred rfl
+  succ _ hg := strict_map hg Ground.succ rfl
+  pred _ hg := strict_map hg Ground.pred rfl
   ifz _ _ _ hc ha hb := conditional hAB hc ha hb
 
 end Elementary
@@ -133,7 +133,7 @@ def Sequential {ι : Type u} (R : (ι → Ground) → Prop) : Prop := R = sequen
 
  theorem hull_primitiveClosed {ι : Type u} (R : (ι → Ground) → Prop) :
     PrimitiveClosed (sequentialHull R) where
-  zero A B hAB _ := (Elementary.primitiveClosed hAB).zero
+  zero _ _ hAB _ := (Elementary.primitiveClosed hAB).zero
   succ g hg A B hAB hR := (Elementary.primitiveClosed hAB).succ g (hg A B hAB hR)
   pred g hg A B hAB hR := (Elementary.primitiveClosed hAB).pred g (hg A B hAB hR)
   ifz c a b hc ha hb A B hAB hR :=

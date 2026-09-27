@@ -197,7 +197,7 @@ variable [PartialOrder β] [DComplete β]
  def ofStabilizing (f : α → β) (hf : Monotone f) : CMap α β where
   toFun := f
   mono := hf
-  map_le s hs b h := h _ (Stabilizing.sup_mem s hs)
+  map_le s hs _ h := h _ (Stabilizing.sup_mem s hs)
 
 @[simp] theorem ofStabilizing_apply (f : α → β) (hf : Monotone f) (a : α) :
     ofStabilizing f hf a = f a := rfl

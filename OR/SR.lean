@@ -97,7 +97,7 @@ namespace Obj
 
  def one : Obj where
   domain := { Carrier := PUnit, po := inferInstance, ob := inferInstance, dc := inferInstance }
-  rel T := {
+  rel _ := {
     holds := fun _ _ => True
     bottom := fun _ => True.intro
     sup := fun _ _ _ _ => True.intro
@@ -233,7 +233,7 @@ variable {A B C D : Obj}
   ext p
   rfl
 @[simp] theorem curry_uncurry (f : Hom C (Obj.arr A B)) : curry (uncurry f) = f := by
-  ext c a
+  ext c
   rfl
 
  theorem curry_mono {f g : Hom (Obj.prod C A) B} (h : f ≤ g) : curry f ≤ curry g :=
@@ -308,7 +308,7 @@ variable {A B C D : Obj}
   ⟨Ground.predMap, fun T w g hg => (T.primitive w).pred g hg⟩
 
  def conditional : Hom (Obj.prod Obj.nat (Obj.prod Obj.nat Obj.nat)) Obj.nat :=
-  ⟨Ground.ifzMap, fun T w g hg =>
+  ⟨Ground.ifzMap, fun T w _ hg =>
     (T.primitive w).ifz _ _ _ hg.1 hg.2.1 hg.2.2⟩
 
 @[simp] theorem successor_apply (d : Ground) : successor d = Ground.succ d := rfl

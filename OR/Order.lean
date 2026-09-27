@@ -116,6 +116,7 @@ def dSup (s : Set α) (hs : Dir s) : α :=
     dSup s hs ≤ dSup t ht :=
   dSup_le hs (fun _ hx => le_dSup ht (h hx))
 
+omit [DComplete α] in
  theorem dSup_image_le [PartialOrder β] [DComplete β]
     {s : Set α} (hs : Dir s) (f : α → β) (hf : Monotone f) {b : β}
     (h : ∀ a ∈ s, f a ≤ b) : dSup (f '' s) (hs.image f hf) ≤ b := by
@@ -123,6 +124,7 @@ def dSup (s : Set α) (hs : Dir s) : α :=
   rintro _ ⟨a, ha, rfl⟩
   exact h a ha
 
+omit [DComplete α] in
  theorem dSup_image_comp [PartialOrder β] [DComplete β]
     [PartialOrder γ] [DComplete γ]
     {s : Set α} (hs : Dir s) (f : α → β) (hf : Monotone f)
@@ -269,7 +271,7 @@ instance : PartialOrder (CMap α β) where
  def id : CMap α α where
   toFun := fun x => x
   mono := fun _ _ h => h
-  map_le s hs _ h := dSup_le hs h
+  map_le _ hs _ h := dSup_le hs h
 
  def const (b : β) : CMap α β where
   toFun := fun _ => b
@@ -524,6 +526,7 @@ variable [PartialOrder β] [DComplete β]
 
 instance : CoeFun (Chain α) (fun _ => ℕ → α) := ⟨Chain.at⟩
 
+omit [DComplete α] in
 @[ext] theorem ext {c d : Chain α} (h : ∀ n, c n = d n) : c = d := by
   cases c with
   | mk c hc =>

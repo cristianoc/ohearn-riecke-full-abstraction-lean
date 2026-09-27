@@ -125,10 +125,10 @@ namespace Examples
   · have hi' : i = 0 ∨ i = 1 := by
       simpa only [porA, Finset.mem_insert, Finset.mem_singleton] using hi
     rcases hi' with rfl | rfl
-    · simpa [porLeft, porRight, hl] using hbot
-    · simpa [porLeft, porRight, hr] using hbot
+    · simp [porLeft, porRight, hl] at hbot
+    · simp [porLeft, porRight, hr] at hbot
   · have h := hconst 0 (by decide) 2 (by decide)
-    simpa [porLeft, porRight, hl, hb] using h
+    simp [porLeft, porRight, hl, hb] at h
 
 end Examples
 end OR

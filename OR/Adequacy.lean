@@ -46,7 +46,6 @@ namespace Comp
       exact h (.val n) (Flat.val_mem_of_dSup_eq hs hn) n rfl
   | arr σ τ ihσ ihτ =>
       intro M s hs h a N ha
-      change Comp τ ((dSup s hs) a) (.app M N)
       rw [Hom.dSup_apply]
       apply ihτ (.app M N)
       rintro _ ⟨f, hf, rfl⟩

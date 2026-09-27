@@ -22,7 +22,8 @@ namespace OR
   rw [lookup_subenv]
   cases x with
   | vz =>
-      simp only [projectLastSub, denote_app, denote_closed, denote_var, lookup] <;> rfl
+      simp only [projectLastSub, denote_app, denote_closed, denote_var, lookup]
+      rfl
   | vs x =>
       simp only [projectLastSub, denote_var, lookup]
 
