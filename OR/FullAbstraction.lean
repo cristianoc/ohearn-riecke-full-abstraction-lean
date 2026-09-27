@@ -25,7 +25,7 @@ namespace PCtx
 
 variable {Γ Δ Θ Ξ : Ctx} {τ σ υ κ : Ty}
 
- def plug (C : PCtx Γ τ Δ υ) (M : Tm Γ τ) : Tm Δ υ :=
+ def plug {Γ Δ : Ctx} {τ υ : Ty} (C : PCtx Γ τ Δ υ) (M : Tm Γ τ) : Tm Δ υ :=
   match C with
   | .hole r => Tm.rename r M
   | .lam C => .lam (plug C M)
@@ -38,7 +38,7 @@ variable {Γ Δ Θ Ξ : Ctx} {τ σ υ κ : Ty}
   | .ifzL N C P => .ifz N (plug C M) P
   | .ifzR N P C => .ifz N P (plug C M)
 
- def rename (r : Ren Δ Θ) (C : PCtx Γ τ Δ υ) : PCtx Γ τ Θ υ :=
+ def rename {Γ Δ Θ : Ctx} {τ υ : Ty} (r : Ren Δ Θ) (C : PCtx Γ τ Δ υ) : PCtx Γ τ Θ υ :=
   match C with
   | .hole s => .hole (Ren.comp r s)
   | .lam C => .lam (rename (Ren.lift r) C)
@@ -56,7 +56,7 @@ variable {Γ Δ Θ Ξ : Ctx} {τ σ υ κ : Ty}
   induction C generalizing Θ <;> simp_all [rename, plug, Tm.rename, Tm.rename_comp]
 
 /-- Substitution of one single-hole context into another remains single-hole. -/
- def compose (C : PCtx Δ υ Θ κ) (E : PCtx Γ τ Δ υ) : PCtx Γ τ Θ κ :=
+ def compose {Γ Δ Θ : Ctx} {τ υ κ : Ty} (C : PCtx Δ υ Θ κ) (E : PCtx Γ τ Δ υ) : PCtx Γ τ Θ κ :=
   match C with
   | .hole r => rename r E
   | .lam C => .lam (compose C E)
