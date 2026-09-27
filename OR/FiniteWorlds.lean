@@ -66,26 +66,31 @@ inductive Extension : Ctx → Ctx → Type
 namespace Extension
 
  def ren : {Γ Δ : Ctx} → Extension Γ Δ → Ren Γ Δ
-  | _, _, .refl _ => Ren.id
-  | _, _, .cons _ e => Ren.comp Ren.wk e.ren
+  | _, _, .refl _ => fun x => x
+  | _, _, .cons _ e => fun x => .vs (ren e x)
 
- def comp {Γ Δ Θ : Ctx} (e : Extension Γ Δ) : Extension Δ Θ → Extension Γ Θ
-  | .refl _ => e
-  | .cons σ f => .cons σ (e.comp f)
+ def comp : {Γ Δ Θ : Ctx} → Extension Γ Δ → Extension Δ Θ → Extension Γ Θ
+  | _, _, _, e, .refl _ => e
+  | _, _, _, e, .cons σ f => .cons σ (comp e f)
 
-@[simp] theorem ren_refl (Γ : Ctx) : (Extension.refl Γ).ren = Ren.id := rfl
+@[simp] theorem ren_refl {Γ : Ctx} (x : Var Γ τ) :
+    ren (.refl Γ) x = x := rfl
 
-@[simp] theorem ren_cons {Γ Δ : Ctx} (σ : Ty) (e : Extension Γ Δ) :
-    (Extension.cons σ e).ren = Ren.comp Ren.wk e.ren := rfl
+@[simp] theorem ren_cons {Γ Δ : Ctx} (σ : Ty) (e : Extension Γ Δ) (x : Var Γ τ) :
+    ren (.cons σ e) x = .vs (ren e x) := rfl
 
- theorem ren_comp {Γ Δ Θ : Ctx} (e : Extension Γ Δ) (f : Extension Δ Θ) :
-    (e.comp f).ren = Ren.comp f.ren e.ren := by
+ theorem ren_comp_apply {Γ Δ Θ : Ctx} (e : Extension Γ Δ) (f : Extension Δ Θ)
+    {τ : Ty} (x : Var Γ τ) :
+    ren (comp e f) x = ren f (ren e x) := by
   induction f with
   | refl => rfl
   | cons σ f ih =>
       simp only [comp, ren_cons, ih]
-      funext τ x
-      rfl
+
+ theorem ren_comp {Γ Δ Θ : Ctx} (e : Extension Γ Δ) (f : Extension Δ Θ) :
+    ren (comp e f) = Ren.comp (ren f) (ren e) := by
+  funext τ x
+  exact ren_comp_apply e f x
 
 end Extension
 
@@ -174,13 +179,13 @@ O'Hearn--Riecke; arbitrary renamings are deliberately not admitted here.
   World := Ctx
   El := FEnv n
   finite Γ := fenvFinite n Γ
-  Hom {Δ Γ} φ := ∃ e : Extension Γ Δ, φ = fpull e.ren
+  Hom {Δ Γ} φ := ∃ e : Extension Γ Δ, φ = fpull Extension.ren e
   identity Γ := ⟨Extension.refl Γ, funext (fun ρ => (fpull_id ρ).symm)⟩
   composition := by
     intro u v w φ ψ hφ hψ
     rcases hφ with ⟨e, rfl⟩
     rcases hψ with ⟨f, rfl⟩
-    refine ⟨e.comp f, ?_⟩
+    refine ⟨Extension.comp e f, ?_⟩
     funext ρ
     rw [Extension.ren_comp, fpull_comp]
   ground Γ := Def n Γ .nat
@@ -197,7 +202,7 @@ O'Hearn--Riecke; arbitrary renamings are deliberately not admitted here.
       exact ⟨.ifz C M N, fun ρ => by rw [denote_ifz, hC, hM, hN]⟩ }
   reindex := by
     rintro Δ Γ φ ⟨e, rfl⟩ g hg
-    exact hg.rename e.ren
+    exact hg.rename Extension.ren e
 
 /-- Relations displayed directly on finite environments. No encoding casts occur here. -/
 def Rel (n : ℕ) (Γ : Ctx) (τ : Ty) (g : FEnv n Γ → D τ) : Prop :=
@@ -209,10 +214,10 @@ def Rel (n : ℕ) (Γ : Ctx) (τ : Ty) (g : FEnv n Γ → D τ) : Prop :=
  theorem rel_arr (n : ℕ) (Γ : Ctx) (σ τ : Ty) (g : FEnv n Γ → D (σ ⇒ τ)) :
     Rel n Γ (σ ⇒ τ) g ↔
       ∀ (Δ : Ctx) (e : Extension Γ Δ) (a : FEnv n Δ → D σ),
-        Rel n Δ σ a → Rel n Δ τ (fun ρ => g (fpull e.ren ρ) (a ρ)) := by
+        Rel n Δ σ a → Rel n Δ τ (fun ρ => g (fpull Extension.ren e ρ) (a ρ)) := by
   constructor
   · intro hg Δ e a ha
-    exact hg Δ (fpull e.ren) ⟨e, rfl⟩ a ha
+    exact hg Δ (fpull Extension.ren e) ⟨e, rfl⟩ a ha
   · intro hg Δ φ hφ a ha
     rcases hφ with ⟨e, rfl⟩
     exact hg Δ e a ha
@@ -226,7 +231,7 @@ def Rel (n : ℕ) (Γ : Ctx) (τ : Ty) (g : FEnv n Γ → D τ) : Prop :=
 
  theorem rel_reindex {n : ℕ} {Γ Δ : Ctx} {τ : Ty} {g : FEnv n Γ → D τ}
     (hg : Rel n Γ τ g) (e : Extension Γ Δ) :
-    Rel n Δ τ (fun ρ => g (fpull e.ren ρ)) :=
+    Rel n Δ τ (fun ρ => g (fpull Extension.ren e ρ)) :=
   ((typeObj τ).rel (finiteTest n)).reindex ⟨e, rfl⟩ g hg
 
 end OR
