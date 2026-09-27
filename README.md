@@ -72,9 +72,9 @@ Each type denotes a domain together with, for every test and world, a relation o
 
 `Examples` checks, among other things, that parallel-or is not in the model (`no_parallel_or`): the uniform arrow carrier excludes it, as the full Scott function space would not.
 
-## Sieber's relations do not suffice
+## Sieber's model is not universal
 
-The paper leaves open whether Sieber's ordinary (single-world) sequentiality relations already give full abstraction. They do not: combining Loader's undecidability theorem with a search argument shows that Sieber's model has non-definable elements. `OR/Sieber/` proves this for finitary PCF, with Loader's theorem as an explicit hypothesis (`sieber_not_universal`); [`SIEBER.md`](SIEBER.md) gives the argument and the transfer to the natural numbers.
+The paper leaves open whether Sieber's ordinary (single-world) sequentiality relations already give full abstraction. `OR/Sieber/` proves a weaker statement for finitary PCF, with Loader's undecidability theorem as an explicit hypothesis: Sieber's model is **not universal**, i.e. some element is not the denotation of any closed term (`sieber_not_universal`). This does not by itself settle the open problem, since a model with non-definable elements can still be fully abstract. [`SIEBER.md`](SIEBER.md) gives the proof and a proposed, not yet formalised, route from this result to a negative answer over the natural numbers.
 
 ## Layout
 

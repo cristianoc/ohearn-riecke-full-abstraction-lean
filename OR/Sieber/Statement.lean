@@ -1,7 +1,7 @@
 import OR.Sieber.Soundness
 
 /-!
-# Sieber's relations do not suffice
+# Sieber's model is not universal
 
 **Statement.** If observational equivalence of finitary PCF is undecidable
 (Loader's theorem), then Sieber's model has an element that is not the
@@ -20,8 +20,10 @@ set_option autoImplicit false
 
 namespace OR.Sieber
 
-/-- Sieber's ordinary sequentiality relations do not give a universal (hence,
-fully abstract) model of finitary PCF. -/
+/-- Sieber's ordinary sequentiality relations do not give a universal model of
+finitary PCF: some element is not the denotation of a closed term. (This is not
+a statement about full abstraction; see `universal_fully_abstract` for the only
+implication proved between the two.) -/
 def SieberNotUniversal : Prop :=
   Loader → ∃ (τ : Ty) (f : SieberBool τ), ¬ Definable f
 

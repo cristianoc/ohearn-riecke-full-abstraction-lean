@@ -3,7 +3,7 @@ import OR.Sieber.CheckComplete
 import OR.Sieber.CheckPrim
 
 /-!
-# Sieber's relations do not suffice: the proof
+# Sieber's model is not universal: the proof
 
 Assuming every element of Sieber's model is definable, observational equivalence
 of finitary PCF becomes computable: both it and its negation are witnessed by

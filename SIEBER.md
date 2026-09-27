@@ -1,8 +1,12 @@
-# Sieber's relations do not suffice
+# Sieber's model is not universal
 
-O'Hearn and Riecke obtain full abstraction for PCF with *Kripke* logical relations, and leave open (conclusion, printed p. 14) whether Sieber's ordinary sequentiality relations, of fixed but arbitrary arity, already suffice. They do not. This note gives the proof for finitary PCF, sketches the transfer to PCF over the natural numbers, and describes the Lean formalisation (`OR/Sieber/`).
+O'Hearn and Riecke obtain full abstraction for PCF with *Kripke* logical relations, and leave open (conclusion, printed p. 14) whether Sieber's ordinary sequentiality relations, of fixed but arbitrary arity, already suffice for full abstraction.
 
-The argument is nonconstructive: it shows that a non-definable element exists, but does not exhibit one. We have not found this corollary stated in the literature.
+This note proves a weaker statement: for finitary PCF, assuming Loader's theorem, **Sieber's model is not universal**. Some element is not the denotation of any closed term. Sections 1–3 give the proof, which is formalised in Lean (`OR/Sieber/`).
+
+**This does not settle the open problem.** Universality and full abstraction are different properties. Lemma 4 shows that universality implies full abstraction, but a model can contain non-definable elements and still satisfy $`M \simeq N \iff ⟦M⟧ = ⟦N⟧`$ for all terms. Section 4 describes a proposed route from this theorem to a negative answer to the open problem, over the natural numbers, and the external results it still depends on.
+
+The argument is nonconstructive: it shows that a non-definable element exists, but does not exhibit one. We have not found this result stated in the literature.
 
 ## 1. Definitions
 
@@ -71,18 +75,34 @@ Every candidate is eventually either accepted or rejected, and never both. Since
 
 Suppose the model is universal. Given closed $`M, N : \tau`$, compute by Lemma 6 the carriers of all types occurring in $`M`$ and $`N`$. Then compute $`⟦M⟧`$ and $`⟦N⟧`$ by evaluating the terms on these finite tables, and compare them. By Lemma 4 this decides $`M \simeq N`$, contradicting Loader's theorem. Hence some $`D_\tau`$ has a non-definable element. $`\square`$
 
-**Corollary.** That element $`f`$ preserves every sequentiality relation of every arity. Since $`D_\tau`$ is finite, a directed set of definable elements has a greatest element, so $`f`$ is not a supremum of definable elements either. Sieber's model is therefore not the fully abstract model of finitary PCF, whose elements are all definable.
+**Corollary.** That element $`f`$ preserves every sequentiality relation of every arity. Since $`D_\tau`$ is finite, a directed set of definable elements has a greatest element, so $`f`$ is not a supremum of definable elements either.
+
+**What this does not show.** It does not show that Sieber's model fails full abstraction for finitary PCF. Only the direction "universal ⇒ fully abstract" (Lemma 4) is proved; non-definable elements could be semantic junk that no program distinguishes.
 
 **Why the argument uses finiteness of the tests but not a bound on their arity.** Relatedness of a tuple for one fixed test is a finite computation, so non-membership is semi-decidable even though there are tests of every arity. Universality makes membership semi-decidable too, and finiteness of the candidate set turns the two semi-decisions into a decision.
 
-## 4. Transfer to PCF over the natural numbers
+## 4. Towards the open problem: a proposed transfer (not formalised)
+
+This section outlines how the theorem could give a negative answer to O'Hearn and Riecke's question for ordinary PCF over $`\mathbb N_\bot`$. The steps are:
+
+```math
+\text{FA over } \mathbb N_\bot \;\Rightarrow\; \text{compact elements definable} \;\Rightarrow\; \text{Boolean universality} \;\Rightarrow\; \bot .
+```
 
 Write $`D^B`$ and $`D^N`$ for Sieber's construction over $`\{\bot, 0, 1\}`$ (standing for $`\bot, \mathsf{tt}, \mathsf{ff}`$) and over $`\mathbb N_\bot`$.
 
 - *A retraction at every type.* Include $`\{\bot, 0, 1\}`$ into $`\mathbb N_\bot`$, and retract by sending values $`\ge 2`$ to $`\bot`$. Both maps are strict, so they preserve the tests with the same description $`(w, A, B)`$ on both sides. Extending them covariantly and contravariantly gives $`i_\tau : D^B_\tau \to D^N_\tau`$ and $`r_\tau`$ with $`r_\tau i_\tau = \mathrm{id}`$. The idempotent $`i_\tau r_\tau`$ is the level-1 projection $`\psi^1_\tau`$, whose image consists of compact elements.
 - *Full abstraction would give Boolean definability.* If $`D^N`$ were fully abstract, every compact element would be definable (Milner). A term $`M`$ defining $`i_\tau(h)`$ is equivalent to a finite game term of grade 1 (Müller's game-term theorem), which observes only the values $`0`$ and $`1`$, through strict two-case tests. Reinterpreting it over the booleans defines $`h`$. So every element of $`D^B`$ would be definable, contradicting the theorem.
 
-Hence Sieber's model over $`\mathbb N_\bot`$ is not fully abstract. This part relies on Milner's compact-definability theorem and on the precise grade-1 form of Müller's game-term theorem, which should be checked against their sources. The finitary result does not depend on them.
+**Proposed corollary.** Sieber's model over $`\mathbb N_\bot`$ is not fully abstract for PCF.
+
+This is not yet established. The remaining obligations are:
+
+1. **Milner's compact definability.** Check that Milner's theorem applies to Sieber's model over $`\mathbb N_\bot`$ as constructed here (order-extensional, with the projections $`\psi^n`$), so that full abstraction implies that every compact element is definable.
+2. **Müller's game-term theorem.** Check the exact grade-1 form: that a term fixed by $`\Psi^1`$ is contextually equivalent to a finite game term that observes ground values only through strict two-case tests on $`0`$ and $`1`$.
+3. **The reinterpretation.** Prove that such game terms, read over the booleans, define the retracted element $`r_\tau(⟦M⟧)`$. This is an induction on game terms using $`r_\tau i_\tau = \mathrm{id}`$.
+
+The finitary theorem of Sections 1–3 does not depend on any of these.
 
 ## 5. Remarks
 
@@ -99,7 +119,7 @@ def SieberNotUniversal : Prop :=
 theorem sieber_not_universal : SieberNotUniversal
 ```
 
-`Loader` states Loader's theorem as `¬ ComputablePred` of observational equivalence on pairs of term codes. The proof has no `sorry` and depends only on `propext`, `Classical.choice` and `Quot.sound`. Sections 1–3 are formalised; section 4 is not.
+`Loader` states Loader's theorem as `¬ ComputablePred` of observational equivalence on pairs of term codes. The proof has no `sorry` and depends only on `propext`, `Classical.choice` and `Quot.sound`. Sections 1–3 are formalised; section 4 is not. The formal result is non-universality; the Lean development proves `universal_fully_abstract` (universality implies full abstraction) and nothing in the converse direction.
 
 The parallel search of Lemma 6 is realised by *certificates*. A certificate lists the carriers as tables, a normal form for each element, the values of all subterms in all environments, and, for each rejected candidate, a failing test with its lifted relations. A checker verifies a certificate by local consistency checks only, so it is primitive recursive by composition. Universality is used only to show that certificates exist. Observational equivalence and its negation are then both recursively enumerable, hence computable (Post's theorem).
 
