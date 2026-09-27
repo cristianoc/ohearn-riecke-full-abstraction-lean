@@ -25,9 +25,6 @@ jobs:
       - name: Show Lean version
         run: lean --version
 
-      - name: Resolve dependencies
-        run: lake update
-
       - name: Get Mathlib cache
         run: lake exe cache get
 
