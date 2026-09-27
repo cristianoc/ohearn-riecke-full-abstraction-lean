@@ -6,6 +6,11 @@ Peter W. O’Hearn and Jon G. Riecke. **Kripke Logical Relations and PCF.**
 *Information and Computation* 120(1), 107–116, 1995.
 DOI: https://doi.org/10.1006/inco.1995.1103
 
+The accepted-manuscript copy used for the source audit is committed at
+`paper/OHearn-Riecke-Kripke-Logical-Relations-and-PCF.pdf` (open access from
+SURFACE: https://surface.syr.edu/lcsmith_other/3). Its PDF page numbers are
+the printed page numbers plus one, because of the repository cover page.
+
 The mathematical proof specification supplied earlier in this conversation was
 used as the immediate plan. `PROOF_MAP.md` records the places where this source
 uses an equivalent representation or a different proof decomposition.

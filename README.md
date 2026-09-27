@@ -48,7 +48,7 @@ One point needs careful wording. **Lemma 12 itself is stated as the closed finit
 
 ### Source audit against the paper
 
-The authoritative comparison source is the **SURFACE copy supplied with this repository audit**: Peter W. O'Hearn and Jon G. Riecke, *Kripke Logical Relations and PCF*. Its title page says “To appear in Information and Computation” and “Accepted, October 1994”; SURFACE catalogs it as the 1995 article. The paper text has its own printed pagination 1--18; the SURFACE PDF has an additional repository cover page, so PDF page numbers are offset by one.
+The authoritative comparison source is the **SURFACE copy committed at [`paper/OHearn-Riecke-Kripke-Logical-Relations-and-PCF.pdf`](paper/OHearn-Riecke-Kripke-Logical-Relations-and-PCF.pdf)** (from https://surface.syr.edu/lcsmith_other/3): Peter W. O'Hearn and Jon G. Riecke, *Kripke Logical Relations and PCF*. Its title page says “To appear in Information and Computation” and “Accepted, October 1994”; SURFACE catalogs it as the 1995 article. The paper text has its own printed pagination 1--18; the SURFACE PDF has an additional repository cover page, so PDF page numbers are offset by one.
 
 The correspondence now uses exact numbered statements and printed pages:
 
