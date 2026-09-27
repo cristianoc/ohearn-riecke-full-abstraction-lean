@@ -54,13 +54,13 @@ The construction and the proofs are the paper's; in particular Lemma 12 is prove
 
 ## Proof outline
 
-**Model** (`Order`, `Flat`, `Sequential`, `Worlds`, `SR`). Ground values form the flat domain $`\mathbb N_\bot`$. A test is a category of finite worlds with, at each world `w`, a relation on tuples `w → ℕ⊥` that is a sequentiality relation: an intersection of Sieber's relations
+**Model** (`Order`, `Flat`, `Sequential`, `Worlds`, `SR`). Ground values form the flat domain $`\mathbb N_\bot`$. A *test* consists of finite sets `w` (worlds), a collection of maps between them closed under identity and composition, and at each world a relation on tuples `w → ℕ⊥` that is stable under those maps and is a sequentiality relation: an intersection of Sieber's relations
 
 ```math
 S^w_{A,B}(g) \iff \bigl(\exists i\in A.\ g(i)=\bot\bigr) \lor \bigl(\forall i,j\in B.\ g(i)=g(j)\bigr).
 ```
 
-An object of `SR` is a domain with a Kripke relation for every test; morphisms are continuous maps preserving all of them. Exponentials relate `g` at `w` when, for every world morphism `φ : v → w` and every related `h`, the tuple `i ↦ g(φ i)(h i)` is related at `v`. PCF (`Syntax`, `Interpretation`) is interpreted in this cartesian closed category, with `pred 0 = ⊥`.
+Each type denotes a domain together with, for every test and world, a relation on tuples of its elements. At ground type this is the test's own relation. At `σ → τ` the domain is the continuous functions that preserve all of these relations, and a tuple of functions `g` is related at `w` when, for every map `φ : v → w` of the test and every related tuple of arguments `h` at `v`, the tuple `i ↦ g(φ i)(h i)` is related at `v`. PCF (`Syntax`, `Interpretation`) is interpreted as usual, with `pred 0 = ⊥`. The paper phrases the same construction as a cartesian closed category `SR` whose objects are these domains-with-relations; the categorical language summarises that products, currying and evaluation behave as expected, and nothing else depends on it.
 
 **Finite projections** (`Projections`). The PCF terms $`P^n_\tau`$ cut every value to level `n`. Their denotations $`\psi^n_\tau`$ are idempotent, increase with `n` to the identity, and have finite images $`D^n_\tau`$.
 
@@ -79,7 +79,7 @@ An object of `SR` is a domain with a Kripke relation for every test; morphisms a
 | `OR.lean` | Root module. |
 | `OR/Order.lean`, `OR/Flat.lean` | Directed-complete orders, continuous maps, fixed points, flat naturals. |
 | `OR/Sequential.lean`, `OR/Worlds.lean` | Sequentiality relations, finite interpolation, tests and Kripke relations. |
-| `OR/SR.lean` | The category `SR`. |
+| `OR/SR.lean` | Domains with relations and relation-preserving maps (the paper's category `SR`). |
 | `OR/Syntax.lean`, `OR/Interpretation.lean` | Intrinsically typed PCF and its interpretation. |
 | `OR/Projections.lean`, `OR/FiniteWorlds.lean` | Finite projections and the test `finiteTest`. |
 | `OR/Definability.lean`, `OR/Compactness.lean` | Finite definability, compact elements. |
