@@ -15,11 +15,19 @@ namespace OR
 
 abbrev D (τ : Ty) : Type := (typeObj τ).domain.Carrier
 
+/-- Expose semantic application without erasing the relational type indices. -/
+instance dArrCoeFun (σ τ : Ty) : CoeFun (D (σ ⇒ τ)) (fun _ => D σ → D τ) :=
+  ⟨fun f => (show Hom (typeObj σ) (typeObj τ) from f).val.toFun⟩
+
  def envObj : Ctx → Obj
   | [] => Obj.one
   | σ :: Γ => Obj.prod (envObj Γ) (typeObj σ)
 
 abbrev Env (Γ : Ctx) : Type := (envObj Γ).domain.Carrier
+
+instance emptyEnvSubsingleton : Subsingleton (Env []) := by
+  change Subsingleton PUnit
+  infer_instance
 
  def lookup {Γ : Ctx} {τ : Ty} (x : Var Γ τ) : Env Γ → D τ :=
   match x with
@@ -33,7 +41,7 @@ abbrev Env (Γ : Ctx) : Type := (envObj Γ).domain.Carrier
 
 @[simp] theorem lookupHom_apply {Γ : Ctx} {τ : Ty} (x : Var Γ τ) (ρ : Env Γ) :
     lookupHom x ρ = lookup x ρ := by
-  induction x generalizing ρ with
+  induction x with
   | vz => rfl
   | vs x ih => exact ih ρ.1
 
@@ -43,13 +51,13 @@ abbrev Env (Γ : Ctx) : Type := (envObj Γ).domain.Carrier
 
 @[simp] theorem lookup_envOf {Γ : Ctx} {τ : Ty}
     (x : Var Γ τ) (f : ∀ {τ : Ty}, Var Γ τ → D τ) : lookup x (envOf f) = f x := by
-  induction x generalizing f with
+  induction x with
   | vz => rfl
   | vs x ih => exact ih (fun x => f (.vs x))
 
  theorem env_ext {Γ : Ctx} {ρ η : Env Γ}
     (h : ∀ {τ : Ty}, ∀ x : Var Γ τ, lookup x ρ = lookup x η) : ρ = η := by
-  induction Γ generalizing ρ η with
+  induction Γ with
   | nil => exact Subsingleton.elim _ _
   | cons σ Γ ih =>
       apply Prod.ext
@@ -69,8 +77,8 @@ abbrev Env (Γ : Ctx) : Type := (envObj Γ).domain.Carrier
 
  theorem env_le_of_lookup {Γ : Ctx} {ρ η : Env Γ}
     (h : ∀ {τ : Ty}, ∀ x : Var Γ τ, lookup x ρ ≤ lookup x η) : ρ ≤ η := by
-  induction Γ generalizing ρ η with
-  | nil => exact le_rfl
+  induction Γ with
+  | nil => exact (Subsingleton.elim ρ η).le
   | cons σ Γ ih =>
       exact ⟨ih (fun x => h (.vs x)), h .vz⟩
 
@@ -95,7 +103,8 @@ abbrev Env (Γ : Ctx) : Type := (envObj Γ).domain.Carrier
     pull (Ren.lift r) (ρ, a) = (pull r ρ, a) := by
   apply env_ext
   intro τ x
-  cases x <;> simp [lookup_pull, Ren.lift, lookup]
+  rw [lookup_pull]
+  cases x <;> simp only [Ren.lift, lookup, lookup_pull]
 
 @[simp] theorem pull_wk {Γ : Ctx} {σ : Ty} (ρ : Env Γ) (a : D σ) :
     pull Ren.wk (ρ, a) = ρ := by
@@ -140,7 +149,7 @@ abbrev denoteClosed {τ : Ty} (M : Tm [] τ) : D τ := denote M PUnit.unit
   | lam M ih =>
       apply Hom.ext
       intro a
-      simp only [Tm.rename, denote_lam]
+      change denote (Tm.rename (Ren.lift r) M) (η, a) = denote M (pull r η, a)
       rw [ih, pull_lift]
   | app M N ihM ihN => simp only [Tm.rename, denote_app, ihM, ihN]
   | fix M ih => simp only [Tm.rename, denote_fix, ih]
@@ -165,9 +174,10 @@ abbrev denoteClosed {τ : Ty} (M : Tm [] τ) : D τ := denote M PUnit.unit
     subenv (Sub.lift θ) (η, a) = (subenv θ η, a) := by
   apply env_ext
   intro τ x
+  rw [lookup_subenv]
   cases x with
-  | vz => simp [lookup_subenv, Sub.lift, lookup]
-  | vs x => simp [lookup_subenv, Sub.lift, denote_rename, pull_wk, lookup]
+  | vz => simp only [Sub.lift, denote_var, lookup]
+  | vs x => simp only [Sub.lift, denote_rename, pull_wk, lookup, lookup_subenv]
 
 @[simp] theorem subenv_id {Γ : Ctx} (ρ : Env Γ) : subenv Sub.id ρ = ρ := by
   apply env_ext
@@ -178,14 +188,16 @@ abbrev denoteClosed {τ : Ty} (M : Tm [] τ) : D τ := denote M PUnit.unit
     subenv (Sub.single N) ρ = (ρ, denote N ρ) := by
   apply env_ext
   intro τ x
-  cases x <;> simp [lookup_subenv, Sub.single, lookup]
+  rw [lookup_subenv]
+  cases x <;> simp only [Sub.single, denote_var, lookup]
 
 @[simp] theorem subenv_extend {Γ Δ : Ctx} {σ : Ty}
     (θ : Sub Γ Δ) (N : Tm Δ σ) (ρ : Env Δ) :
     subenv (Sub.extend θ N) ρ = (subenv θ ρ, denote N ρ) := by
   apply env_ext
   intro τ x
-  cases x <;> simp [lookup_subenv, Sub.extend, lookup]
+  rw [lookup_subenv]
+  cases x <;> simp only [Sub.extend, lookup, lookup_subenv]
 
  theorem denote_subst {Γ Δ : Ctx} {τ : Ty} (M : Tm Γ τ)
     (θ : Sub Γ Δ) (η : Env Δ) : denote (Tm.subst θ M) η = denote M (subenv θ η) := by
@@ -194,7 +206,7 @@ abbrev denoteClosed {τ : Ty} (M : Tm [] τ) : D τ := denote M PUnit.unit
   | lam M ih =>
       apply Hom.ext
       intro a
-      simp only [Tm.subst, denote_lam]
+      change denote (Tm.subst (Sub.lift θ) M) (η, a) = denote M (subenv θ η, a)
       rw [ih, subenv_lift]
   | app M N ihM ihN => simp only [Tm.subst, denote_app, ihM, ihN]
   | fix M ih => simp only [Tm.subst, denote_fix, ih]
