@@ -1,4 +1,5 @@
 name: Vendor reference paper
+# One-shot archival workflow; remove after the PDF is committed.
 
 on:
   push:
