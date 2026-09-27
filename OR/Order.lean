@@ -565,9 +565,8 @@ theorem sup_mono (c d : Chain α) (h : ∀ n, c n ≤ d n) : c.sup ≤ d.sup :=
   c.sup_le (fun n => (h n).trans (d.le_sup n))
 
 theorem sup_const (a : α) : (Chain.mk (fun _ => a) (fun _ _ _ => le_rfl)).sup = a := by
-  apply le_antisymm
-  · exact sup_le _ (fun _ => le_rfl)
-  · exact le_sup _ 0
+  let c : Chain α := ⟨fun _ => a, fun _ _ _ => le_rfl⟩
+  exact le_antisymm (c.sup_le (fun _ => le_rfl)) (c.le_sup 0)
 
 theorem sup_fun_apply {ι : Type v} {A : ι → Type w}
     [∀ i, PartialOrder (A i)] [∀ i, DComplete (A i)]

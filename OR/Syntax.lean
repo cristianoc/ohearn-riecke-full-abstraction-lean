@@ -144,7 +144,15 @@ namespace Tm
 variable {Γ Δ Θ : Ctx} {σ τ : Ty}
 
 @[simp] theorem subst_id (M : Tm Γ τ) : subst Sub.id M = M := by
-  induction M <;> simp_all [subst, Sub.lift_id, Sub.id]
+  induction M with
+  | var x => rfl
+  | lam M ih => simp only [subst, Sub.lift_id, ih]
+  | app M N ihM ihN => simp only [subst, ihM, ihN]
+  | fix M ih => simp only [subst, ih]
+  | zero => rfl
+  | succ M ih => simp only [subst, ih]
+  | pred M ih => simp only [subst, ih]
+  | ifz C M N ihC ihM ihN => simp only [subst, ihC, ihM, ihN]
 
  theorem subst_rename (M : Tm Γ τ) (r : Ren Γ Δ) (θ : Sub Δ Θ) :
     subst θ (rename r M) = subst (fun x => θ (r x)) M := by
