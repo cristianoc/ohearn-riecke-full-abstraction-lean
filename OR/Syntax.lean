@@ -45,12 +45,14 @@ variable {Γ Δ Θ : Ctx} {σ : Ty}
   | _, .vz => .vz
   | _, .vs x => .vs (r x)
 
-@[simp] theorem lift_id : lift (id : Ren Γ Γ) = (id : Ren (σ :: Γ) (σ :: Γ)) := by
+/-- Keep the implicit type index abstract in equalities of renaming families. -/
+@[simp] theorem lift_id : @lift Γ Γ σ (@id Γ) = @id (σ :: Γ) := by
   funext τ x
   cases x <;> rfl
 
  theorem lift_comp (s : Ren Δ Θ) (r : Ren Γ Δ) :
-    lift (σ := σ) (comp s r) = comp (lift s) (lift r) := by
+    @lift Γ Θ σ (@comp Γ Δ Θ s r) =
+      @comp (σ :: Γ) (σ :: Δ) (σ :: Θ) (@lift Δ Θ σ s) (@lift Γ Δ σ r) := by
   funext τ x
   cases x <;> rfl
 
@@ -72,11 +74,11 @@ namespace Tm
 variable {Γ Δ Θ : Ctx} {σ τ : Ty}
 
 @[simp] theorem rename_id (M : Tm Γ τ) : rename Ren.id M = M := by
-  induction M <;> simp_all [rename, Ren.lift_id]
+  induction M <;> simp_all [rename, Ren.lift_id, Ren.id]
 
  theorem rename_comp (M : Tm Γ τ) (r : Ren Γ Δ) (s : Ren Δ Θ) :
     rename s (rename r M) = rename (Ren.comp s r) M := by
-  induction M generalizing Δ Θ <;> simp_all [rename, Ren.lift_comp]
+  induction M generalizing Δ Θ <;> simp_all [rename, Ren.lift_comp, Ren.comp]
 
  theorem rename_wk (M : Tm Γ τ) (r : Ren Γ Δ) :
     rename (Ren.lift (σ := σ) r) (rename Ren.wk M) = rename Ren.wk (rename r M) := by
@@ -101,25 +103,26 @@ variable {Γ Δ Θ : Ctx} {σ : Ty}
   | _, .vz => N
   | _, .vs x => θ x
 
-@[simp] theorem lift_id : lift (id : Sub Γ Γ) = (id : Sub (σ :: Γ) (σ :: Γ)) := by
+@[simp] theorem lift_id : @lift Γ Γ σ (@id Γ) = @id (σ :: Γ) := by
   funext τ x
   cases x <;> rfl
 
  theorem lift_precomp (θ : Sub Δ Θ) (r : Ren Γ Δ) :
     (fun {τ} (x : Var (σ :: Γ) τ) => lift θ (Ren.lift r x)) =
-      lift (fun x => θ (r x)) := by
+      @lift Γ Θ σ (fun {τ} (x : Var Γ τ) => θ (r x)) := by
   funext τ x
   cases x <;> rfl
 
  theorem lift_postrename (r : Ren Δ Θ) (θ : Sub Γ Δ) :
     (fun {τ} (x : Var (σ :: Γ) τ) => Tm.rename (Ren.lift r) (lift θ x)) =
-      lift (fun x => Tm.rename r (θ x)) := by
+      @lift Γ Θ σ (fun {τ} (x : Var Γ τ) => Tm.rename r (θ x)) := by
   funext τ x
   cases x with
   | vz => rfl
   | vs x => exact Tm.rename_wk (θ x) r
 
- theorem lift_ofRen (r : Ren Γ Δ) : lift (σ := σ) (ofRen r) = ofRen (Ren.lift r) := by
+ theorem lift_ofRen (r : Ren Γ Δ) :
+    @lift Γ Δ σ (@ofRen Γ Δ r) = @ofRen (σ :: Γ) (σ :: Δ) (@Ren.lift Γ Δ σ r) := by
   funext τ x
   cases x <;> rfl
 
@@ -141,7 +144,7 @@ namespace Tm
 variable {Γ Δ Θ : Ctx} {σ τ : Ty}
 
 @[simp] theorem subst_id (M : Tm Γ τ) : subst Sub.id M = M := by
-  induction M <;> simp_all [subst, Sub.lift_id]
+  induction M <;> simp_all [subst, Sub.lift_id, Sub.id]
 
  theorem subst_rename (M : Tm Γ τ) (r : Ren Γ Δ) (θ : Sub Δ Θ) :
     subst θ (rename r M) = subst (fun x => θ (r x)) M := by
@@ -230,7 +233,7 @@ variable {Γ Δ Θ : Ctx} {σ τ : Ty}
 
 @[simp] theorem closed_empty (M : Tm [] τ) : closed (Γ := []) M = M := by
   unfold closed
-  have he : (Ren.empty : Ren [] []) = Ren.id := by
+  have he : @Ren.empty [] = @Ren.id [] := by
     funext υ x
     exact nomatch x
   rw [he, rename_id]

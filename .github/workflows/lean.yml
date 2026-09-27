@@ -35,4 +35,9 @@ jobs:
         run: lake --no-ansi build
 
       - name: Axiom audit
-        run: lake env lean OR/AxiomAudit.lean
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .validation
+          lake env lean OR/AxiomAudit.lean 2>&1 | tee .validation/axioms.log
+          python3 scripts/check_axioms.py .validation/axioms.log

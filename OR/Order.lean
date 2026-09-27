@@ -106,7 +106,7 @@ def dSup (s : Set α) (hs : Dir s) : α :=
 
  @[simp] theorem dSup_singleton (a : α) : dSup {a} (Dir.singleton a) = a := by
   apply le_antisymm
-  · apply dSup_le
+  · apply dSup_le (Dir.singleton a)
     intro b hb
     have : b = a := by simpa using hb
     exact this.le
@@ -119,7 +119,7 @@ def dSup (s : Set α) (hs : Dir s) : α :=
  theorem dSup_image_le [PartialOrder β] [DComplete β]
     {s : Set α} (hs : Dir s) (f : α → β) (hf : Monotone f) {b : β}
     (h : ∀ a ∈ s, f a ≤ b) : dSup (f '' s) (hs.image f hf) ≤ b := by
-  apply dSup_le
+  apply dSup_le (hs.image f hf)
   rintro _ ⟨a, ha, rfl⟩
   exact h a ha
 
@@ -152,10 +152,10 @@ instance prodDComplete : DComplete (α × β) where
       exact ⟨le_dSup ha ⟨p, hp, rfl⟩, le_dSup hb ⟨p, hp, rfl⟩⟩
     · intro p hp
       constructor
-      · apply dSup_le
+      · apply dSup_le ha
         rintro _ ⟨q, hq, rfl⟩
         exact (hp hq).1
-      · apply dSup_le
+      · apply dSup_le hb
         rintro _ ⟨q, hq, rfl⟩
         exact (hp hq).2
 
@@ -164,12 +164,12 @@ instance prodDComplete : DComplete (α × β) where
   apply le_antisymm
   · have h : dSup s hs ≤
         (dSup (Prod.fst '' s) (hs.image _ (fun _ _ h => h.1)), (dSup s hs).2) := by
-      apply dSup_le
+      apply dSup_le hs
       intro p hp
       exact ⟨le_dSup (hs.image _ (fun _ _ h => h.1)) ⟨p, hp, rfl⟩,
         (le_dSup hs hp).2⟩
     exact h.1
-  · apply dSup_le
+  · apply dSup_le (hs.image Prod.fst (fun _ _ h => h.1))
     rintro _ ⟨p, hp, rfl⟩
     exact (le_dSup hs hp).1
 
@@ -178,12 +178,12 @@ instance prodDComplete : DComplete (α × β) where
   apply le_antisymm
   · have h : dSup s hs ≤
         ((dSup s hs).1, dSup (Prod.snd '' s) (hs.image _ (fun _ _ h => h.2))) := by
-      apply dSup_le
+      apply dSup_le hs
       intro p hp
       exact ⟨(le_dSup hs hp).1,
         le_dSup (hs.image _ (fun _ _ h => h.2)) ⟨p, hp, rfl⟩⟩
     exact h.2
-  · apply dSup_le
+  · apply dSup_le (hs.image Prod.snd (fun _ _ h => h.2))
     rintro _ ⟨p, hp, rfl⟩
     exact (le_dSup hs hp).2
 
@@ -196,27 +196,29 @@ variable [∀ i, PartialOrder (A i)] [∀ i, DComplete (A i)]
 
 instance piDComplete : DComplete (∀ i, A i) where
   has_lub s hs := by
-    let h : ∀ i, Dir ((fun f => f i) '' s) :=
-      fun i => hs.image (fun f => f i) (fun _ _ h => h i)
+    let h : ∀ i, Dir ((fun f : ∀ j, A j => f i) '' s) :=
+      fun i => hs.image (fun f : ∀ j, A j => f i) (fun _ _ h => h i)
     refine ⟨fun i => dSup _ (h i), ?_, ?_⟩
     · intro f hf i
       exact le_dSup (h i) ⟨f, hf, rfl⟩
     · intro f hf i
-      apply dSup_le
+      apply dSup_le (h i)
       rintro _ ⟨g, hg, rfl⟩
       exact hf hg i
 
  theorem dSup_apply (s : Set (∀ i, A i)) (hs : Dir s) (i : ι) :
     dSup s hs i =
-      dSup ((fun f => f i) '' s) (hs.image _ (fun _ _ h => h i)) := by
+      dSup ((fun f : ∀ j, A j => f i) '' s)
+        (hs.image (fun f : ∀ j, A j => f i) (fun _ _ h => h i)) := by
+  let hi : ∀ i, Dir ((fun f : ∀ j, A j => f i) '' s) :=
+    fun i => hs.image (fun f : ∀ j, A j => f i) (fun _ _ h => h i)
   have h := dSup_eq hs (show IsLUB s
-      (fun i => dSup ((fun f => f i) '' s)
-        (hs.image _ (fun _ _ h => h i))) from by
+      (fun i => dSup ((fun f : ∀ j, A j => f i) '' s) (hi i)) from by
     constructor
     · intro f hf i
-      exact le_dSup (hs.image _ (fun _ _ h => h i)) ⟨f, hf, rfl⟩
+      exact le_dSup (hi i) ⟨f, hf, rfl⟩
     · intro f hf i
-      apply dSup_le
+      apply dSup_le (hi i)
       rintro _ ⟨g, hg, rfl⟩
       exact hf hg i)
   exact congrFun h i
@@ -259,8 +261,8 @@ instance : PartialOrder (CMap α β) where
  theorem map_dSup (f : CMap α β) (s : Set α) (hs : Dir s) :
     f (dSup s hs) = dSup (f '' s) (hs.image f f.mono) := by
   apply le_antisymm
-  · exact f.map_le s hs _ (fun a ha => le_dSup _ ⟨a, ha, rfl⟩)
-  · apply dSup_le
+  · exact f.map_le s hs _ (fun a ha => le_dSup (hs.image f f.mono) ⟨a, ha, rfl⟩)
+  · apply dSup_le (hs.image f f.mono)
     rintro _ ⟨a, ha, rfl⟩
     exact f.mono (le_dSup hs ha)
 
@@ -288,7 +290,7 @@ instance : PartialOrder (CMap α β) where
   mono := fun _ _ h => h.1
   map_le s hs a h := by
     rw [dSup_prod_fst]
-    apply dSup_le
+    apply dSup_le (hs.image Prod.fst (fun _ _ h => h.1))
     rintro _ ⟨p, hp, rfl⟩
     exact h p hp
 
@@ -297,7 +299,7 @@ instance : PartialOrder (CMap α β) where
   mono := fun _ _ h => h.2
   map_le s hs b h := by
     rw [dSup_prod_snd]
-    apply dSup_le
+    apply dSup_le (hs.image Prod.snd (fun _ _ h => h.2))
     rintro _ ⟨p, hp, rfl⟩
     exact h p hp
 
@@ -319,39 +321,44 @@ instance : PartialOrder (CMap α β) where
 
  def pointSup (s : Set (CMap α β)) (hs : Dir s) : CMap α β where
   toFun a := dSup ((fun f : CMap α β => f a) '' s)
-    (hs.image _ (fun _ _ h => h a))
+    (hs.image (fun f : CMap α β => f a) (fun _ _ h => h a))
   mono := by
     intro a b hab
-    apply dSup_le
+    apply dSup_le (hs.image (fun f : CMap α β => f a) (fun _ _ h => h a))
     rintro _ ⟨f, hf, rfl⟩
-    exact (f.mono hab).trans (le_dSup _ ⟨f, hf, rfl⟩)
+    exact (f.mono hab).trans
+      (le_dSup (hs.image (fun f : CMap α β => f b) (fun _ _ h => h b)) ⟨f, hf, rfl⟩)
   map_le t ht b h := by
     apply dSup_le
+      (hs.image (fun f : CMap α β => f (dSup t ht)) (fun _ _ h => h _))
     rintro _ ⟨f, hf, rfl⟩
     apply f.map_le t ht b
     intro a ha
-    exact (le_dSup (hs.image _ (fun _ _ h => h a)) ⟨f, hf, rfl⟩).trans (h a ha)
+    exact (le_dSup (hs.image (fun f : CMap α β => f a) (fun _ _ h => h a))
+      ⟨f, hf, rfl⟩).trans (h a ha)
 
 instance : DComplete (CMap α β) where
   has_lub s hs := by
     refine ⟨pointSup s hs, ?_, ?_⟩
     · intro f hf a
-      exact le_dSup _ ⟨f, hf, rfl⟩
+      exact le_dSup (hs.image (fun f : CMap α β => f a) (fun _ _ h => h a))
+        ⟨f, hf, rfl⟩
     · intro f hf a
-      apply dSup_le
+      apply dSup_le (hs.image (fun f : CMap α β => f a) (fun _ _ h => h a))
       rintro _ ⟨g, hg, rfl⟩
       exact hf hg a
 
  theorem dSup_apply (s : Set (CMap α β)) (hs : Dir s) (a : α) :
     (dSup s hs) a = dSup ((fun f : CMap α β => f a) '' s)
-      (hs.image _ (fun _ _ h => h a)) := by
+      (hs.image (fun f : CMap α β => f a) (fun _ _ h => h a)) := by
   have heq : dSup s hs = pointSup s hs := by
-    apply dSup_eq
+    apply dSup_eq hs
     constructor
     · intro f hf x
-      exact le_dSup _ ⟨f, hf, rfl⟩
+      exact le_dSup (hs.image (fun f : CMap α β => f x) (fun _ _ h => h x))
+        ⟨f, hf, rfl⟩
     · intro f hf x
-      apply dSup_le
+      apply dSup_le (hs.image (fun f : CMap α β => f x) (fun _ _ h => h x))
       rintro _ ⟨g, hg, rfl⟩
       exact hf hg x
   exact congrArg (fun f : CMap α β => f a) heq
@@ -416,7 +423,7 @@ instance [OrderBot β] : OrderBot (CMap α β) where
   mono := fun _ _ h => h i
   map_le s hs b h := by
     rw [OR.dSup_apply]
-    apply dSup_le
+    apply dSup_le (hs.image (fun f : ∀ j, A j => f i) (fun _ _ h => h i))
     rintro _ ⟨f, hf, rfl⟩
     exact h f hf
 
@@ -460,7 +467,7 @@ instance subtypeDComplete : DComplete {a : α // P a} where
     · intro a ha
       exact le_dSup ht ⟨a, ha, rfl⟩
     · intro a ha
-      apply dSup_le
+      apply dSup_le ht
       rintro _ ⟨b, hb, rfl⟩
       exact ha hb
 
@@ -471,12 +478,12 @@ instance subtypeDComplete : DComplete {a : α // P a} where
   have hP : P (dSup (Subtype.val '' s) ht) :=
     SupClosed.closed _ ht (by rintro _ ⟨a, ha, rfl⟩; exact a.property)
   have he : dSup s hs = ⟨dSup (Subtype.val '' s) ht, hP⟩ := by
-    apply dSup_eq
+    apply dSup_eq hs
     constructor
     · intro a ha
       exact le_dSup ht ⟨a, ha, rfl⟩
     · intro a ha
-      apply dSup_le
+      apply dSup_le ht
       rintro _ ⟨b, hb, rfl⟩
       exact ha hb
   exact congrArg Subtype.val he
@@ -486,7 +493,7 @@ instance subtypeDComplete : DComplete {a : α // P a} where
   mono := fun _ _ h => h
   map_le s hs b h := by
     rw [dSup_subtype_val]
-    apply dSup_le
+    apply dSup_le (hs.image Subtype.val (fun _ _ h => h))
     rintro _ ⟨a, ha, rfl⟩
     exact h a ha
 
@@ -507,8 +514,8 @@ end Subtypes
 
 /-- Increasing natural-number-indexed chains, used only for approximation and recursion. -/
 structure Chain (α : Type u) [Preorder α] where
-  at : ℕ → α
-  mono : Monotone at
+  «at» : ℕ → α
+  mono : Monotone «at»
 
 namespace Chain
 
@@ -534,7 +541,7 @@ theorem le_sup (c : Chain α) (n : ℕ) : c n ≤ c.sup :=
   le_dSup c.dir ⟨n, rfl⟩
 
 theorem sup_le (c : Chain α) {a : α} (h : ∀ n, c n ≤ a) : c.sup ≤ a := by
-  apply dSup_le
+  apply dSup_le c.dir
   rintro _ ⟨n, rfl⟩
   exact h n
 
@@ -629,7 +636,7 @@ theorem lfp_le (f : CMap α α) {a : α} (ha : f a ≤ a) : lfp f ≤ a := by
   | succ n ih => exact (f.mono ih).trans ha
 
 @[simp] theorem lfp_id : lfp (CMap.id : CMap α α) = ⊥ := by
-  exact le_antisymm (lfp_le _ le_rfl) bot_le
+  exact le_antisymm (lfp_le (CMap.id : CMap α α) (a := (⊥ : α)) le_rfl) bot_le
 
 theorem lfp_mono {f g : CMap α α} (h : f ≤ g) : lfp f ≤ lfp g := by
   apply Chain.sup_mono
