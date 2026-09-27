@@ -99,8 +99,9 @@ The paper leaves open whether Sieber's fixed-arity sequentiality relations alrea
 | `OR/Operational.lean`, `OR/Adequacy.lean`, `OR/Observations.lean` | Operational semantics, adequacy, operational full abstraction. |
 | `OR/Examples.lean`, `OR/AxiomAudit.lean` | Regression examples; axiom audit. |
 | `OR/Sieber/` | Finitary PCF and Sieber's model (not universal); Sieber's model over $`ℕ_⊥`$ (not inequationally fully abstract). See `SIEBER.md`. |
+| `SIEBER.md` | The mathematical proofs of the two Sieber results, the external theorems they assume, and what remains open. |
 | `paper/` | The paper (SURFACE copy). |
-| `scripts/` | `check.sh` and the two audit scripts. |
+| `scripts/` | `check.sh` and the two audit scripts; `search_*.py` are unmaintained notes from a counterexample search, not part of the proof. |
 
 ## Build
 
