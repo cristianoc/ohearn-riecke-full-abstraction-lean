@@ -42,22 +42,32 @@ The repair iterations were overwhelmingly proof-engineering and elaboration repa
 
 These are presently intended as **explications or proof-representation changes, not changes to the full-abstraction claim**.
 
-One strengthening deserves to be stated explicitly. The paper's finite-definability result is a closed theorem, but **that statement is not strong enough to use directly as the induction hypothesis in a literal structural induction at arrow type**. The Lean proof therefore proves the open finite-environment tuple theorem `strong_finite_definability` first and derives the closed result `finite_definability` from it. This does not make the paper's closed statement false; it distinguishes the theorem ultimately wanted from the stronger lemma needed to prove it without hiding the higher-type induction.
+One point needs careful wording. **Lemma 12 itself is stated as the closed finite-definability theorem, but its proof immediately strengthens the induction hypothesis.** On printed pp. 12--13 the paper says, after stating Lemma 12, “We prove the following claim by induction on the type t,” and quantifies over an arbitrary finite world (w=[D^n_{s_1},\ldots,D^n_{s_m}]) and tuple (g:w\to\llbracket t\rrbracket), proving relatedness iff representability. The Lean theorem `strong_finite_definability` is therefore not an invention needed to repair the paper: it formalizes the stronger claim that the paper itself uses inside the proof. The closed theorem `finite_definability` corresponds to Lemma 12's stated conclusion.
 
 ### Source audit against the paper
 
-The comparison is against the published article, Peter W. O'Hearn and Jon G. Riecke, *Kripke Logical Relations and PCF*, **Information and Computation 120(1), 107--116 (1995)**, DOI `10.1006/inco.1995.1103`, not merely against a later description of its result. The proof specification used to build this development identifies the source landmarks as **Definitions 1--6**, the construction of the category **SR**, **Lemmas 10--12**, **Definition 13**, and **Theorem 14**. In particular:
+The authoritative comparison source is the **SURFACE copy supplied with this repository audit**: Peter W. O'Hearn and Jon G. Riecke, *Kripke Logical Relations and PCF*. Its title page says “To appear in Information and Computation” and “Accepted, October 1994”; SURFACE catalogs it as the 1995 article. The paper text has its own printed pagination 1--18; the SURFACE PDF has an additional repository cover page, so PDF page numbers are offset by one.
 
-- the relational/sequential setup and the construction of the model are audited against Definitions 1--6 and the intervening construction of `SR`;
-- projections and the finite-definability argument are audited against Lemmas 10--12; the stronger open theorem in Lean is the induction-strengthened form needed to establish the paper's closed finite-definability conclusion;
-- the paper's observation relation is the one introduced at Definition 13; the Lean development additionally proves an explicit operational adequacy bridge rather than identifying operational evaluation with that denotational observation by convention; and
-- the final full-abstraction result is audited against Theorem 14.
+The correspondence now uses exact numbered statements and printed pages:
 
-The article occupies journal pages 107--116. Exact per-item page numbers should be recorded only from an authoritative paginated copy; theorem/definition numbers above are the stable source references used in the formalisation audit. The repository should not manufacture page numbers from an OCR/search copy.
+| Paper | Printed page(s) | Lean/formalisation correspondence | Audit note |
+|---|---:|---|---|
+| Definition 1; Proposition 2 | 4 | `Elementary`, `finite_interpolation`, `sequential_iff_primitive_closed` | Proposition 2 is Sieber's finite-arity characterization used later by Proposition 6. |
+| Definition 3 | 6 | `KRel` | Completeness means bottom plus directed-lub closure; Kripke monotonicity is reindexing along world morphisms. |
+| Definitions 4--5; Proposition 6 | 7 | `Test`, ground sequentiality closure | Proposition 6 reduces finitary Kripke sequentiality to preservation by 0, succ, pred and ifz. |
+| Definition of `SR` | 8 | `Obj`, `Uniform`, `Hom` | The paper quantifies over subcategories of `Finset` and finitary Kripke sequentiality relations, with explicit concreteness and uniformity conditions. |
+| Lemma 7 | 9 | hom-space dcpo/exponential-relation closure and concreteness | The paper proves concreteness and calls the other parts routine/from the definition; Lean proves all parts. |
+| Lemma 8 | 9--10 | products/exponentials, curry/uncurry | Lean expands continuity and uniformity obligations that the paper abbreviates. |
+| Proposition 9 | 10 | cpo-enriched CCC, order extensionality, fixed point | Lean separates these into named constructions/lemmas. |
+| Lemma 10 (Milner) | 11 | projection approximation and idempotence | Lean proves the projection algebra explicitly. |
+| Definition of (C_n,R_n); Lemma 11 | 12 | `finiteTest`, selected ground relation | **Difference:** the paper's (C_n) morphisms are prefix projections. The Lean test currently allows all type-preserving renamings; this is a richer category and must be justified as a conservative strengthening for the definability argument, not described as a literal transcription. |
+| Lemma 12 and its proof-strengthened claim | 12--13 | `strong_finite_definability`, `finite_definability` | The *statement* of Lemma 12 is closed finite definability. The *proof itself* strengthens to arbitrary finite worlds/tuples and proves relatedness iff representability by induction on type. Lean mirrors this proof structure. |
+| Definition 13 | 14 | `ContextualDenLE` (and, via adequacy, `ContextualOpLE`) | The paper deliberately defines observable approximation denotationally, then says operational adequacy follows by the standard computability method. |
+| Theorem 14 (Full Abstraction) | 14 | `full_abstraction_den`; with explicit adequacy, `full_abstraction_op` | The paper gives the theorem and says its proof follows from Lemmas 10, 12 and continuity; Lean expands the separating-context and operational arguments. |
 
-A prepublication version of the same work is also indexed as accepted in October 1994 and “to appear in Information and Computation.” No separate, longer O'Hearn--Riecke technical report with a substantially expanded proof has been identified in this audit.
+This matters for the interpretation of “formalizing the paper.” There are three distinct cases to audit separately: (1) details suppressed by ordinary mathematical convention; (2) a theorem whose stated conclusion is weaker than the induction claim explicitly used in its proof, as with Lemma 12; and (3) an actual change of construction, such as enlarging the morphisms of (C_n) from the paper's prefix projections to all type-preserving renamings. Only the third category requires a new mathematical equivalence/conservativity argument.
 
-A separate question is whether every theorem *as literally phrased in the paper*, with exactly the paper's suppressed side conditions and ambient conventions, can be copied verbatim into Lean and remain well-typed and true. That requires distinguishing harmless mathematical convention from a proof statement that is true but too weak for its induction, and from genuinely omitted hypotheses. The formalisation deliberately does not blur those three cases.
+The repository should therefore not claim that every Lean definition is a literal transcription. It claims a checked formalization of the same full-abstraction argument, with deviations identified and audited against the exact source statements above.
 
 ## 1. Language and theorem
 
