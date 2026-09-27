@@ -73,24 +73,21 @@ namespace Extension
   | _, _, _, e, .refl _ => e
   | _, _, _, e, .cons σ f => .cons σ (comp e f)
 
-@[simp] theorem ren_refl {Γ : Ctx} (x : Var Γ τ) :
+@[simp] theorem ren_refl {Γ : Ctx} {τ : Ty} (x : Var Γ τ) :
     ren (.refl Γ) x = x := rfl
 
-@[simp] theorem ren_cons {Γ Δ : Ctx} (σ : Ty) (e : Extension Γ Δ) (x : Var Γ τ) :
+@[simp] theorem ren_cons {Γ Δ : Ctx} {τ : Ty}
+    (σ : Ty) (e : Extension Γ Δ) (x : Var Γ τ) :
     ren (.cons σ e) x = .vs (ren e x) := rfl
 
  theorem ren_comp_apply {Γ Δ Θ : Ctx} (e : Extension Γ Δ) (f : Extension Δ Θ)
     {τ : Ty} (x : Var Γ τ) :
     ren (comp e f) x = ren f (ren e x) := by
   induction f with
-  | refl => rfl
+  | refl =>
+      simp only [comp, ren_refl]
   | cons σ f ih =>
       simp only [comp, ren_cons, ih]
-
- theorem ren_comp {Γ Δ Θ : Ctx} (e : Extension Γ Δ) (f : Extension Δ Θ) :
-    ren (comp e f) = Ren.comp (ren f) (ren e) := by
-  funext τ x
-  exact ren_comp_apply e f x
 
 end Extension
 
@@ -108,6 +105,15 @@ end Extension
   apply fenv_ext
   intro τ x
   simp only [flookup_fpull, Ren.comp]
+
+
+ theorem fpull_extension_comp {n : ℕ} {Γ Δ Θ : Ctx}
+    (e : Extension Γ Δ) (f : Extension Δ Θ) (ρ : FEnv n Θ) :
+    fpull (Extension.ren e) (fpull (Extension.ren f) ρ) =
+      fpull (Extension.ren (Extension.comp e f)) ρ := by
+  apply fenv_ext
+  intro τ x
+  simp only [flookup_fpull, Extension.ren_comp_apply]
 
 @[simp] theorem fpull_wk {n : ℕ} {Γ : Ctx} {σ : Ty} (ρ : FEnv n (σ :: Γ)) :
     fpull Ren.wk ρ = ρ.1 := by
@@ -195,14 +201,17 @@ O'Hearn--Riecke; arbitrary renamings are deliberately not admitted here.
   El := FEnv n
   finite Γ := fenvFinite n Γ
   Hom {Δ Γ} φ := ∃ e : Extension Γ Δ, φ = fpull (Extension.ren e)
-  identity Γ := ⟨Extension.refl Γ, funext (fun ρ => (fpull_id ρ).symm)⟩
+  identity Γ := ⟨Extension.refl Γ, funext (fun ρ => by
+    apply fenv_ext
+    intro τ x
+    simp only [flookup_fpull, Extension.ren_refl])⟩
   composition := by
     intro u v w φ ψ hφ hψ
     rcases hφ with ⟨e, rfl⟩
     rcases hψ with ⟨f, rfl⟩
-    refine ⟨Extension.comp e f, ?_⟩
+    refine ⟨Extension.comp f e, ?_⟩
     funext ρ
-    rw [Extension.ren_comp, fpull_comp]
+    exact (fpull_extension_comp f e ρ).symm
   ground Γ := Def n Γ .nat
   ground_bottom Γ := (defPrimitive n Γ).bottom
   ground_sup Γ s hs h := h _ (Stabilizing.sup_mem (α := FEnv n Γ → Ground) s hs)
