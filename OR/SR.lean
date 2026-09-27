@@ -95,7 +95,7 @@ end Hom
 
 namespace Obj
 
- abbrev one : Obj where
+ def one : Obj where
   domain := { Carrier := PUnit, po := inferInstance, ob := inferInstance, dc := inferInstance }
   rel T := {
     holds := fun _ _ => True
@@ -104,7 +104,11 @@ namespace Obj
     reindex := fun _ _ _ => True.intro }
   concrete := fun _ _ _ => True.intro
 
- abbrev prod (A B : Obj) : Obj where
+instance oneSubsingleton : Subsingleton one := by
+  change Subsingleton PUnit
+  infer_instance
+
+ def prod (A B : Obj) : Obj where
   domain := { Carrier := A × B, po := inferInstance, ob := inferInstance, dc := inferInstance }
   rel T := {
     holds := fun w g => A.R T w (fun i => (g i).1) ∧ B.R T w (fun i => (g i).2)
@@ -132,7 +136,7 @@ namespace Obj
 The relation tests every reindexing in the selected test. The carrier is `Hom A B`,
 whose elements already preserve every test. The two quantifiers are independent.
 -/
- abbrev arr (A B : Obj) : Obj where
+ def arr (A B : Obj) : Obj where
   domain := { Carrier := Hom A B, po := inferInstance, ob := inferInstance, dc := inferInstance }
   rel T := {
     holds := fun w g =>
@@ -151,13 +155,17 @@ whose elements already preserve every test. The two quantifiers are independent.
       exact hg v (θ ∘ φ) (T.composition hφ hθ) a ha }
   concrete T w f v φ hφ a ha := f.uniform T v a ha
 
+/-- Expose application without unfolding the relational object indices of `Hom`. -/
+instance arrCoeFun (A B : Obj) : CoeFun (arr A B) (fun _ => A → B) :=
+  ⟨fun f => (show Hom A B from f).val.toFun⟩
+
 @[simp] theorem arr_related (A B : Obj) (T : Test) (w : T.World)
     (g : T.El w → arr A B) :
     (arr A B).R T w g ↔
       ∀ (v : T.World) (φ : T.El v → T.El w), T.Hom φ →
         ∀ a : T.El v → A, A.R T v a → B.R T v (fun i => g (φ i) (a i)) := Iff.rfl
 
- abbrev nat : Obj where
+ def nat : Obj where
   domain := groundDomain
   rel := Test.groundRel
   concrete T w a := (T.primitive w).constant a
@@ -193,7 +201,8 @@ variable {A B C D : Obj}
   intro a
   rfl
  theorem terminal_unique (f g : Hom A Obj.one) : f = g := by
-  ext a
+  apply Hom.ext
+  intro a
   exact Subsingleton.elim _ _
 
  def eval : Hom (Obj.prod (Obj.arr A B) A) B :=
