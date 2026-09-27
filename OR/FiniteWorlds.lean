@@ -169,6 +169,21 @@ namespace Def
 
 end Def
 
+/-- Closure under the four ground PCF operations, used with Proposition 6 to
+establish that the selected complete Kripke relation is sequential. -/
+ theorem defPrimitive (n : ℕ) (Γ : Ctx) : PrimitiveClosed (Def n Γ .nat) where
+  zero := ⟨.zero, fun _ => rfl⟩
+  succ := by
+    rintro g ⟨M, hM⟩
+    exact ⟨.succ M, fun ρ => by rw [denote_succ, hM]⟩
+  pred := by
+    rintro g ⟨M, hM⟩
+    exact ⟨.pred M, fun ρ => by rw [denote_pred, hM]⟩
+  ifz := by
+    rintro d a b ⟨D, hD⟩ ⟨M, hM⟩ ⟨N, hN⟩
+    exact ⟨.ifz D M N, fun ρ => by rw [denote_ifz, hD, hM, hN]⟩
+
+
 /--
 The selected test R_n over the paper's category C_n (paper §4, p. 12).
 Worlds are finite products D^n_s encoded by typed contexts.  Its morphisms are
@@ -179,7 +194,7 @@ O'Hearn--Riecke; arbitrary renamings are deliberately not admitted here.
   World := Ctx
   El := FEnv n
   finite Γ := fenvFinite n Γ
-  Hom {Δ Γ} φ := ∃ e : Extension Γ Δ, φ = fpull Extension.ren e
+  Hom {Δ Γ} φ := ∃ e : Extension Γ Δ, φ = fpull (Extension.ren e)
   identity Γ := ⟨Extension.refl Γ, funext (fun ρ => (fpull_id ρ).symm)⟩
   composition := by
     intro u v w φ ψ hφ hψ
@@ -189,20 +204,12 @@ O'Hearn--Riecke; arbitrary renamings are deliberately not admitted here.
     funext ρ
     rw [Extension.ren_comp, fpull_comp]
   ground Γ := Def n Γ .nat
-  primitive Γ := {
-    zero := ⟨.zero, fun _ => rfl⟩
-    succ := by
-      rintro g ⟨M, hM⟩
-      exact ⟨.succ M, fun ρ => by rw [denote_succ, hM]⟩
-    pred := by
-      rintro g ⟨M, hM⟩
-      exact ⟨.pred M, fun ρ => by rw [denote_pred, hM]⟩
-    ifz := by
-      rintro c a b ⟨C, hC⟩ ⟨M, hM⟩ ⟨N, hN⟩
-      exact ⟨.ifz C M N, fun ρ => by rw [denote_ifz, hC, hM, hN]⟩ }
+  ground_bottom Γ := (defPrimitive n Γ).bottom
+  ground_sup Γ s hs h := h _ (Stabilizing.sup_mem (α := FEnv n Γ → Ground) s hs)
   reindex := by
     rintro Δ Γ φ ⟨e, rfl⟩ g hg
-    exact hg.rename Extension.ren e
+    exact hg.rename (Extension.ren e)
+  sequential Γ := (sequential_iff_primitive_closed (Def n Γ .nat)).mpr (defPrimitive n Γ)
 
 /-- Relations displayed directly on finite environments. No encoding casts occur here. -/
 def Rel (n : ℕ) (Γ : Ctx) (τ : Ty) (g : FEnv n Γ → D τ) : Prop :=
@@ -214,10 +221,10 @@ def Rel (n : ℕ) (Γ : Ctx) (τ : Ty) (g : FEnv n Γ → D τ) : Prop :=
  theorem rel_arr (n : ℕ) (Γ : Ctx) (σ τ : Ty) (g : FEnv n Γ → D (σ ⇒ τ)) :
     Rel n Γ (σ ⇒ τ) g ↔
       ∀ (Δ : Ctx) (e : Extension Γ Δ) (a : FEnv n Δ → D σ),
-        Rel n Δ σ a → Rel n Δ τ (fun ρ => g (fpull Extension.ren e ρ) (a ρ)) := by
+        Rel n Δ σ a → Rel n Δ τ (fun ρ => g (fpull (Extension.ren e) ρ) (a ρ)) := by
   constructor
   · intro hg Δ e a ha
-    exact hg Δ (fpull Extension.ren e) ⟨e, rfl⟩ a ha
+    exact hg Δ (fpull (Extension.ren e)) ⟨e, rfl⟩ a ha
   · intro hg Δ φ hφ a ha
     rcases hφ with ⟨e, rfl⟩
     exact hg Δ e a ha
@@ -231,7 +238,7 @@ def Rel (n : ℕ) (Γ : Ctx) (τ : Ty) (g : FEnv n Γ → D τ) : Prop :=
 
  theorem rel_reindex {n : ℕ} {Γ Δ : Ctx} {τ : Ty} {g : FEnv n Γ → D τ}
     (hg : Rel n Γ τ g) (e : Extension Γ Δ) :
-    Rel n Δ τ (fun ρ => g (fpull Extension.ren e ρ)) :=
+    Rel n Δ τ (fun ρ => g (fpull (Extension.ren e) ρ)) :=
   ((typeObj τ).rel (finiteTest n)).reindex ⟨e, rfl⟩ g hg
 
 end OR
