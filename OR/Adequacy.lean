@@ -95,7 +95,7 @@ def EnvComp {Γ : Ctx} (ρ : Env Γ) (θ : Sub Γ []) : Prop :=
   induction M with
   | var x =>
       intro ρ θ hρ
-      exact hρ x
+      simpa only [denote_var, Tm.subst] using hρ x
   | @lam Γ σ τ M ih =>
       intro ρ θ hρ a N ha
       have hb := ih (ρ, a) (Sub.extend θ N) (envComp_extend hρ ha)
@@ -134,7 +134,9 @@ def EnvComp {Γ : Ctx} (ρ : Env Γ) (θ : Sub Γ []) : Prop :=
       have hM := ih ρ θ hρ
       change Ground.succ (denote M ρ) = .val n at hn
       cases hd : denote M ρ with
-      | bot => simp only [hd, Ground.succ] at hn
+      | bot =>
+          simp only [hd, Ground.succ] at hn
+          cases hn
       | val k =>
           have hk : k + 1 = n := by
             simpa only [hd, Ground.succ, Flat.val.injEq] using hn
@@ -145,10 +147,14 @@ def EnvComp {Γ : Ctx} (ρ : Env Γ) (θ : Sub Γ []) : Prop :=
       have hM := ih ρ θ hρ
       change Ground.pred (denote M ρ) = .val n at hn
       cases hd : denote M ρ with
-      | bot => simp only [hd, Ground.pred] at hn
+      | bot =>
+          simp only [hd, Ground.pred] at hn
+          cases hn
       | val k =>
           cases k with
-          | zero => simp only [hd, Ground.pred] at hn
+          | zero =>
+              simp only [hd, Ground.pred] at hn
+              cases hn
           | succ k =>
               have hk : k = n := by
                 simpa only [hd, Ground.pred, Flat.val.injEq] using hn
@@ -161,7 +167,9 @@ def EnvComp {Γ : Ctx} (ρ : Env Γ) (θ : Sub Γ []) : Prop :=
       have hN := ihN ρ θ hρ
       change Ground.ifz (denote C ρ) (denote M ρ) (denote N ρ) = .val n at hn
       cases hd : denote C ρ with
-      | bot => simp only [hd, Ground.ifz] at hn
+      | bot =>
+          simp only [hd, Ground.ifz] at hn
+          cases hn
       | val k =>
           cases k with
           | zero =>
