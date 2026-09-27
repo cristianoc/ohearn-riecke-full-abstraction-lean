@@ -61,7 +61,7 @@ end KRel
  def Test.groundRel (T : Test) : KRel T groundDomain where
   holds := T.ground
   bottom w := (T.primitive w).bottom
-  sup w s hs h := h _ (Stabilizing.sup_mem s hs)
+  sup w s hs h := h _ (Stabilizing.sup_mem (α := T.El w → Ground) s hs)
   reindex hφ g hg := T.reindex hφ g hg
 
  theorem Test.sequential (T : Test) (w : T.World) : Sequential (T.ground w) :=
