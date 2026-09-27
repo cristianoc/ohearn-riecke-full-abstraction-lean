@@ -77,61 +77,15 @@ def filter_B2(candidates, max_arity=3):
         print(f"arity {w}: {len(rs)} distinct tests; {len(cur)} elements remain")
     return cur
 
+
+
+
 if __name__ == "__main__":
     print("B->B:", len(B1))
     B2mono = monotone_B1_B()
     print("(B->B)->B monotone:", len(B2mono))
     B2 = filter_B2(B2mono, 3)
-    print("(B->B)->B ordinary-Sieber through arity 3:", len(B2))\n    defs = definable_B2()\n    print("(B->B)->B definable:", len(defs))\n    assert len(defs) == len(B2) == 355
-    print()
-    print("NEXT: formulate the first order-4 carrier as SAT/SMT.")
-    print("Use one 3-valued variable per input element; impose monotonicity and")
-    print("ordinary-relation preservation lazily. Search simultaneously for a")
-    print("finite Kripke/world-extension witness rejecting the candidate.")
-
-
-# ---------------------------------------------------------------------------
-# Exact definability check for (B -> B) -> B
-# ---------------------------------------------------------------------------
-
-def definable_B2():
-    """All denotations of closed terms (B->B)->B, represented as tables on B1.
-
-    A beta-normal closed term is lambda f. M with f:B->B and M:B.  Semantically
-    the ground tables M(f) form the least set containing bottom/tt/ff and closed
-    under:
-      * strict conditional, pointwise; and
-      * application of f: g |-> (f |-> f(g(f))).
-
-    Tables are represented by two bitmasks: positions returning tt and ff.
-    The remaining positions return bottom.  This is exact, not a depth-bounded
-    term enumeration.
-    """
-    n = len(B1)
-    full = (1 << n) - 1
-    S = {(0, 0), (full, 0), (0, full)}
-
-    def fapp(g):
-        ones = twos = 0
-        for i, fi in enumerate(B1):
-            v = 1 if (g[0] >> i) & 1 else 2 if (g[1] >> i) & 1 else 0
-            out = fi[v]
-            if out == 1:
-                ones |= 1 << i
-            elif out == 2:
-                twos |= 1 << i
-        return ones, twos
-
-    while True:
-        old = list(S)
-        T = set(S)
-        T.update(fapp(g) for g in old)
-        for c1, c2 in old:
-            for a1, a2 in old:
-                for b1, b2 in old:
-                    T.add(((c1 & a1) | (c2 & b1),
-                           (c1 & a2) | (c2 & b2)))
-        if T == S:
-            return S
-        print("definable closure:", len(S), "->", len(T))
-        S = T
+    print("(B->B)->B ordinary-Sieber through arity 3:", len(B2))
+    defs = definable_B2()
+    print("(B->B)->B definable:", len(defs))
+    assert len(defs) == len(B2) == 355
