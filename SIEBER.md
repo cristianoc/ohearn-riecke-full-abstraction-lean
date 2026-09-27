@@ -1,12 +1,13 @@
-# Sieber's model is not universal
+# Sieber's relations do not give full abstraction
 
-O'Hearn and Riecke obtain full abstraction for PCF with *Kripke* logical relations, and leave open (conclusion, printed p. 14) whether Sieber's ordinary sequentiality relations, of fixed but arbitrary arity, already suffice for full abstraction.
+O'Hearn and Riecke (*Kripke logical relations and PCF*, 1995) obtain a fully abstract model of PCF with *Kripke* logical relations. In their conclusion (printed p. 14) they leave open whether Sieber's fixed-arity sequentiality relations already suffice for full abstraction. This note proves two results.
 
-This note proves a weaker statement: for finitary PCF, assuming Loader's theorem, **Sieber's model is not universal**. Some element is not the denotation of any closed term. Sections 1–3 give the proof, which is formalised in Lean (`OR/Sieber/`).
+- **Theorem A** (Sections 1–3). For finitary PCF over the Booleans, assuming Loader's theorem, Sieber's model is **not universal**: some element is not the denotation of any closed term. This alone does not answer the question: a model with non-definable elements can still be fully abstract.
+- **Theorem B** (Section 4). For PCF over the natural numbers, assume Loader's theorem, Milner's compact-definability theorem (1977) and Müller's Game Term Theorem (2012). Then Sieber's model $`D^N`$ is **not inequationally fully abstract**: the denotational order and the contextual preorder differ on some pair of closed terms. This answers the question for the inequational notion that O'Hearn and Riecke's own theorem uses, and for the direct presentation of the model. §4.6 lists what remains open, including the equational notion.
 
-**This does not settle the open problem.** Universality and full abstraction are different properties. Lemma 4 shows that universality implies full abstraction, but a model can contain non-definable elements and still satisfy $`M \simeq N \iff ⟦M⟧ = ⟦N⟧`$ for all terms. Section 4 describes a proposed route from this theorem to a negative answer to the open problem, over the natural numbers, and the external results it still depends on.
+Both are formalised in Lean (`OR/Sieber/`, Section 6). For Theorem B, Loader's theorem and the two published theorems are the only hypotheses. The premises of Milner's theorem are proved for $`D^N`$.
 
-The argument is nonconstructive: it shows that a non-definable element exists, but does not exhibit one. We have not found this result stated in the literature.
+Both arguments are nonconstructive: they show that a non-definable element exists, but do not exhibit one. We have not found these results stated in the literature.
 
 ## 1. Definitions
 
@@ -40,7 +41,7 @@ $`D_{\sigma\to\rho}`$ is ordered pointwise. The carriers are built from the carr
 
 A term $`\Gamma \vdash M : \tau`$ denotes a function $`⟦M⟧ : D_\Gamma \to D_\tau`$, defined as usual (the conditional is strict in its test). An element $`f \in D_\tau`$ is *definable* when $`f = ⟦M⟧`$ for a closed term $`M`$. The model is *universal* when every element of every $`D_\tau`$ is definable.
 
-**Theorem.** If Loader's theorem holds, Sieber's model of finitary PCF is not universal: some $`D_\tau`$ contains an element that is not the denotation of any closed term.
+**Theorem A.** If Loader's theorem holds, Sieber's model of finitary PCF is not universal: some $`D_\tau`$ contains an element that is not the denotation of any closed term.
 
 ## 2. Lemmas
 
@@ -77,232 +78,142 @@ Suppose the model is universal. Given closed $`M, N : \tau`$, compute by Lemma 6
 
 **Corollary.** That element $`f`$ preserves every sequentiality relation of every arity. Since $`D_\tau`$ is finite, a directed set of definable elements has a greatest element, so $`f`$ is not a supremum of definable elements either.
 
-**What this does not show.** It does not show that Sieber's model fails full abstraction for finitary PCF. Only the direction "universal ⇒ fully abstract" (Lemma 4) is proved; non-definable elements could be semantic junk that no program distinguishes.
+**What this does not show.** It does not show that this finitary model fails full abstraction. Only the direction "universal ⇒ fully abstract" (Lemma 4) is proved; non-definable elements could be semantic junk that no program distinguishes. Section 4 closes this gap for the model over the natural numbers.
 
 **Why the argument uses finiteness of the tests but not a bound on their arity.** Relatedness of a tuple for one fixed test is a finite computation, so non-membership is semi-decidable even though there are tests of every arity. Universality makes membership semi-decidable too, and finiteness of the candidate set turns the two semi-decisions into a decision.
 
-## 4. Towards the open problem: detailed transfer proof
+## 4. The model over the natural numbers is not inequationally fully abstract
 
-This section records the mathematical proof to formalise next. **Model distinction:** let (D^B) be the ordinary single-world Sieber model over (B_⊥={⊥,0,1}), and let (D^N) be the ordinary single-world Sieber model over (ℕ_⊥), defined by the same induction. The existing `OR.D` is the O'Hearn--Riecke **Kripke** model, not (D^N). Do not use it as the definition of the natural Sieber model. Its projection proofs may be copied/reused only after establishing the corresponding facts for (D^N).
+### 4.1 Setting and statement
 
-Translate types by `hat(B)=nat` and `hat(σ→τ)=hat(σ)→hat(τ)`. Let (ψ^1) be the usual PCF level-1 projection:
+**PCF.** Types are $`\hat\tau ::= \mathsf{nat} \mid \hat\sigma \to \hat\tau`$. The constants are $`0`$, $`\mathsf{succ}`$, $`\mathsf{pred}`$ (with $`\mathsf{pred}\,0`$ divergent), $`\mathsf{ifz}`$ and $`\mathsf{fix}`$, as in O'Hearn and Riecke (and as in the rest of this repository). For closed terms, $`M \sqsubseteq N`$ holds when for every closed context $`C`$ of type $`\mathsf{nat}`$, $`C[M]`$ reduces to a numeral $`n`$ only if $`C[N]`$ does. Write $`M \simeq N`$ when $`M \sqsubseteq N`$ and $`N \sqsubseteq M`$.
+
+**The model $`D^N`$.** Take the definition of Section 1 with $`V`$ replaced by the flat domain $`ℕ_⊥`$, $`S^w_{A,B} \subseteq ℕ_⊥^{\,w}`$ defined by the same formula, and "monotone" replaced by "continuous". So $`D^N_{\mathsf{nat}} = ℕ_⊥`$, and $`D^N_{\hat\sigma\to\hat\tau}`$ is the set of continuous maps $`D^N_{\hat\sigma} \to D^N_{\hat\tau}`$ whose constant tuples lie in every lifted test, ordered pointwise. Constants have their standard meaning and $`\mathsf{fix}`$ denotes the least fixed point.
+
+This is O'Hearn and Riecke's construction with their Kripke relations replaced by Sieber's fixed-arity relations, which is the comparison their question asks about. Their §2 also describes Sieber's model as the invariant elements of the continuous type hierarchy, followed by an extensional collapse. We do not prove that this presentation gives the same model; the result below is about $`D^N`$ as defined here.
+
+**Full abstraction.** $`D^N`$ is *inequationally fully abstract* when for all closed $`M, N`$
 ```math
-ψ^1_B(⊥)=⊥,\quad ψ^1_B(0)=0,\quad ψ^1_B(1)=1,\quad ψ^1_B(n)=⊥\ (n≥2),
+M \sqsubseteq N \iff ⟦M⟧ \le ⟦N⟧.
 ```
-```math
-ψ^1_{σ→τ}(f)(x)=ψ^1_τ(f(ψ^1_σ x)).
-```
-Write (L_τ={x∈D^N_τ\mid ψ^1_τx=x}). The central theorem is
-```math
-D^B_τ \cong L_{\widehat τ}.
-```
+Full abstraction for open terms implies this, so failing it for closed terms is the stronger conclusion.
 
-### 4.1 Ground relation lemma
+**Theorem B.** Assume Loader's theorem and the two published results (MP) and (GT) below. Then $`D^N`$ is not inequationally fully abstract.
 
-For a test (R), an intersection of elementary (S^w_{A,C}), define
-(j:B_⊥→ℕ_⊥) by (⊥↦⊥,0↦0,1↦1), and define (q:ℕ_⊥→B_⊥) by fixing
-(⊥,0,1) and sending every (n≥2) to (⊥). Thus (qj=id) and (jq=ψ^1_B).
+**(MP) Milner's compact-definability theorem** (R. Milner, *Fully abstract models of typed λ-calculi*, TCS 4, 1977). In an order-extensional, ω-algebraic model of PCF in which $`\mathsf{fix}`$ denotes least fixed points, inequational full abstraction implies that every compact element is definable. Lemma P below shows that $`D^N`$ meets these premises.
 
-**Lemma 7.** For every Boolean tuple (g:w→B_⊥),
+**(GT) Müller's Game Term Theorem** (F. Müller, *On Berry's conjectures about the stable order in PCF*, LMCS 8(4), 2012, Theorem 4.12, taking $`M = N`$ and $`i = j`$). A *finite term of grade $`i`$* is a closed term with $`M \simeq Ψ^i M`$ (Definition 3.1). Every such term is observationally equivalent to a *game term of grade $`i`$* (Definition 4.1). Müller's PCF has the same constants, including the divergent $`\mathsf{pred}\,0`$; numerals and $`⊥`$ are primitive there and are macros ($`\mathsf{succ}^n 0`$, $`\mathsf{fix}(λx.x)`$) here. His $`Ψ^i`$ is the projection $`ψ^i`$ below.
+
+A game term of grade 1 is generated by
 ```math
-R^B(g) \iff R^N(j\circ g).                       \tag{7a}
+G ::= ⊥ \mid λ\vec x.\,m\ (m \in \{0,1\}) \mid λ\vec x.\,\mathsf{case}_1(y\,\vec M;\,N_0,\,N_1),
 ```
-For every natural tuple (h:w→ℕ_⊥),
-```math
-R^N(h) \Longrightarrow R^B(q\circ h).             \tag{7b}
-```
+where $`\mathsf{case}_1(z; N_0, N_1)`$ abbreviates $`\mathsf{ifz}\ z\ N_0\ (\mathsf{ifz}\ (\mathsf{pred}\ z)\ N_1\ ⊥)`$. It returns $`N_0`$ on $`0`$, $`N_1`$ on $`1`$, and diverges otherwise.
 
-*Proof.* Work componentwise on (S^w_{A,C}). For (7a), (j) is injective and reflects bottom, so it preserves and reflects both alternatives: bottom at some coordinate in (A), or constancy on (C). For (7b), (q) is strict, so a bottom witness remains bottom; and every function preserves equality, so constancy remains constancy. Intersections preserve the statements. The converse of (7b) for arbitrary natural tuples is not needed. ∎
+### 4.2 Projections (Lemma P)
 
-### 4.2 Simultaneous transfer lemma
-
-Define, by induction on Boolean types,
+The PCF terms $`Ψ^n`$ denote
 ```math
-i_B=j,\qquad r_B=q,
-```
-and
-```math
-i_{σ→τ}(f)(x)=i_τ(f(r_σx)),                         \tag{8}
-```
-```math
-r_{σ→τ}(F)(a)=r_τ(F(i_σa)).                         \tag{9}
+ψ^n_{\mathsf{nat}}(k) = \begin{cases} k & k \le n \\ ⊥ & \text{otherwise,} \end{cases}
+\qquad
+ψ^n_{\hat\sigma\to\hat\tau}(f) = ψ^n_{\hat\tau} \circ f \circ ψ^n_{\hat\sigma}.
 ```
 
-**Lemma 8 (transfer).** Simultaneously for every (τ):
+**Lemma P.**
+1. $`ψ^n \le \mathrm{id}`$.
+2. $`ψ^n ψ^n = ψ^n`$.
+3. $`ψ^n \le ψ^m`$ for $`n \le m`$.
+4. $`\bigsqcup_n ψ^n x = x`$.
+5. The image of $`ψ^n`$ is finite.
 
-1. (i_τ:D^B_τ→D^N_{\widehat τ}) and (r_τ:D^N_{\widehat τ}→D^B_τ) are well-defined.
-2. They are monotone.
-3. For every test (R) and Boolean tuple (g:w→D^B_τ),
+Hence $`x`$ is compact iff $`ψ^n x = x`$ for some $`n`$. So $`D^N`$ is ω-algebraic: every element is the supremum of the chain $`(ψ^n x)_n`$ of compact elements, and there are countably many compact elements. It is order-extensional by definition.
+
+*Proof.* Items 1–4 are by induction on types. For 4 at arrow types, use continuity of $`f`$ and the diagonal $`k = \max(m, n)`$:
+```math
+ψ^m(f(ψ^n x)) \le ψ^k(f(ψ^k x)).
+```
+For 5: an element $`f`$ of level $`n`$ at $`\hat\sigma\to\hat\tau`$ satisfies $`f(x) = f(ψ^n x)`$ and $`f(x) = ψ^n(f(x))`$. So it is determined by a map between the finite level-$`n`$ sets at $`\hat\sigma`$ and $`\hat\tau`$.
+
+For compactness, let $`x = ψ^n x \le \bigsqcup E`$ with $`E`$ directed. The image $`ψ^n(E)`$ is directed and finite, so it contains its supremum $`ψ^n e_0`$. Then
+```math
+x = ψ^n x \le ψ^n\bigl(\textstyle\bigsqcup E\bigr) = \bigsqcup ψ^n(E) = ψ^n e_0 \le e_0.
+```
+Conversely, a compact $`x \le \bigsqcup_n ψ^n x`$ lies below some $`ψ^n x \le x`$. $`\square`$
+
+### 4.3 Transfer between the two models
+
+Write $`D^B`$ for Sieber's model of Section 1 and $`\widehat B = \mathsf{nat}`$. Let $`j : V \to ℕ_⊥`$ send $`⊥, \mathsf{tt}, \mathsf{ff}`$ to $`⊥, 0, 1`$, and let $`q : ℕ_⊥ \to V`$ send $`0, 1`$ to $`\mathsf{tt}, \mathsf{ff}`$ and everything else to $`⊥`$. Then $`q j = \mathrm{id}`$ and $`j q = ψ^1_{\mathsf{nat}}`$.
+
+**Lemma 7.** For a test $`R`$ of arity $`w`$, a tuple $`g \in V^w`$ and a tuple $`h \in ℕ_⊥^{\,w}`$:
+```math
+R^B(g) \iff R^N(j \circ g), \qquad R^N(h) \implies R^B(q \circ h).
+```
+
+*Proof.* It suffices to consider one $`S^w_{A,B}`$. The map $`j`$ is injective and reflects $`⊥`$, so it preserves and reflects both "$`⊥`$ somewhere in $`A`$" and "constant on $`B`$". The map $`q`$ is strict and preserves equality. $`\square`$
+
+Define $`i_\tau : D^B_\tau \to D^N_{\hat\tau}`$ and $`r_\tau : D^N_{\hat\tau} \to D^B_\tau`$ by $`i_B = j`$, $`r_B = q`$ and
+```math
+i_{\sigma\to\rho}(f) = i_\rho \circ f \circ r_\sigma, \qquad r_{\sigma\to\rho}(F) = r_\rho \circ F \circ i_\sigma.
+```
+
+**Lemma 8 (transfer).** For every $`\tau`$:
+1. $`i_\tau`$ and $`r_\tau`$ are well defined (they land in the carriers) and monotone.
+2. $`R^B_\tau(g) \iff R^N_{\hat\tau}(i_\tau \circ g)`$ and $`R^N_{\hat\tau}(h) \implies R^B_\tau(r_\tau \circ h)`$.
+3. $`r_\tau i_\tau = \mathrm{id}`$ and $`i_\tau r_\tau = ψ^1_{\hat\tau}`$.
+4. For every directed $`E \subseteq D^N_{\hat\tau}`$ there is $`e \in E`$ with $`r_\tau(\bigsqcup E) = r_\tau(e)`$.
+
+*Proof.* The four items are proved together, by induction on $`\tau`$. The ground case is Lemma 7 together with $`\bigsqcup E \in E`$ in a flat domain. Let $`\tau = \sigma\to\rho`$.
+- *Relations.* For the first half of 2, apply the inductive 2 at $`\sigma`$ (second half) and at $`\rho`$ (first half), and use $`r_\sigma i_\sigma = \mathrm{id}`$ for the converse direction. The second half of 2 is similar. Applied to constant tuples, 2 shows that $`i_{\sigma\to\rho}(f)`$ and $`r_{\sigma\to\rho}(F)`$ preserve every test.
+- *Continuity.* $`i_{\sigma\to\rho}(f)`$ is continuous because, by 4 at $`\sigma`$, $`r_\sigma(\bigsqcup E) = r_\sigma(e)`$ for some $`e \in E`$.
+- *Inverse laws.* These are the computations
+  ```math
+  r_\rho(i_\rho(f(r_\sigma(i_\sigma a)))) = f(a),
+  \qquad
+  i_\rho(r_\rho(F(i_\sigma(r_\sigma x)))) = ψ^1(F(ψ^1 x)).
+  ```
+- *Item 4.* Since $`D^B_\sigma`$ is finite, 4 at $`\rho`$ gives, for each $`a`$, some $`F_a \in E`$ with $`r_\rho((\bigsqcup E)(i_\sigma a)) = r_\rho(F_a(i_\sigma a))`$. Let $`e \in E`$ be an upper bound of the finitely many $`F_a`$. Then $`r_{\sigma\to\rho}(e)`$ and $`r_{\sigma\to\rho}(\bigsqcup E)`$ agree, by monotonicity and antisymmetry. $`\square`$
+
+**Lemma 9.** $`D^B_\tau \cong \{x \in D^N_{\hat\tau} \mid ψ^1 x = x\}`$ via $`i_\tau`$ and $`r_\tau`$. This follows from item 3.
+
+**Lemma 10.** Every $`i_\tau h`$ is compact. This follows from $`ψ^1(i_\tau h) = i_\tau h`$ and Lemma P.
+
+### 4.4 Reading game terms as Boolean terms
+
+A grade-1 game term is, up to $`\simeq`$ (use $`⊥ \simeq λ\vec x.⊥`$), the image $`\widehat G`$ of a Boolean term $`G`$ under $`\mathsf{tt} \mapsto 0`$, $`\mathsf{ff} \mapsto 1`$, $`⊥ \mapsto ⊥`$ and $`\mathsf{if}\ C\ \mathsf{then}\ M\ \mathsf{else}\ N \mapsto \mathsf{case}_1(\widehat C; \widehat M, \widehat N)`$. Variables, abstraction and application are kept.
+
+The naive statement $`⟦\widehat G⟧_N(i\rho) = i(⟦G⟧_B\rho)`$ is false at arrow types: $`⟦λx.x⟧_N = \mathrm{id}`$, but $`i(\mathrm{id}) = ψ^1`$. We use a logical relation instead:
+```math
+L_B(x, b) \iff q(x) = b,
+\qquad
+L_{\sigma\to\rho}(F, f) \iff \forall x\, a.\ L_\sigma(x, a) \implies L_\rho(F x, f a).
+```
+
+**Lemma 11.**
+1. $`L_\tau(i_\tau a, a)`$, and $`L_\tau(x, b)`$ implies $`r_\tau x = b`$.
+2. For environments related componentwise by $`L`$, $`L_\tau(⟦\widehat G⟧_N\eta,\ ⟦G⟧_B\rho)`$.
+
+*Proof.* Part 1 is by induction on $`\tau`$. The ground case is $`q j = \mathrm{id}`$. At $`\sigma\to\rho`$: if $`L_\sigma(x, a)`$, then $`r_\sigma x = a`$, so $`i(f)(x) = i_\rho(f a)`$, which is related to $`f a`$. If $`L_{\sigma\to\rho}(F, f)`$, then from $`L_\sigma(i_\sigma a, a)`$ we get $`r(F)(a) = r_\rho(F(i_\sigma a)) = f a`$.
+
+Part 2 is by induction on $`G`$. Variables, abstraction and application are immediate. For the constants, $`q(0) = \mathsf{tt}`$, $`q(1) = \mathsf{ff}`$ and $`q(⊥) = ⊥`$. For $`\mathsf{case}_1`$ with $`q(z) = c`$: if $`z = 0`$ then $`c = \mathsf{tt}`$ and both sides take the first branch; the case $`z = 1`$ is symmetric; otherwise the natural side is $`⊥`$ and $`c = ⊥`$. $`\square`$
+
+### 4.5 Proof of Theorem B
+
+Suppose $`D^N`$ is inequationally fully abstract. Let $`h \in D^B_\tau`$.
+1. By Lemma 10 and (MP) there is a closed $`M`$ with $`⟦M⟧ = i_\tau h`$.
+2. Since $`ψ^1(i_\tau h) = i_\tau h`$, we have $`⟦Ψ^1 M⟧ = ⟦M⟧`$, so $`Ψ^1 M \simeq M`$ by full abstraction.
+3. By (GT) there is a Boolean term $`G`$ with $`\widehat G \simeq M`$, and full abstraction gives $`⟦\widehat G⟧ = i_\tau h`$.
+4. By Lemma 11, $`L_\tau(i_\tau h, ⟦G⟧_B)`$, hence
    ```math
-   R^B_τ(g) \iff R^N_{\widehat τ}(i_τ\circ g).     \tag{10}
+   ⟦G⟧_B = r_\tau(i_\tau h) = h.
    ```
-4. For every test (R) and natural tuple (h:w→D^N_{\widehat τ}),
-   ```math
-   R^N_{\widehat τ}(h) \Longrightarrow R^B_τ(r_τ\circ h). \tag{11}
-   ```
-5. (r_τi_τ=id).
-6. (i_τr_τ=ψ^1_{\widehat τ}).
 
-*Proof.* The ground case is Lemma 7 plus (qj=id), (jq=ψ^1_B).
+So $`D^B`$ is universal, contradicting the theorem of Section 3. $`\square`$
 
-Let (τ=σ→ρ). For the forward implication of (10), suppose (f:w→D^B_{σ→ρ}) is Boolean-related and (x:w→D^N_{\widehat σ}) is natural-related. By induction (11), (r_σ∘x) is Boolean-related. Apply the Boolean arrow relation to get
-```math
-R^B_ρ\bigl(f_k(r_σx_k)\bigr)_k.
-```
-By induction (10) at (ρ),
-```math
-R^N_{\widehatρ}\bigl(i_ρ(f_k(r_σx_k))\bigr)_k,
-```
-which is exactly the required result by (8).
+### 4.6 What remains open
 
-Conversely suppose (i_{σ→ρ}∘f) is natural-related and let (a:w→D^B_σ) be Boolean-related. By induction (10), (i_σ∘a) is natural-related. Applying the natural arrow relation gives
-```math
-R^N_{\widehatρ}\bigl(i_ρ(f_k(r_σ(i_σa_k)))\bigr)_k.
-```
-Use (r_σi_σ=id), then induction (10) backwards at (ρ), to obtain
-(R^B_ρ(f_k(a_k))_k). This proves (10).
-
-For (11), suppose (F:w→D^N_{\widehatσ→\widehatρ}) is natural-related and (a:w→D^B_σ) is Boolean-related. By (10) at (σ), (i_σ∘a) is natural-related. Hence
-```math
-R^N_{\widehatρ}\bigl(F_k(i_σa_k)\bigr)_k.
-```
-Apply induction (11) at (ρ). By (9) the result is exactly
-(R^B_ρ(r_{σ→ρ}(F_k)(a_k))_k).
-
-These calculations applied to constant tuples prove that (8) and (9) preserve every test, hence really land in the restricted arrow carriers. Monotonicity follows from the induction hypotheses and monotonicity of the transported functions.
-
-For the first inverse law,
-```math
-r_{σ→ρ}(i_{σ→ρ}f)(a)
- =r_ρ(i_ρ(f(r_σ(i_σa))))=f(a).
-```
-For the second,
-```math
-i_{σ→ρ}(r_{σ→ρ}F)(x)
- =i_ρr_ρ(F(i_σr_σx))
- =ψ^1_ρ(F(ψ^1_σx))
- =ψ^1_{σ→ρ}(F)(x).
-```
-Thus all six assertions hold. ∎
-
-**Formalisation warning.** Prove (10), (11), well-definedness and the inverse equations in one mutual/type induction. Defining carrier-valued (i,r) before relation preservation is available is otherwise circular.
-
-### 4.3 Level-one isomorphism
-
-**Lemma 9.**
-```math
-D^B_τ \cong L_{\widehatτ}
-```
-as ordered sets, with maps (i_τ,r_τ).
-
-*Proof.* For (a∈D^B_τ),
-```math
-ψ^1(i_τa)=i_τr_τi_τa=i_τa.
-```
-If (x∈L_{\widehatτ}), then
-```math
-i_τ(r_τx)=ψ^1x=x.
-```
-The other inverse law is Lemma 8(5), and both maps are monotone by Lemma 8(2). ∎
-
-### 4.4 Compactness
-
-Assume the ordinary natural Sieber carriers have directed suprema, the projections are continuous, and (ψ^1≤id), as in the standard construction.
-
-**Lemma 10.** Every (x∈L_{\widehatτ}) is compact.
-
-*Proof.* Let (E) be directed and (x≤⊔E). Then
-```math
-x=ψ^1x≤ψ^1(⊔E)=⊔_{e∈E}ψ^1e.
-```
-The set (ψ^1(E)) is directed and lies in (L_{\widehatτ}), which is finite by Lemma 9 and finiteness of (D^B_τ). A directed subset of a finite poset has a greatest element, say (ψ^1e_0). Therefore
-```math
-x≤ψ^1e_0≤e_0.
-```
-Hence (x) is compact. ∎
-
-### 4.5 From hypothetical full abstraction to a grade-1 term
-
-Assume for contradiction that the ordinary natural Sieber model (D^N) is inequationally fully abstract.
-
-Use the Milner--Plotkin compact-definability characterization: for an order-extensional PCF model satisfying the standard domain hypotheses, full abstraction implies that every compact element is definable. This is an **external theorem**; in Lean its hypotheses should be made explicit.
-
-Take arbitrary (h∈D^B_τ). By Lemmas 9--10, (i_τh) is compact, so there is a closed PCF term (M:\widehatτ) with
-```math
-⟦M⟧_N=i_τh.                                         \tag{12}
-```
-Since (i_τh) is fixed by (ψ^1), and the PCF term (Ψ^1) denotes (ψ^1),
-```math
-⟦Ψ^1M⟧_N=⟦M⟧_N.
-```
-Full abstraction gives
-```math
-Ψ^1M\simeq M.                                       \tag{13}
-```
-Thus (M) is a finite term of grade 1 in Müller's terminology.
-
-### 4.6 Grade-1 game-term reinterpretation
-
-Use Müller's Game Term Theorem: every finite term of grade (i) is observationally equivalent to a game term of grade (i). From (13) obtain a grade-1 game term (G:\widehatτ) with
-```math
-G\simeq M.                                          \tag{14}
-```
-Full abstraction and (12) imply
-```math
-⟦G⟧_N=i_τh.                                         \tag{15}
-```
-
-A grade-1 game term contains only bottom, numerals (0,1), variables, abstraction/application, and the strict finite operation
-```math
-case_1(z;N_0,N_1),
-```
-which returns (N_0) on (0), (N_1) on (1), and bottom otherwise.
-
-Define a Boolean translation (G^B) structurally: (⊥↦⊥), (0↦tt), (1↦ff); preserve variables, lambda and application; translate (case_1(z;N_0,N_1)) to the strict Boolean conditional on (z^B).
-
-**Lemma 11 (reinterpretation).** For every grade-1 game term (G) of translated type and Boolean environment (ρ),
-```math
-⟦G⟧_N(iρ)=i_τ(⟦G^B⟧_B(ρ)).                         \tag{16}
-```
-
-*Proof.* Structural induction on (G).
-
-Constants and variables are immediate. Lambda is pointwise the induction hypothesis.
-
-For application (PQ), write the function type as (σ→τ). By induction,
-```math
-⟦P⟧_N(iρ)=i_{σ→τ}(⟦P^B⟧_Bρ),\qquad
-⟦Q⟧_N(iρ)=i_σ(⟦Q^B⟧_Bρ).
-```
-Then by (8) and (r_σi_σ=id),
-```math
-i_{σ→τ}(f)(i_σa)
- =i_τ(f(r_σ(i_σa)))
- =i_τ(f(a)),
-```
-which is exactly (16) for application.
-
-For (case_1), the induction hypothesis says that the natural scrutinee is in the image of (i_B), hence is exactly (⊥,0), or (1). On these three values natural (case_1) agrees respectively with strict Boolean conditional on (⊥,tt,ff). Apply the induction hypotheses to the selected branch. ∎
-
-For closed (G), (16) and (15) give
-```math
-i_τ(⟦G^B⟧_B)=⟦G⟧_N=i_τh.
-```
-Apply (r_τ) and use (r_τi_τ=id):
-```math
-⟦G^B⟧_B=h.
-```
-Since (h) was arbitrary, every element of every Boolean carrier is definable. Thus (D^B) is universal, contradicting `sieber_not_universal`.
-
-### 4.7 Conditional conclusion
-
-Subject only to the two cited external results in the precise forms used above (Milner--Plotkin compact definability and Müller's grade-1 Game Term Theorem), the preceding lemmas prove:
-```math
-\boxed{\text{the ordinary Sieber model over }ℕ_⊥\text{ is not fully abstract for PCF}.}
-```
-
-The internal proof obligations are Lemmas 7--11. Lemmas 7--9 and 11 are elementary inductions; Lemma 10 is the finite-image compactness argument. The Lean agent should formalise these arguments rather than search for alternative proofs.
-
+- **Equational full abstraction.** Theorem B does not say whether $`M \simeq N \iff ⟦M⟧ = ⟦N⟧`$ fails. The two notions differ in general; see Stoughton, *Equationally fully abstract models of PCF* (MFPS 1989, LNCS 442). (MP) is the only step that needs the inequational form.
+- **Sieber's collapse presentation.** The theorem is about the direct presentation $`D^N`$ (see §4.1), not about the collapse of the invariant elements of the continuous hierarchy.
+- **The two cited theorems.** They are used as stated above and are not re-proved.
 
 ## 5. Remarks
 
@@ -319,7 +230,18 @@ def SieberNotUniversal : Prop :=
 theorem sieber_not_universal : SieberNotUniversal
 ```
 
-`Loader` states Loader's theorem as `¬ ComputablePred` of observational equivalence on pairs of term codes. The proof has no `sorry` and depends only on `propext`, `Classical.choice` and `Quot.sound`. Sections 1–3 are formalised; section 4 is not. The formal result is non-universality; the Lean development proves `universal_fully_abstract` (universality implies full abstraction) and nothing in the converse direction.
+`Loader` states Loader's theorem as `¬ ComputablePred` of observational equivalence on pairs of term codes. Theorem B is
+
+```lean
+theorem natural_sieber_not_inequationally_fully_abstract (hL : Loader)
+    (hMP : NS.MilnerPlotkin) (hMu : MullerGrade1) : ¬ NS.InequationallyFullyAbstract
+```
+
+- **`NS.InequationallyFullyAbstract`** states $`M \sqsubseteq N \iff ⟦M⟧ \le ⟦N⟧`$ for closed terms of the repository's PCF, where $`\sqsubseteq`$ is the contextual preorder `ContextualOpLE` and $`⟦\cdot⟧`$ is the denotation in `NS.D` (`NatModel.lean`).
+- **`NS.MilnerPlotkin`** is (MP) at $`D^N`$. Its premises `OrderExtensional`, `OmegaAlgebraic` and `LeastFixedPoints` are explicit antecedents. They are proved (`orderExtensional`, `omegaAlgebraic`, `leastFixedPoints`) and discharged inside the proof.
+- **`MullerGrade1`** is (GT) at grade 1: a closed `M` with `Ψ¹ M ≃ M` is observationally equivalent to `embed G` for a Boolean term `G`. Here `embed` is the translation of §4.4, which covers every grade-1 game term. Allowing every Boolean term only weakens the hypothesis.
+
+Neither cited theorem is proved in Lean, so Theorem B is as strong as those theorems as stated. Both proofs have no `sorry` and depend only on `propext`, `Classical.choice` and `Quot.sound`.
 
 The parallel search of Lemma 6 is realised by *certificates*. A certificate lists the carriers as tables, a normal form for each element, the values of all subterms in all environments, and, for each rejected candidate, a failing test with its lifted relations. A checker verifies a certificate by local consistency checks only, so it is primitive recursive by composition. Universality is used only to show that certificates exist. Observational equivalence and its negation are then both recursively enumerable, hence computable (Post's theorem).
 
@@ -336,3 +258,8 @@ The parallel search of Lemma 6 is realised by *certificates*. A certificate list
 | `TypeCheck.lean` | Certificates for pairs of codes that are not two closed terms of the same type. |
 | `PrimrecLib.lean`, `CheckPrim.lean` | Both checkers are primitive recursive. |
 | `Main.lean` | Post's theorem and the proof of the theorem: `sieber_not_universal`. |
+| `NatModel.lean` | The ordinary (single-world) Sieber model over $`ℕ_⊥`$, `NS.D`, with the interpretation `NS.denote` of PCF. |
+| `Transfer.lean` | `ψⁿ` in `NS`; Lemmas 7–9: the maps `i`, `r` (`tr`). |
+| `Algebraic.lean` | Lemma P and Lemma 10: `level_compact`, `compact_iff_level`, and the premises of (MP). |
+| `Reinterpret.lean` | Game terms as `embed G`; Lemma 11 as the logical relation `LRel` (`Tm.lrel`, `den_of_embed`). |
+| `NotFullyAbstract.lean` | The hypotheses and Theorem B, `natural_sieber_not_inequationally_fully_abstract`. |

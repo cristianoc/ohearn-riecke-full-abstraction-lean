@@ -36,3 +36,6 @@ The accompanying checker accepts only `propext`, `Classical.choice`, and
 #print axioms OR.Sieber.Check.complete
 #print axioms OR.Sieber.Check.verdict_prim
 #print axioms OR.Sieber.sieber_not_universal
+#print axioms OR.NS.omegaAlgebraic
+#print axioms OR.Sieber.Tm.lrel
+#print axioms OR.Sieber.natural_sieber_not_inequationally_fully_abstract
