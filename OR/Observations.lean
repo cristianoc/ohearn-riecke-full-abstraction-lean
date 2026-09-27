@@ -26,11 +26,13 @@ namespace OR
     numeralTest 0 d = Ground.ifz d (.val 0) .bot := by
   simp only [numeralTest, numeralTestTerm, denoteClosed, denote_lam, denote_ifz,
     denote_var, lookup, denote_zero, denote_omega]
+  rfl
 
  theorem numeralTest_succ (n : ℕ) (d : Ground) :
     numeralTest (n + 1) d = Ground.ifz d .bot (numeralTest n (Ground.pred d)) := by
   simp only [numeralTest, numeralTestTerm, denoteClosed, denote_lam, denote_ifz,
     denote_var, lookup, denote_omega, denote_app, denote_closed, denote_pred]
+  rfl
 
  theorem numeralTest_spec (n : ℕ) (d : Ground) :
     numeralTest n d = if d = .val n then .val 0 else .bot := by

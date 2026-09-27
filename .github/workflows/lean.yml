@@ -31,6 +31,13 @@ jobs:
       - name: Get Mathlib cache
         run: lake exe cache get
 
+      - name: Source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .validation
+          python3 scripts/static_audit.py | tee .validation/static.json
+
       - name: Build formalisation
         shell: bash
         run: |
