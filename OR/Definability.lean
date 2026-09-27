@@ -71,14 +71,14 @@ with arbitrary contexts and arbitrary related argument tuples in the arrow case.
         have hkRel : Rel n Δ σ k := rel_projection hh
         have hkFixed : Fixed n σ k := fun ρ => projection_idem σ n (h ρ)
         obtain ⟨N, hN⟩ := (ihσ Δ k hkFixed).mp hkRel
-        let out : FEnv n Δ → D τ := fun ρ => g (fpull e.ren ρ) (h ρ)
+        let out : FEnv n Δ → D τ := fun ρ => g (fpull Extension.ren e ρ) (h ρ)
         have houtFixed : Fixed n τ out :=
-          fun ρ => finite_output_fixed (hfixed (fpull e.ren ρ)) (h ρ)
+          fun ρ => finite_output_fixed (hfixed (fpull Extension.ren e ρ)) (h ρ)
         apply (ihτ Δ out houtFixed).mpr
-        refine ⟨.app (Tm.rename e.ren M) N, ?_⟩
+        refine ⟨.app (Tm.rename Extension.ren e M) N, ?_⟩
         intro ρ
         rw [denote_app, denote_rename, ← includeEnv_fpull, hM, hN]
-        exact finite_input_absorption (hfixed (fpull e.ren ρ)) (h ρ)
+        exact finite_input_absorption (hfixed (fpull Extension.ren e ρ)) (h ρ)
 
 /-- The empty context is a singleton world; concreteness supplies its constant tuple. -/
  theorem finite_definability (τ : Ty) (n : ℕ) (d : D τ)
