@@ -25,6 +25,6 @@ Main results:
 * `OR.full_abstraction_op_eq`
 * `OR.full_abstraction_termination`
 
-This is a tentative, uncompiled formalization. See `README.md` for the validation
+See `README.md` for the validation
 status and `OR/AxiomAudit.lean` for the independent final dependency audit.
 -/
