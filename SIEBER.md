@@ -81,28 +81,228 @@ Suppose the model is universal. Given closed $`M, N : \tau`$, compute by Lemma 6
 
 **Why the argument uses finiteness of the tests but not a bound on their arity.** Relatedness of a tuple for one fixed test is a finite computation, so non-membership is semi-decidable even though there are tests of every arity. Universality makes membership semi-decidable too, and finiteness of the candidate set turns the two semi-decisions into a decision.
 
-## 4. Towards the open problem: a proposed transfer (not formalised)
+## 4. Towards the open problem: detailed transfer proof
 
-This section outlines how the theorem could give a negative answer to O'Hearn and Riecke's question for ordinary PCF over $`\mathbb N_\bot`$. The steps are:
+This section records the mathematical proof to formalise next. **Model distinction:** let (D^B) be the ordinary single-world Sieber model over (B_⊥={⊥,0,1}), and let (D^N) be the ordinary single-world Sieber model over (ℕ_⊥), defined by the same induction. The existing `OR.D` is the O'Hearn--Riecke **Kripke** model, not (D^N). Do not use it as the definition of the natural Sieber model. Its projection proofs may be copied/reused only after establishing the corresponding facts for (D^N).
 
+Translate types by `hat(B)=nat` and `hat(σ→τ)=hat(σ)→hat(τ)`. Let (ψ^1) be the usual PCF level-1 projection:
 ```math
-\text{FA over } \mathbb N_\bot \;\Rightarrow\; \text{compact elements definable} \;\Rightarrow\; \text{Boolean universality} \;\Rightarrow\; \bot .
+ψ^1_B(⊥)=⊥,\quad ψ^1_B(0)=0,\quad ψ^1_B(1)=1,\quad ψ^1_B(n)=⊥\ (n≥2),
+```
+```math
+ψ^1_{σ→τ}(f)(x)=ψ^1_τ(f(ψ^1_σ x)).
+```
+Write (L_τ={x∈D^N_τ\mid ψ^1_τx=x}). The central theorem is
+```math
+D^B_τ \cong L_{\widehat τ}.
 ```
 
-Write $`D^B`$ and $`D^N`$ for Sieber's construction over $`\{\bot, 0, 1\}`$ (standing for $`\bot, \mathsf{tt}, \mathsf{ff}`$) and over $`\mathbb N_\bot`$.
+### 4.1 Ground relation lemma
 
-- *A retraction at every type.* Include $`\{\bot, 0, 1\}`$ into $`\mathbb N_\bot`$, and retract by sending values $`\ge 2`$ to $`\bot`$. Both maps are strict, so they preserve the tests with the same description $`(w, A, B)`$ on both sides. Extending them covariantly and contravariantly gives $`i_\tau : D^B_\tau \to D^N_\tau`$ and $`r_\tau`$ with $`r_\tau i_\tau = \mathrm{id}`$. The idempotent $`i_\tau r_\tau`$ is the level-1 projection $`\psi^1_\tau`$, whose image consists of compact elements.
-- *Full abstraction would give Boolean definability.* If $`D^N`$ were fully abstract, every compact element would be definable (Milner). A term $`M`$ defining $`i_\tau(h)`$ is equivalent to a finite game term of grade 1 (Müller's game-term theorem), which observes only the values $`0`$ and $`1`$, through strict two-case tests. Reinterpreting it over the booleans defines $`h`$. So every element of $`D^B`$ would be definable, contradicting the theorem.
+For a test (R), an intersection of elementary (S^w_{A,C}), define
+(j:B_⊥→ℕ_⊥) by (⊥↦⊥,0↦0,1↦1), and define (q:ℕ_⊥→B_⊥) by fixing
+(⊥,0,1) and sending every (n≥2) to (⊥). Thus (qj=id) and (jq=ψ^1_B).
 
-**Proposed corollary.** Sieber's model over $`\mathbb N_\bot`$ is not fully abstract for PCF.
+**Lemma 7.** For every Boolean tuple (g:w→B_⊥),
+```math
+R^B(g) \iff R^N(j\circ g).                       \tag{7a}
+```
+For every natural tuple (h:w→ℕ_⊥),
+```math
+R^N(h) \Longrightarrow R^B(q\circ h).             \tag{7b}
+```
 
-This is not yet established. The remaining obligations are:
+*Proof.* Work componentwise on (S^w_{A,C}). For (7a), (j) is injective and reflects bottom, so it preserves and reflects both alternatives: bottom at some coordinate in (A), or constancy on (C). For (7b), (q) is strict, so a bottom witness remains bottom; and every function preserves equality, so constancy remains constancy. Intersections preserve the statements. The converse of (7b) for arbitrary natural tuples is not needed. ∎
 
-1. **Milner's compact definability.** Check that Milner's theorem applies to Sieber's model over $`\mathbb N_\bot`$ as constructed here (order-extensional, with the projections $`\psi^n`$), so that full abstraction implies that every compact element is definable.
-2. **Müller's game-term theorem.** Check the exact grade-1 form: that a term fixed by $`\Psi^1`$ is contextually equivalent to a finite game term that observes ground values only through strict two-case tests on $`0`$ and $`1`$.
-3. **The reinterpretation.** Prove that such game terms, read over the booleans, define the retracted element $`r_\tau(⟦M⟧)`$. This is an induction on game terms using $`r_\tau i_\tau = \mathrm{id}`$.
+### 4.2 Simultaneous transfer lemma
 
-The finitary theorem of Sections 1–3 does not depend on any of these.
+Define, by induction on Boolean types,
+```math
+i_B=j,\qquad r_B=q,
+```
+and
+```math
+i_{σ→τ}(f)(x)=i_τ(f(r_σx)),                         \tag{8}
+```
+```math
+r_{σ→τ}(F)(a)=r_τ(F(i_σa)).                         \tag{9}
+```
+
+**Lemma 8 (transfer).** Simultaneously for every (τ):
+
+1. (i_τ:D^B_τ→D^N_{\widehat τ}) and (r_τ:D^N_{\widehat τ}→D^B_τ) are well-defined.
+2. They are monotone.
+3. For every test (R) and Boolean tuple (g:w→D^B_τ),
+   ```math
+   R^B_τ(g) \iff R^N_{\widehat τ}(i_τ\circ g).     \tag{10}
+   ```
+4. For every test (R) and natural tuple (h:w→D^N_{\widehat τ}),
+   ```math
+   R^N_{\widehat τ}(h) \Longrightarrow R^B_τ(r_τ\circ h). \tag{11}
+   ```
+5. (r_τi_τ=id).
+6. (i_τr_τ=ψ^1_{\widehat τ}).
+
+*Proof.* The ground case is Lemma 7 plus (qj=id), (jq=ψ^1_B).
+
+Let (τ=σ→ρ). For the forward implication of (10), suppose (f:w→D^B_{σ→ρ}) is Boolean-related and (x:w→D^N_{\widehat σ}) is natural-related. By induction (11), (r_σ∘x) is Boolean-related. Apply the Boolean arrow relation to get
+```math
+R^B_ρ\bigl(f_k(r_σx_k)\bigr)_k.
+```
+By induction (10) at (ρ),
+```math
+R^N_{\widehatρ}\bigl(i_ρ(f_k(r_σx_k))\bigr)_k,
+```
+which is exactly the required result by (8).
+
+Conversely suppose (i_{σ→ρ}∘f) is natural-related and let (a:w→D^B_σ) be Boolean-related. By induction (10), (i_σ∘a) is natural-related. Applying the natural arrow relation gives
+```math
+R^N_{\widehatρ}\bigl(i_ρ(f_k(r_σ(i_σa_k)))\bigr)_k.
+```
+Use (r_σi_σ=id), then induction (10) backwards at (ρ), to obtain
+(R^B_ρ(f_k(a_k))_k). This proves (10).
+
+For (11), suppose (F:w→D^N_{\widehatσ→\widehatρ}) is natural-related and (a:w→D^B_σ) is Boolean-related. By (10) at (σ), (i_σ∘a) is natural-related. Hence
+```math
+R^N_{\widehatρ}\bigl(F_k(i_σa_k)\bigr)_k.
+```
+Apply induction (11) at (ρ). By (9) the result is exactly
+(R^B_ρ(r_{σ→ρ}(F_k)(a_k))_k).
+
+These calculations applied to constant tuples prove that (8) and (9) preserve every test, hence really land in the restricted arrow carriers. Monotonicity follows from the induction hypotheses and monotonicity of the transported functions.
+
+For the first inverse law,
+```math
+r_{σ→ρ}(i_{σ→ρ}f)(a)
+ =r_ρ(i_ρ(f(r_σ(i_σa))))=f(a).
+```
+For the second,
+```math
+i_{σ→ρ}(r_{σ→ρ}F)(x)
+ =i_ρr_ρ(F(i_σr_σx))
+ =ψ^1_ρ(F(ψ^1_σx))
+ =ψ^1_{σ→ρ}(F)(x).
+```
+Thus all six assertions hold. ∎
+
+**Formalisation warning.** Prove (10), (11), well-definedness and the inverse equations in one mutual/type induction. Defining carrier-valued (i,r) before relation preservation is available is otherwise circular.
+
+### 4.3 Level-one isomorphism
+
+**Lemma 9.**
+```math
+D^B_τ \cong L_{\widehatτ}
+```
+as ordered sets, with maps (i_τ,r_τ).
+
+*Proof.* For (a∈D^B_τ),
+```math
+ψ^1(i_τa)=i_τr_τi_τa=i_τa.
+```
+If (x∈L_{\widehatτ}), then
+```math
+i_τ(r_τx)=ψ^1x=x.
+```
+The other inverse law is Lemma 8(5), and both maps are monotone by Lemma 8(2). ∎
+
+### 4.4 Compactness
+
+Assume the ordinary natural Sieber carriers have directed suprema, the projections are continuous, and (ψ^1≤id), as in the standard construction.
+
+**Lemma 10.** Every (x∈L_{\widehatτ}) is compact.
+
+*Proof.* Let (E) be directed and (x≤⊔E). Then
+```math
+x=ψ^1x≤ψ^1(⊔E)=⊔_{e∈E}ψ^1e.
+```
+The set (ψ^1(E)) is directed and lies in (L_{\widehatτ}), which is finite by Lemma 9 and finiteness of (D^B_τ). A directed subset of a finite poset has a greatest element, say (ψ^1e_0). Therefore
+```math
+x≤ψ^1e_0≤e_0.
+```
+Hence (x) is compact. ∎
+
+### 4.5 From hypothetical full abstraction to a grade-1 term
+
+Assume for contradiction that the ordinary natural Sieber model (D^N) is inequationally fully abstract.
+
+Use the Milner--Plotkin compact-definability characterization: for an order-extensional PCF model satisfying the standard domain hypotheses, full abstraction implies that every compact element is definable. This is an **external theorem**; in Lean its hypotheses should be made explicit.
+
+Take arbitrary (h∈D^B_τ). By Lemmas 9--10, (i_τh) is compact, so there is a closed PCF term (M:\widehatτ) with
+```math
+⟦M⟧_N=i_τh.                                         \tag{12}
+```
+Since (i_τh) is fixed by (ψ^1), and the PCF term (Ψ^1) denotes (ψ^1),
+```math
+⟦Ψ^1M⟧_N=⟦M⟧_N.
+```
+Full abstraction gives
+```math
+Ψ^1M\simeq M.                                       \tag{13}
+```
+Thus (M) is a finite term of grade 1 in Müller's terminology.
+
+### 4.6 Grade-1 game-term reinterpretation
+
+Use Müller's Game Term Theorem: every finite term of grade (i) is observationally equivalent to a game term of grade (i). From (13) obtain a grade-1 game term (G:\widehatτ) with
+```math
+G\simeq M.                                          \tag{14}
+```
+Full abstraction and (12) imply
+```math
+⟦G⟧_N=i_τh.                                         \tag{15}
+```
+
+A grade-1 game term contains only bottom, numerals (0,1), variables, abstraction/application, and the strict finite operation
+```math
+case_1(z;N_0,N_1),
+```
+which returns (N_0) on (0), (N_1) on (1), and bottom otherwise.
+
+Define a Boolean translation (G^B) structurally: (⊥↦⊥), (0↦tt), (1↦ff); preserve variables, lambda and application; translate (case_1(z;N_0,N_1)) to the strict Boolean conditional on (z^B).
+
+**Lemma 11 (reinterpretation).** For every grade-1 game term (G) of translated type and Boolean environment (ρ),
+```math
+⟦G⟧_N(iρ)=i_τ(⟦G^B⟧_B(ρ)).                         \tag{16}
+```
+
+*Proof.* Structural induction on (G).
+
+Constants and variables are immediate. Lambda is pointwise the induction hypothesis.
+
+For application (PQ), write the function type as (σ→τ). By induction,
+```math
+⟦P⟧_N(iρ)=i_{σ→τ}(⟦P^B⟧_Bρ),\qquad
+⟦Q⟧_N(iρ)=i_σ(⟦Q^B⟧_Bρ).
+```
+Then by (8) and (r_σi_σ=id),
+```math
+i_{σ→τ}(f)(i_σa)
+ =i_τ(f(r_σ(i_σa)))
+ =i_τ(f(a)),
+```
+which is exactly (16) for application.
+
+For (case_1), the induction hypothesis says that the natural scrutinee is in the image of (i_B), hence is exactly (⊥,0), or (1). On these three values natural (case_1) agrees respectively with strict Boolean conditional on (⊥,tt,ff). Apply the induction hypotheses to the selected branch. ∎
+
+For closed (G), (16) and (15) give
+```math
+i_τ(⟦G^B⟧_B)=⟦G⟧_N=i_τh.
+```
+Apply (r_τ) and use (r_τi_τ=id):
+```math
+⟦G^B⟧_B=h.
+```
+Since (h) was arbitrary, every element of every Boolean carrier is definable. Thus (D^B) is universal, contradicting `sieber_not_universal`.
+
+### 4.7 Conditional conclusion
+
+Subject only to the two cited external results in the precise forms used above (Milner--Plotkin compact definability and Müller's grade-1 Game Term Theorem), the preceding lemmas prove:
+```math
+\boxed{\text{the ordinary Sieber model over }ℕ_⊥\text{ is not fully abstract for PCF}.}
+```
+
+The internal proof obligations are Lemmas 7--11. Lemmas 7--9 and 11 are elementary inductions; Lemma 10 is the finite-image compactness argument. The Lean agent should formalise these arguments rather than search for alternative proofs.
+
 
 ## 5. Remarks
 
