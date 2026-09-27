@@ -95,7 +95,7 @@ end Hom
 
 namespace Obj
 
- def one : Obj where
+ abbrev one : Obj where
   domain := { Carrier := PUnit, po := inferInstance, ob := inferInstance, dc := inferInstance }
   rel T := {
     holds := fun _ _ => True
@@ -104,7 +104,7 @@ namespace Obj
     reindex := fun _ _ _ => True.intro }
   concrete := fun _ _ _ => True.intro
 
- def prod (A B : Obj) : Obj where
+ abbrev prod (A B : Obj) : Obj where
   domain := { Carrier := A × B, po := inferInstance, ob := inferInstance, dc := inferInstance }
   rel T := {
     holds := fun w g => A.R T w (fun i => (g i).1) ∧ B.R T w (fun i => (g i).2)
@@ -132,7 +132,7 @@ namespace Obj
 The relation tests every reindexing in the selected test. The carrier is `Hom A B`,
 whose elements already preserve every test. The two quantifiers are independent.
 -/
- def arr (A B : Obj) : Obj where
+ abbrev arr (A B : Obj) : Obj where
   domain := { Carrier := Hom A B, po := inferInstance, ob := inferInstance, dc := inferInstance }
   rel T := {
     holds := fun w g =>
@@ -157,7 +157,7 @@ whose elements already preserve every test. The two quantifiers are independent.
       ∀ (v : T.World) (φ : T.El v → T.El w), T.Hom φ →
         ∀ a : T.El v → A, A.R T v a → B.R T v (fun i => g (φ i) (a i)) := Iff.rfl
 
- def nat : Obj where
+ abbrev nat : Obj where
   domain := groundDomain
   rel := Test.groundRel
   concrete T w a := (T.primitive w).constant a
