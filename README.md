@@ -72,7 +72,7 @@ Each type denotes a domain together with, for every test and world, a relation o
 
 `Examples` checks, among other things, that parallel-or is not in the model (`no_parallel_or`): the uniform arrow carrier excludes it, as the full Scott function space would not.
 
-## Sieber's relations do not give full abstraction
+## Sieber's ordinary relations fail inequational full abstraction
 
 The paper leaves open whether Sieber's fixed-arity sequentiality relations already give full abstraction. `OR/Sieber/` proves two results; [`SIEBER.md`](SIEBER.md) gives the mathematics.
 
