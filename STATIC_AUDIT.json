@@ -1,0 +1,213 @@
+{
+  "audit_kind": "static source checks only",
+  "lean_typechecking_performed": false,
+  "lean_executable_found": false,
+  "status": "PASS",
+  "lean_files": 18,
+  "source_lines": 3665,
+  "theorem_declarations": 305,
+  "definition_declarations": 138,
+  "dependency_order": [
+    "OR.Order",
+    "OR.Flat",
+    "OR.Sequential",
+    "OR.Worlds",
+    "OR.SR",
+    "OR.Syntax",
+    "OR.Interpretation",
+    "OR.Operational",
+    "OR.Projections",
+    "OR.FiniteWorlds",
+    "OR.Definability",
+    "OR.FullAbstraction",
+    "OR.Adequacy",
+    "OR.Compactness",
+    "OR.Observations",
+    "OR.Examples",
+    "OR",
+    "OR.AxiomAudit"
+  ],
+  "errors": [],
+  "files": [
+    {
+      "file": "OR/Adequacy.lean",
+      "lines": 235,
+      "theorems": 13,
+      "definitions": 4,
+      "imports": [
+        "OR.Operational",
+        "OR.FullAbstraction"
+      ]
+    },
+    {
+      "file": "OR/AxiomAudit.lean",
+      "lines": 29,
+      "theorems": 0,
+      "definitions": 0,
+      "imports": [
+        "OR"
+      ]
+    },
+    {
+      "file": "OR/Compactness.lean",
+      "lines": 95,
+      "theorems": 7,
+      "definitions": 1,
+      "imports": [
+        "OR.Definability"
+      ]
+    },
+    {
+      "file": "OR/Definability.lean",
+      "lines": 121,
+      "theorems": 6,
+      "definitions": 2,
+      "imports": [
+        "OR.FiniteWorlds"
+      ]
+    },
+    {
+      "file": "OR/Examples.lean",
+      "lines": 127,
+      "theorems": 13,
+      "definitions": 5,
+      "imports": [
+        "OR.Observations",
+        "OR.Compactness"
+      ]
+    },
+    {
+      "file": "OR/FiniteWorlds.lean",
+      "lines": 189,
+      "theorems": 17,
+      "definitions": 9,
+      "imports": [
+        "OR.Projections"
+      ]
+    },
+    {
+      "file": "OR/Flat.lean",
+      "lines": 277,
+      "theorems": 29,
+      "definitions": 9,
+      "imports": [
+        "OR.Order"
+      ]
+    },
+    {
+      "file": "OR/FullAbstraction.lean",
+      "lines": 250,
+      "theorems": 10,
+      "definitions": 8,
+      "imports": [
+        "OR.Definability"
+      ]
+    },
+    {
+      "file": "OR/Interpretation.lean",
+      "lines": 257,
+      "theorems": 31,
+      "definitions": 14,
+      "imports": [
+        "OR.SR",
+        "OR.Syntax"
+      ]
+    },
+    {
+      "file": "OR/Observations.lean",
+      "lines": 93,
+      "theorems": 6,
+      "definitions": 4,
+      "imports": [
+        "OR.Adequacy"
+      ]
+    },
+    {
+      "file": "OR/Operational.lean",
+      "lines": 125,
+      "theorems": 16,
+      "definitions": 1,
+      "imports": [
+        "OR.Interpretation"
+      ]
+    },
+    {
+      "file": "OR/Order.lean",
+      "lines": 653,
+      "theorems": 54,
+      "definitions": 23,
+      "imports": [
+        "Mathlib"
+      ]
+    },
+    {
+      "file": "OR/Projections.lean",
+      "lines": 312,
+      "theorems": 22,
+      "definitions": 10,
+      "imports": [
+        "OR.Interpretation"
+      ]
+    },
+    {
+      "file": "OR/SR.lean",
+      "lines": 311,
+      "theorems": 44,
+      "definitions": 25,
+      "imports": [
+        "OR.Worlds"
+      ]
+    },
+    {
+      "file": "OR/Sequential.lean",
+      "lines": 225,
+      "theorems": 13,
+      "definitions": 3,
+      "imports": [
+        "OR.Flat"
+      ]
+    },
+    {
+      "file": "OR/Syntax.lean",
+      "lines": 266,
+      "theorems": 22,
+      "definitions": 18,
+      "imports": [
+        "Mathlib"
+      ]
+    },
+    {
+      "file": "OR/Worlds.lean",
+      "lines": 70,
+      "theorems": 2,
+      "definitions": 2,
+      "imports": [
+        "OR.Sequential"
+      ]
+    },
+    {
+      "file": "OR.lean",
+      "lines": 30,
+      "theorems": 0,
+      "definitions": 0,
+      "imports": [
+        "OR.Order",
+        "OR.Flat",
+        "OR.Sequential",
+        "OR.Worlds",
+        "OR.SR",
+        "OR.Syntax",
+        "OR.Interpretation",
+        "OR.Projections",
+        "OR.FiniteWorlds",
+        "OR.Definability",
+        "OR.Compactness",
+        "OR.FullAbstraction",
+        "OR.Operational",
+        "OR.Adequacy",
+        "OR.Observations",
+        "OR.Examples"
+      ]
+    }
+  ]
+}
