@@ -32,7 +32,11 @@ jobs:
         run: lake exe cache get
 
       - name: Build formalisation
-        run: lake --no-ansi build
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .validation
+          lake --no-ansi build 2>&1 | tee .validation/build.log
 
       - name: Axiom audit
         shell: bash
@@ -41,3 +45,13 @@ jobs:
           mkdir -p .validation
           lake env lean OR/AxiomAudit.lean 2>&1 | tee .validation/axioms.log
           python3 scripts/check_axioms.py .validation/axioms.log
+
+      - name: Preserve validation logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-logs
+          path: .validation/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 7

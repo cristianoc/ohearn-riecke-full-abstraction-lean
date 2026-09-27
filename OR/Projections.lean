@@ -30,7 +30,7 @@ namespace OR
  theorem projection_nat_zero (d : Ground) :
     projection .nat 0 d = Ground.ifz d (.val 0) .bot := by
   simp [projection, projectionTerm, groundProjectionTerm, denoteClosed, denote_lam,
-    denote_ifz, denote_var, lookup, denote_omega]
+    denote_ifz, denote_var, lookup, denote_omega] <;> rfl
 
  theorem projection_nat_succ (n : ℕ) (d : Ground) :
     projection .nat (n + 1) d =
@@ -74,7 +74,8 @@ namespace OR
       | val k =>
           by_cases h : k ≤ n
           · simp [Ground.cut, h]
-          · simp [Ground.cut, h]
+          · simp only [Ground.cut, if_neg h]
+            exact (bot_le : (⊥ : Ground) ≤ Flat.val k)
   | arr σ τ ihσ ihτ =>
       intro n f x
       rw [projection_arr_apply]
@@ -86,13 +87,15 @@ namespace OR
   induction τ with
   | nat =>
       intro d n m hnm
+      change projection .nat n d ≤ projection .nat m d
       rw [projection_nat, projection_nat]
       cases d with
       | bot => exact le_rfl
       | val k =>
           by_cases hkn : k ≤ n
           · simp [Ground.cut, hkn, hkn.trans hnm]
-          · simp [Ground.cut, hkn]
+          · simp only [Ground.cut, if_neg hkn]
+            exact (bot_le : (⊥ : Ground) ≤ _)
   | arr σ τ ihσ ihτ =>
       intro f n m hnm x
       rw [projection_arr_apply, projection_arr_apply]
@@ -200,26 +203,29 @@ abbrev Level (τ : Ty) (n : ℕ) := {d : D τ // projection τ n d = d}
   by_contra hk
   simp [Ground.cut, hk] at hp
 
+/-- Separate the numerical encoding from its finite-range proof. -/
+ def Ground.code : Ground → ℕ
+  | .bot => 0
+  | .val k => k + 1
+
+ theorem Ground.code_injective : Function.Injective Ground.code := by
+  intro a b h
+  cases a <;> cases b <;> simp_all [Ground.code]
+
  def finiteNatCode {n : ℕ} (a : Level .nat n) : Fin (n + 2) :=
-  match h : a.val with
-  | .bot => ⟨0, by omega⟩
-  | .val k => ⟨k + 1, by have hk := finite_nat_bound a h; omega⟩
+  ⟨Ground.code a.val, by
+    cases h : a.val with
+    | bot => simp [Ground.code]
+    | val k =>
+        have hk := finite_nat_bound a h
+        simp only [Ground.code]
+        omega⟩
 
  theorem finiteNatCode_injective (n : ℕ) : Function.Injective (@finiteNatCode n) := by
   intro a b h
-  have he := congrArg Fin.val h
   apply Subtype.ext
-  cases ha : a.val with
-  | bot =>
-      cases hb : b.val with
-      | bot => simp only [ha, hb]
-      | val k => simp [finiteNatCode, ha, hb] at he
-  | val k =>
-      cases hb : b.val with
-      | bot => simp [finiteNatCode, ha, hb] at he
-      | val j =>
-          have hkj : k = j := by simpa [finiteNatCode, ha, hb] using he
-          simp only [ha, hb, hkj]
+  apply Ground.code_injective
+  exact congrArg Fin.val h
 
  def finiteRestriction {σ τ : Ty} {n : ℕ} (f : Level (σ ⇒ τ) n) :
     Level σ n → Level τ n :=
@@ -278,7 +284,7 @@ instance levelInhabited (τ : Ty) (n : ℕ) : Inhabited (Level τ n) :=
 
 @[simp] theorem lookup_envProjection {Γ : Ctx} {τ : Ty} (x : Var Γ τ) (n : ℕ) (ρ : Env Γ) :
     lookup x (envProjection Γ n ρ) = projection τ n (lookup x ρ) := by
-  induction x generalizing n ρ with
+  induction x generalizing n with
   | vz => rfl
   | vs x ih => exact ih n ρ.1
 

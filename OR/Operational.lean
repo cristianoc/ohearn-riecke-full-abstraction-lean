@@ -115,11 +115,13 @@ end Red
 namespace Eval
 
  theorem sound {M : Tm [] .nat} {n : ℕ} (h : Eval M n) : denoteClosed M = .val n :=
-  (Red.sound h).trans (denote_numeral n PUnit.unit)
+  (Red.sound h).trans (denote_numeral (Γ := []) n PUnit.unit)
 
  theorem unique {M : Tm [] .nat} {m n : ℕ} (hm : Eval M m) (hn : Eval M n) : m = n :=
   Flat.val.inj (hm.sound.symm.trans hn.sound)
 
 end Eval
+
+end
 
 end OR
