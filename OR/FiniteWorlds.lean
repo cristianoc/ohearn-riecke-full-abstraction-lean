@@ -123,6 +123,15 @@ end Extension
   simp only [flookup_fpull, Ren.wk, flookup]
 
 
+/-- The generating projection used in the forward arrow case of paper Lemma 12. -/
+@[simp] theorem fpull_one_extension {n : ℕ} {Γ : Ctx} {σ : Ty}
+    (ρ : FEnv n (σ :: Γ)) :
+    fpull (Extension.ren (.cons σ (.refl Γ))) ρ = ρ.1 := by
+  apply fenv_ext
+  intro τ x
+  simp only [flookup_fpull, Extension.ren_cons, Extension.ren_refl, flookup]
+
+
 @[simp] theorem fpull_extension_one {n : ℕ} {Γ : Ctx} {σ : Ty}
     (ρ : FEnv n (σ :: Γ)) :
     fpull (Extension.ren (.cons σ (.refl Γ))) ρ = ρ.1 := by

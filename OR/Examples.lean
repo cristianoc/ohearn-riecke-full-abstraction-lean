@@ -92,11 +92,15 @@ namespace Examples
     subst ψ
     rfl
   ground _ := Elementary porA porB
-  primitive _ := Elementary.primitiveClosed por_subset
+  ground_bottom _ := (Elementary.primitiveClosed por_subset).bottom
+  ground_sup _ s hs h := h _ (Stabilizing.sup_mem (α := Fin 3 → Ground) s hs)
   reindex := by
     intro v w φ hφ g hg
     subst φ
     exact hg
+  sequential _ :=
+    (sequential_iff_primitive_closed (Elementary porA porB)).mpr
+      (Elementary.primitiveClosed por_subset)
 
  def porLeft : Fin 3 → Ground := ![.val 0, .bot, .val 1]
  def porRight : Fin 3 → Ground := ![.bot, .val 0, .val 1]

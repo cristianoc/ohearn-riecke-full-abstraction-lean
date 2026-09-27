@@ -48,9 +48,9 @@ with arbitrary contexts and arbitrary related argument tuples in the arrow case.
           (ihσ (σ :: Γ) argument hargFixed).mpr hargDef
         let body : FEnv n (σ :: Γ) → D τ := fun ρ => g ρ.1 ρ.2.val
         have hbodyRel : Rel n (σ :: Γ) τ body := by
-          let e : Extension Γ (σ :: Γ) := .cons σ (.refl Γ)
-          have h := (rel_arr n Γ σ τ g).mp hg (σ :: Γ) e argument hargRel
-          simpa [e, body, argument] using h
+          have h := (rel_arr n Γ σ τ g).mp hg (σ :: Γ)
+            (.cons σ (.refl Γ)) argument hargRel
+          simpa only [body, argument, fpull_one_extension] using h
         have hbodyFixed : Fixed n τ body :=
           fun ρ => finite_output_fixed (hfixed ρ.1) ρ.2.val
         obtain ⟨L, hL⟩ := (ihτ (σ :: Γ) body hbodyFixed).mp hbodyRel
