@@ -21,10 +21,15 @@ structure Test where
   identity : ∀ w, Hom (fun x : El w => x)
   composition : ∀ {u v w : World} {f : El u → El v} {g : El v → El w},
     Hom f → Hom g → Hom (g ∘ f)
+  /-- Paper Definition 3: the ground family is already a complete Kripke relation. -/
   ground : ∀ w, (El w → Ground) → Prop
-  primitive : ∀ w, PrimitiveClosed (ground w)
+  ground_bottom : ∀ w, ground w (fun _ => ⊥)
+  ground_sup : ∀ w (s : Set (El w → Ground)) (hs : Dir s),
+    (∀ g ∈ s, ground w g) → ground w (dSup s hs)
   reindex : ∀ {v w : World} {φ : El v → El w}, Hom φ →
     ∀ g, ground w g → ground v (g ∘ φ)
+  /-- Paper Definitions 4--5: every finite-arity component is sequential. -/
+  sequential : ∀ w, Sequential (ground w)
 
 attribute [instance] Test.finite
 
@@ -58,13 +63,14 @@ end KRel
   ob := inferInstance
   dc := inferInstance
 
+/-- Proposition 6, recovered from the paper-level sequentiality field. -/
+ theorem Test.primitive (T : Test) (w : T.World) : PrimitiveClosed (T.ground w) :=
+  (sequential_iff_primitive_closed (T.ground w)).mp (T.sequential w)
+
  def Test.groundRel (T : Test) : KRel T groundDomain where
   holds := T.ground
-  bottom w := (T.primitive w).bottom
-  sup w s hs h := h _ (Stabilizing.sup_mem (α := T.El w → Ground) s hs)
+  bottom := T.ground_bottom
+  sup := T.ground_sup
   reindex hφ g hg := T.reindex hφ g hg
-
- theorem Test.sequential (T : Test) (w : T.World) : Sequential (T.ground w) :=
-  (sequential_iff_primitive_closed (T.ground w)).mpr (T.primitive w)
 
 end OR
