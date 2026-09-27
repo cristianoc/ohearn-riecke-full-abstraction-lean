@@ -48,8 +48,9 @@ with arbitrary contexts and arbitrary related argument tuples in the arrow case.
           (ihσ (σ :: Γ) argument hargFixed).mpr hargDef
         let body : FEnv n (σ :: Γ) → D τ := fun ρ => g ρ.1 ρ.2.val
         have hbodyRel : Rel n (σ :: Γ) τ body := by
-          have h := (rel_arr n Γ σ τ g).mp hg (σ :: Γ) Ren.wk argument hargRel
-          simpa only [fpull_wk] using h
+          have e : Extension Γ (σ :: Γ) := .cons σ (.refl Γ)
+          have h := (rel_arr n Γ σ τ g).mp hg (σ :: Γ) e argument hargRel
+          simpa only [Extension.ren_cons, Extension.ren_refl, Ren.comp, Ren.wk, fpull_wk] using h
         have hbodyFixed : Fixed n τ body :=
           fun ρ => finite_output_fixed (hfixed ρ.1) ρ.2.val
         obtain ⟨L, hL⟩ := (ihτ (σ :: Γ) body hbodyFixed).mp hbodyRel
@@ -64,20 +65,20 @@ with arbitrary contexts and arbitrary related argument tuples in the arrow case.
         exact hrep.trans (finite_input_absorption (hfixed ρ) d)
       · rintro ⟨M, hM⟩
         apply (rel_arr n Γ σ τ g).mpr
-        intro Δ r h hh
+        intro Δ e h hh
         -- `h` is not assumed to be finite-level. Project it before using the IH.
         let k : FEnv n Δ → D σ := fun ρ => projection σ n (h ρ)
         have hkRel : Rel n Δ σ k := rel_projection hh
         have hkFixed : Fixed n σ k := fun ρ => projection_idem σ n (h ρ)
         obtain ⟨N, hN⟩ := (ihσ Δ k hkFixed).mp hkRel
-        let out : FEnv n Δ → D τ := fun ρ => g (fpull r ρ) (h ρ)
+        let out : FEnv n Δ → D τ := fun ρ => g (fpull e.ren ρ) (h ρ)
         have houtFixed : Fixed n τ out :=
-          fun ρ => finite_output_fixed (hfixed (fpull r ρ)) (h ρ)
+          fun ρ => finite_output_fixed (hfixed (fpull e.ren ρ)) (h ρ)
         apply (ihτ Δ out houtFixed).mpr
-        refine ⟨.app (Tm.rename r M) N, ?_⟩
+        refine ⟨.app (Tm.rename e.ren M) N, ?_⟩
         intro ρ
         rw [denote_app, denote_rename, ← includeEnv_fpull, hM, hN]
-        exact finite_input_absorption (hfixed (fpull r ρ)) (h ρ)
+        exact finite_input_absorption (hfixed (fpull e.ren ρ)) (h ρ)
 
 /-- The empty context is a singleton world; concreteness supplies its constant tuple. -/
  theorem finite_definability (τ : Ty) (n : ℕ) (d : D τ)
