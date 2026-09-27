@@ -40,7 +40,24 @@ The repair iterations were overwhelmingly proof-engineering and elaboration repa
 - the operational semantics and adequacy proof are developed explicitly rather than imported as a standard metatheorem; and
 - the finite interpolation / primitive-closure characterization needed for the ground tests is proved inside the development rather than treated as an external characterization result.
 
-These are presently intended as **explications or proof-representation changes, not changes to the full-abstraction claim**. A separate question is whether every theorem *as literally phrased in the paper*, with exactly the paper's suppressed side conditions and ambient conventions, can be copied verbatim into Lean and remain well-typed and true. That requires distinguishing harmless mathematical convention from genuinely omitted hypotheses; the formalisation deliberately does not blur that distinction.
+These are presently intended as **explications or proof-representation changes, not changes to the full-abstraction claim**.
+
+One strengthening deserves to be stated explicitly. The paper's finite-definability result is a closed theorem, but **that statement is not strong enough to use directly as the induction hypothesis in a literal structural induction at arrow type**. The Lean proof therefore proves the open finite-environment tuple theorem `strong_finite_definability` first and derives the closed result `finite_definability` from it. This does not make the paper's closed statement false; it distinguishes the theorem ultimately wanted from the stronger lemma needed to prove it without hiding the higher-type induction.
+
+### Source audit against the paper
+
+The comparison is against the published article, Peter W. O'Hearn and Jon G. Riecke, *Kripke Logical Relations and PCF*, **Information and Computation 120(1), 107--116 (1995)**, DOI `10.1006/inco.1995.1103`, not merely against a later description of its result. The proof specification used to build this development identifies the source landmarks as **Definitions 1--6**, the construction of the category **SR**, **Lemmas 10--12**, **Definition 13**, and **Theorem 14**. In particular:
+
+- the relational/sequential setup and the construction of the model are audited against Definitions 1--6 and the intervening construction of `SR`;
+- projections and the finite-definability argument are audited against Lemmas 10--12; the stronger open theorem in Lean is the induction-strengthened form needed to establish the paper's closed finite-definability conclusion;
+- the paper's observation relation is the one introduced at Definition 13; the Lean development additionally proves an explicit operational adequacy bridge rather than identifying operational evaluation with that denotational observation by convention; and
+- the final full-abstraction result is audited against Theorem 14.
+
+The article occupies journal pages 107--116. Exact per-item page numbers should be recorded only from an authoritative paginated copy; theorem/definition numbers above are the stable source references used in the formalisation audit. The repository should not manufacture page numbers from an OCR/search copy.
+
+A prepublication version of the same work is also indexed as accepted in October 1994 and “to appear in Information and Computation.” No separate, longer O'Hearn--Riecke technical report with a substantially expanded proof has been identified in this audit.
+
+A separate question is whether every theorem *as literally phrased in the paper*, with exactly the paper's suppressed side conditions and ambient conventions, can be copied verbatim into Lean and remain well-typed and true. That requires distinguishing harmless mathematical convention from a proof statement that is true but too weak for its induction, and from genuinely omitted hypotheses. The formalisation deliberately does not blur those three cases.
 
 ## 1. Language and theorem
 
