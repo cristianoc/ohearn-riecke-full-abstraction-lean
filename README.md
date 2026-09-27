@@ -75,30 +75,30 @@ The repository should therefore not claim that every Lean definition is a litera
 
 Types are
 
-$$
+```math
 \tau ::= \mathsf{nat} \mid \sigma \to \tau.
-$$
+```
 
 Terms are intrinsically typed and include variables, abstraction, application, fixed points, zero, successor, predecessor, and a ground-result conditional. The development follows the paper’s convention
 
-$$
+```math
 \operatorname{pred}(0)=\bot,
-$$
+```
 
 rather than truncated predecessor.
 
 For `M,N : Γ ⊢ τ`, operational contextual approximation is
 
-$$
+```math
 M \preceq_{\mathrm{ctx}} N
 \quad\Longleftrightarrow\quad
 \forall C[-] : (\Gamma,\tau) \rightsquigarrow \mathsf{nat},\ \forall n,
 \ C[M]\Downarrow n \Rightarrow C[N]\Downarrow n.
-$$
+```
 
 The goal is
 
-$$
+```math
 \boxed{
 M \preceq_{\mathrm{ctx}} N
 \quad\Longleftrightarrow\quad
@@ -107,7 +107,7 @@ M \preceq_{\mathrm{ctx}} N
 \sqsubseteq
 \llbracket N\rrbracket\rho.
 }
-$$
+```
 
 Hence contextual equivalence is equality of denotations.
 
@@ -121,13 +121,13 @@ The crucial point is that the function-space carrier is **not** the set of all c
 
 For a finite world `w` and `A ⊆ B ⊆ w`, define the elementary sequentiality relation
 
-$$
+```math
 S^w_{A,B}(g)
 \quad\Longleftrightarrow\quad
 \bigl(\exists i\in A,\ g(i)=\bot\bigr)
 \ \lor\
 \bigl(\forall i,j\in B,\ g(i)=g(j)\bigr).
-$$
+```
 
 A sequentiality relation is an intersection of elementary relations. A ground test supplies such a relation at every finite world and is stable under reindexing.
 
@@ -142,36 +142,36 @@ An object `A` contains:
 
 It satisfies concreteness:
 
-$$
+```math
 \forall R,w,a\in|A|,
 \qquad A(R)^w(\lambda i.a).
-$$
+```
 
 A morphism `f : A → B` is Scott-continuous and uniformly preserves every ground test:
 
-$$
+```math
 \forall R,w,g,
 \qquad A(R)^w(g) \Rightarrow B(R)^w(f\circ g).
-$$
+```
 
 Thus the carrier of an exponential is
 
-$$
+```math
 |B^A| = \operatorname{Hom}_{\mathsf{SR}}(A,B)
-$$
+```
 
 with pointwise order.
 
 Its relation is
 
-$$
+```math
 \begin{aligned}
 (B^A)(R)^w(g) \Longleftrightarrow {}&
 \forall(v,\varphi:v\to w),\ \forall h:v\to|A|,\\
 & A(R)^v(h) \Rightarrow
 B(R)^v\bigl(\lambda i.\,g(\varphi i)(h(i))\bigr).
 \end{aligned}
-$$
+```
 
 Two different universal quantifications are important here:
 
@@ -184,7 +184,7 @@ The files prove the closure properties needed for products, exponentials, evalua
 
 For ground type,
 
-$$
+```math
 p_{\mathsf{nat}}^n(\bot)=\bot,
 \qquad
 p_{\mathsf{nat}}^n(\uparrow k)=
@@ -192,63 +192,63 @@ p_{\mathsf{nat}}^n(\uparrow k)=
 \uparrow k & k\le n,\\
 \bot & k>n.
 \end{cases}
-$$
+```
 
 For arrows,
 
-$$
+```math
 p_{\sigma\to\tau}^n(f)(x)
 =
 p_\tau^n\bigl(f(p_\sigma^n(x))\bigr).
-$$
+```
 
 Each projection is denoted by a closed PCF term. The development proves the four structural laws used throughout the argument:
 
-$$
+```math
 p_\tau^n(d)\sqsubseteq d,
-$$
+```
 
-$$
+```math
 n\le m \Rightarrow p_\tau^n(d)\sqsubseteq p_\tau^m(d),
-$$
+```
 
-$$
+```math
 p_\tau^m(p_\tau^n(d)) = p_\tau^{\min(m,n)}(d),
-$$
+```
 
 and
 
-$$
+```math
 \bigsqcup_n p_\tau^n(d)=d.
-$$
+```
 
 Put
 
-$$
+```math
 D_\tau^n = \{d\in D_\tau \mid p_\tau^n(d)=d\}.
-$$
+```
 
 For finite-level functions two consequences are isolated explicitly:
 
-$$
+```math
 \boxed{f(p_\sigma^n(x))=f(x)}
 \qquad\text{(input absorption)}
-$$
+```
 
 and
 
-$$
+```math
 \boxed{p_\tau^n(f(x))=f(x)}
 \qquad\text{(output fixedness)}.
-$$
+```
 
 The finite-level sets are proved finite. At arrow type, restriction yields an injection
 
-$$
+```math
 D_{\sigma\to\tau}^n
 \hookrightarrow
 (D_\sigma^n\to D_\tau^n).
-$$
+```
 
 No surjectivity claim is needed.
 
@@ -256,58 +256,58 @@ No surjectivity claim is needed.
 
 The naive closed statement
 
-$$
+```math
 p_\tau^n(d)=d
 \Rightarrow
 \exists M:\varnothing\vdash\tau,\ \llbracket M\rrbracket=d
-$$
+```
 
 is too weak to support induction at higher type. The formalisation instead uses a stronger tuple theorem with arbitrary finite environments.
 
 For
 
-$$
+```math
 \Gamma=x_1:\sigma_1,\ldots,x_m:\sigma_m,
-$$
+```
 
 define the finite-environment world
 
-$$
+```math
 W_{n,\Gamma}
 =
 D_{\sigma_1}^n\times\cdots\times D_{\sigma_m}^n.
-$$
+```
 
 The empty context yields a singleton world. World maps are context projections.
 
 Let
 
-$$
+```math
 \iota_\Gamma:W_{n,\Gamma}\to\llbracket\Gamma\rrbracket
-$$
+```
 
 be componentwise inclusion. Define the selected ground relation by representability:
 
-$$
+```math
 R_n^\Gamma(g)
 \Longleftrightarrow
 \exists M:\Gamma\vdash\mathsf{nat},
 \forall\rho\in W_{n,\Gamma},
 \llbracket M\rrbracket(\iota_\Gamma\rho)=g(\rho).
-$$
+```
 
 The range of `g` is the whole flat natural domain; only the environments are finite-level. Restricting outputs to `D_nat^n` would break closure under successor.
 
 The strong theorem proved by induction on type is, schematically:
 
-$$
+```math
 \boxed{
 \operatorname{Rel}_{n,\Gamma,\tau}(g)
 \Longleftrightarrow
 \exists M:\Gamma\vdash\tau,
 \forall\rho,\ \llbracket M\rrbracket(\iota_\Gamma\rho)=g(\rho)
 }
-$$
+```
 
 under the pointwise finite-level condition `p_τ^n(g ρ)=g ρ`.
 
@@ -315,48 +315,48 @@ under the pointwise finite-level condition `p_τ^n(g ρ)=g ρ`.
 
 Suppose
 
-$$
+```math
 g:W_{n,\Gamma}\to D_{\sigma\to\tau}
-$$
+```
 
 is related and pointwise fixed. Extend the world by a variable of type `σ`. The tuple
 
-$$
+```math
 h(\rho,a)=a
-$$
+```
 
 is represented by the newest variable and therefore related by the reverse induction hypothesis.
 
 Apply the arrow relation to `g` and `h`; this produces
 
-$$
+```math
 g'(\rho,a)=g(\rho)(a)
-$$
+```
 
 at type `τ`. Output fixedness makes `g'` finite-level, so the induction hypothesis yields
 
-$$
+```math
 L:\Gamma,x:\sigma\vdash\tau
-$$
+```
 
 representing it.
 
 Define
 
-$$
+```math
 Q=\lambda x:\sigma.\,L[x:=P_\sigma^n x].
-$$
+```
 
 For arbitrary semantic `d`,
 
-$$
+```math
 \begin{aligned}
 \llbracket Q\rrbracket(\iota_\Gamma\rho)(d)
 &=\llbracket L\rrbracket(\iota_\Gamma\rho,p_\sigma^n(d))\\
 &=g(\rho)(p_\sigma^n(d))\\
 &=g(\rho)(d),
 \end{aligned}
-$$
+```
 
 where the last step is input absorption. This is equality on the entire semantic function domain, not merely on finite arguments.
 
@@ -364,26 +364,26 @@ where the last step is input absorption. This is equality on the entire semantic
 
 Suppose `M : Γ ⊢ σ → τ` represents a pointwise fixed tuple `g`. Take an arbitrary future world and arbitrary related argument tuple
 
-$$
+```math
 h:W_{n,\Gamma,\Delta}\to D_\sigma.
-$$
+```
 
 No finite-level assumption is made on `h`.
 
 Project it:
 
-$$
+```math
 k=p_\sigma^n\circ h.
-$$
+```
 
 Uniformity of the projection preserves relatedness, while idempotence gives pointwise fixedness. The induction hypothesis then provides a term representing `k`. Applying the weakened `M` to that term represents
 
-$$
+```math
 \rho\mapsto
  g(\operatorname{drop}\rho)(p_\sigma^n(h(\rho)))
  =
  g(\operatorname{drop}\rho)(h(\rho)),
-$$
+```
 
 again by input absorption. The result is pointwise fixed by output fixedness, so the reverse induction hypothesis at `τ` yields relatedness.
 
@@ -393,53 +393,53 @@ The closed finite-definability theorem is recovered from this stronger theorem b
 
 To prove reflection of contextual approximation, suppose
 
-$$
+```math
 \llbracket M\rrbracket\not\sqsubseteq\llbracket N\rrbracket.
-$$
+```
 
 Pointwise order gives an environment witnessing the failure. Unfolding function order repeatedly produces a finite sequence of semantic arguments and a natural `q` such that
 
-$$
+```math
 \llbracket M\rrbracket\rho\,a_1\cdots a_k = \uparrow q,
-$$
+```
 
 but
 
-$$
+```math
 \llbracket N\rrbracket\rho\,a_1\cdots a_k \ne \uparrow q.
-$$
+```
 
 Collect the environment and arguments into one product element `z`, and let `z_n` be its componentwise finite projection. Then
 
-$$
+```math
 z_n\sqsubseteq z_{n+1}\sqsubseteq z,
 \qquad
 \bigsqcup_n z_n=z.
-$$
+```
 
 Joint continuity of interpretation and evaluation gives
 
-$$
+```math
 \bigsqcup_n F_M(z_n)=F_M(z)=\uparrow q.
-$$
+```
 
 Compactness of the numeral produces one finite level `n` with
 
-$$
+```math
 F_M(z_n)=\uparrow q.
-$$
+```
 
 At that **same** level,
 
-$$
+```math
 F_N(z_n)\sqsubseteq F_N(z),
-$$
+```
 
 so `F_N(z_n) ≠ ↑q`; otherwise flatness would force `F_N(z)=↑q`.
 
 Every coordinate of `z_n` is finite-level fixed, so finite definability supplies closed terms for every environment coordinate and every semantic argument. These terms are assembled into an actual PCF closing context
 
-$$
+```math
 \boxed{
 C[-]
 =
@@ -447,15 +447,15 @@ C[-]
 T_1\cdots T_m\,
 U_1\cdots U_k.
 }
-$$
+```
 
 Substitution and interpretation laws give
 
-$$
+```math
 \llbracket C[M]\rrbracket=\uparrow q,
 \qquad
 \llbracket C[N]\rrbracket\ne\uparrow q.
-$$
+```
 
 Thus semantic order failure yields an explicit contextual separator. Preservation in the other direction is a structural induction on contexts using monotonicity of every semantic constructor.
 
@@ -463,50 +463,50 @@ Thus semantic order failure yields an explicit contextual separator. Preservatio
 
 The operational layer is proved separately, using call-by-name reduction and the computational logical relation
 
-$$
+```math
 d\triangleleft_{\mathsf{nat}}M
 \Longleftrightarrow
 \forall n,\ d=\uparrow n\Rightarrow M\Downarrow n,
-$$
+```
 
 and
 
-$$
+```math
 f\triangleleft_{\sigma\to\tau}M
 \Longleftrightarrow
 \forall a,N,
 \ a\triangleleft_\sigma N
  \Rightarrow
  f(a)\triangleleft_\tau MN.
-$$
+```
 
 For each term this relation contains bottom and is closed under directed suprema; it is also backward closed under reduction.
 
 The fixed-point case is explicit: from `f △ F`, prove by induction that
 
-$$
+```math
 f^k(\bot)\triangleleft \operatorname{fix}F.
-$$
+```
 
 The successor step uses
 
-$$
+```math
 \operatorname{fix}F\longrightarrow F(\operatorname{fix}F),
-$$
+```
 
 and directed closure yields
 
-$$
+```math
 Y(f)\triangleleft\operatorname{fix}F.
-$$
+```
 
 Together with reduction soundness, this proves ground adequacy:
 
-$$
+```math
 M\Downarrow n
 \Longleftrightarrow
 \llbracket M\rrbracket=\uparrow n.
-$$
+```
 
 Combining adequacy with the denotational separator yields operational full abstraction.
 
