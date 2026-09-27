@@ -1,0 +1,47 @@
+name: Materialize staged formalisation
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".bootstrap/**"
+      - ".github/workflows/materialize.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reconstruct source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .bootstrap/part00 .bootstrap/part01 .bootstrap/part02 .bootstrap/part03 .bootstrap/part04             | base64 -d > /tmp/formalisation.tar.gz
+          tar -xzf /tmp/formalisation.tar.gz
+          test -f OR/Order.lean
+          test -f OR/Sequential.lean
+          test -f OR/SR.lean
+          test -f OR/Syntax.lean
+          test -f OR/Interpretation.lean
+          test -f OR/Projections.lean
+
+      - name: Commit materialized project
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .bootstrap
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "Add complete tentative Lean formalisation"
+            git push
+          fi
