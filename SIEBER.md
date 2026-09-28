@@ -367,7 +367,7 @@ Theorem C.
 
 ### 4.8 What remains open
 
-- **Equational full abstraction.** Theorem B does not say whether $`M \simeq N \iff ⟦M⟧ = ⟦N⟧`$ fails. The two notions differ in general; see Stoughton, *Equationally fully abstract models of PCF* (MFPS 1989, LNCS 442). (MP) is the only step that needs the inequational form.
+- **Lean formalisation of the exact-order strengthening.** Theorem C gives an equational counterexample at exact order 4 mathematically. The current Lean endpoint proves only the unbounded inequational Theorem B. Formalizing the order-3 Loader equation lemma and the local Stoughton compact-definability construction would make Theorem C kernel-checked.
 - **Sieber's collapse presentation.** The theorem is about the direct presentation $`D^N`$ (see §4.1), not about the collapse of the invariant elements of the continuous hierarchy.
 - **The two cited theorems.** They are used as stated above and are not re-proved. For (GT), the only claim outside Lean is that the transcription into this repository's PCF is faithful (§4.1).
 
