@@ -149,3 +149,30 @@ The 6,497 pairs settled by closed calls are exactly the pairs with incompatible 
 No element in this candidate language is a counterexample. Every table the §7 language generated (up to five principal cones) that survives the arity-3 tests is PCF-definable.
 
 If $`τ_0`$ has a non-definable Sieber element, it lies outside this family. It would need many cones with interlocking structure, or it could be that $`τ_0`$ is universal. The next step is to generate candidates that the definability side does *not* immediately solve. Examples are tables with many minimal cones, and tables built to defeat one level of nested calls. A second option is to widen the type (M5).
+
+## A non-definable table that preserves every arity-3 test
+
+`universality.py` asks z3 for a state $`(h,S)`$ with $`h`$ preserving all arity-3 tests and no progressing splitter among the 4,233 columns. It finds one at the root. That $`h`$ is $`ff`$ on a 146-element up-set with 20 minimal elements (`data/bad_state_h.npy`). `deepen.py` finds no column at the next nesting level that is total on its support, and `root_obstruction.py` turns this into a proof of non-definability. Three of the 20 minimal points already suffice, which gives a much smaller candidate:
+```math
+h_3(F)=\begin{cases} ff & F\in\ \uparrow 129\ \cup \uparrow 272\ \cup \uparrow 321,\\ \bot & \text{otherwise,}\end{cases}
+```
+with 35 support elements (`data/candidate_3cone_h.npy`). As tables on $`D_1=(\bot\bot\bot,\ \bot\bot t,\ \bot\bot f,\ \bot t\bot,\ \bot tt,\ \bot tf,\ \bot f\bot,\ \bot ft,\ \bot ff,\ ttt,\ fff)`$:
+
+| Point | Table | Arguments on which it converges |
+|---|---|---|
+| 129 | `⊥⊥⊥⊥⊥f⊥tf⊥f` | `⊥tf ⊥ft ⊥ff fff` |
+| 272 | `⊥⊥⊥fff⊥⊥⊥f⊥` | `⊥t⊥ ⊥tt ⊥tf ttt` |
+| 321 | `⊥t⊥⊥t⊥⊥t⊥tf` | `⊥⊥t ⊥tt ⊥ft ttt fff` |
+
+The common upper bounds are 281 of 129 and 272, and 333 (also 335) of 129 and 321. Points 272 and 321 have none.
+
+`verify_candidate.py` checks both $`h_3`$ and the 20-cone $`h`$ using numpy only (no z3, no GPU):
+1. $`h`$ is monotone.
+2. $`h`$ preserves all 85 non-trivial arity-3 tests, over all 107,189,017 related triples of $`D_2`$.
+3. $`h`$ is not PCF-definable. Suppose $`h`$ is definable and not constant. Its normal form $`λF.\,G`$ then evaluates a call $`F(ψ)`$ first, where $`ψ=λz.M`$ may use $`F`$. The conditional is strict, so $`F(ψ_F)\neq\bot`$ on all of $`\mathrm{supp}(h)`$. The map $`F\mapsto ψ_F`$ is definable, hence monotone. Whenever two support points have a common upper bound $`u`$, their $`ψ`$-values lie below $`ψ_u`$ and are therefore compatible. The allowed arguments above make this impossible:
+   - compatibility of 129 with 272 along 281 forces $`ψ_{129}=\bot tf`$, because every allowed argument of 272 is $`t`$ at $`tt`$;
+   - compatibility of 129 with 321 along 333 forces $`ψ_{129}\in\{\bot ft,\ \bot ff,\ fff\}`$.
+
+Neither $`h`$ nor $`h_3`$ is killed by the 61 elementary arity-4 relations $`S^4_{A,B}`$ either.
+
+**Status.** $`h_3`$ is a non-definable table that preserves every arity-3 Sieber test. It is a counterexample to universality of $`τ_0`$ if it also preserves Sieber's relations of **every** arity, and that is the open step. Point 3 relies on the head-call lemma: the first evaluated action of a non-constant normal form $`λF.G`$ is a strict call $`F(ψ)`$. That is standard for $`β`$-normal forms after commuting conversions of the conditional, but it should be written out.
