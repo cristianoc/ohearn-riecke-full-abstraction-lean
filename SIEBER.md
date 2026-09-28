@@ -334,7 +334,56 @@ when a term solution exists.  This decides Loader's order-3 problem, contradicti
 This is a localized version of the argument of Sections 2--3: global undecidability is not
 needed.
 
-#### 4.7.1a The concrete Loader type family
+#### 4.7.1a A second tight boundary: universality fails first at order 3
+
+There is a useful lower-order theorem complementary to Theorem C.
+
+**Theorem U (first non-universal order = 3).**  In the finitary Boolean ordinary-Sieber
+model, every element at every type of order at most 2 is PCF-definable, while some element
+at a type of exact order 3 is not.
+
+*Proof.*  Sieber's low-level definability theorem is stronger than his order-3
+full-abstraction statement.  In the standard hierarchy, at every type of level at most 2,
+an element is invariant under all finite-arity PCF logical relations iff it is the supremum
+of a directed set of PCF-definable elements.  Streicher's exposition states this explicitly
+and also recalls Sieber's combinatorial characterization of those PCF logical relations as
+the finite-arity sequentiality relations used here.
+
+For finitary PCF the semantic carrier at every type is finite.  Hence any directed subset
+has a greatest element: repeatedly take upper bounds inside the finite directed set.  Its
+supremum is therefore one of its members.  Consequently, if a finitary element is invariant
+under all Sieber relations at a type of order at most 2, it is itself PCF-definable.  But
+the carrier of the ordinary Sieber model consists exactly of the invariant elements.
+Thus
+```math
+D^B_τ=\{\llbracket M\rrbracket:M:τ\}
+\qquad(\operatorname{ord}(τ)\le2).
+\tag{18a}
+```
+
+Lemma 13 below, using Loader's order-3 equation problem, supplies a non-definable element
+at some type of order at most 3.  Equation (18a) excludes orders 0, 1 and 2, so that
+element must have exact order 3.  `□`
+
+This gives two adjacent sharp thresholds:
+```math
+\begin{array}{c|cc}
+ & \text{holds through} & \text{first failure}\\ \hline
+\text{universality of ordinary Sieber} & 2 & 3\\
+\text{full abstraction of ordinary Sieber} & 3 & 4.
+\end{array}
+\tag{18b}
+```
+The one-order offset is the same one visible in Loader's construction and in the
+Stoughton compact-separation argument: a non-definable semantic object at type `σ`
+is exposed observationally by terms at a type of shape `σ→B` (or `σ→nat`), one
+order higher.
+
+As an independent algorithmic check, Kawata--Asada--Kobayashi (APLAS 2015) give decision
+algorithms for definability of order-2 finitary PCF; one is explicitly based on Sieber's
+sequentiality relations.
+
+#### 4.7.1b The concrete Loader type family
 
 Loader's reduction gives substantially more type information than the bare order bound.
 He fixes once and for all an undecidable semi-Thue system
