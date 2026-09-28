@@ -59,11 +59,28 @@ Classes are taken up to the 16 symmetries of $`τ_0`$. These swap $`tt/ff`$ inde
 
   The single relation $`S^3_{01,012}`$ kills nothing here.
 
+  Explicitly, as ground relations on $`B^3`$:
+  ```math
+  R_1 = S^3_{\{0\},\{012\}}\cap S^3_{\{1,2\},\{012\}}
+      = \{ttt,\ fff\}\cup\{\bot\bot\bot,\ \bot\bot t,\ \bot\bot f,\ \bot t\bot,\ \bot f\bot\},
+  ```
+  ```math
+  R_2 = S^3_{\{0\},\{012\}}\cap S^3_{\{1,2\},\{1,2\}}
+      = R_1\cup\{\bot tt,\ \bot ff\}.
+  ```
+  Both say that if $`x_0`$ is defined, the triple is constant. They differ on the other two coordinates:
+  - $`R_1`$: if $`x_1`$ and $`x_2`$ are both defined, the whole triple is constant, so $`x_0`$ must be defined too;
+  - $`R_2`$: if $`x_1`$ and $`x_2`$ are both defined, they must be equal, but $`x_0`$ may be $`\bot`$.
+
+  For a candidate $`h`$, a violation is a related triple $`(F_0,F_1,F_2)`$ of $`D_2`$ on which:
+  - $`R_1`$: $`h`$ is defined on $`F_0`$ but not constant; or $`h`$ is defined on $`F_1`$ and $`F_2`$ but not on $`F_0`$, or not constant.
+  - $`R_2`$: $`h`$ is defined on $`F_0`$ but not constant; or $`h`$ is defined on $`F_1`$ and $`F_2`$ with different values.
+
 ## Arity-4 diagnostic (`diag_arity4.py`)
 
 The question is whether arity 4 suddenly becomes strong. The diagnostic uses the elementary relations $`S^4_{A,B}`$ with $`A\neq\emptyset`$, which gives 61 distinct relations, without intersections. It runs on 180 survivor classes: the 60 smallest, 60 random and 60 largest.
 
-A positive control passes: random tables are killed, and their witnesses are verified on the CPU. At the time of writing, **0 of the first 30 classes are killed**. The run takes about 20 s per class, and its results go to `data/arity4_diagnostic.json`.
+A positive control passes: random tables are killed, and their witnesses are verified on the CPU. **0 of the 92 classes checked were killed**, and the run was then stopped. M4 below shows why: every survivor class is definable, and definable elements preserve every relation of every arity. On this candidate family the diagnostic could not have killed anything.
 
 ## Why M4 cannot be done as specified
 
@@ -73,6 +90,13 @@ Lemma 13 of [`SIEBER.md`](../SIEBER.md) uses Loader's equation-solvability probl
 3. That would decide Loader's order-3 problem. Hence **no such algorithm exists**.
 
 Definability is semi-decidable, by enumerating terms. Non-definability is not, uniformly. In particular, no finite family of Kripke relations can decide definability at every order-3 type.
+
+**Finite Kripke witnesses are sound but not known to be complete.** The Lean characterization `finiteTest` (`OR/FiniteWorlds.lean`) is not a finite object:
+- its worlds are *all* typed contexts (`World := Ctx`);
+- its ground relation at a world is the set of *definable* maps (`Def n Γ .nat`);
+- the arrow clause quantifies over every extension of a context.
+
+Enumerating finite Kripke relations (finitely many finite worlds, computable relations) therefore only gives sound rejections. It cannot be complete uniformly at order 3: otherwise definability would be semi-decidable on both sides, hence decidable. For $`τ_0`$ alone completeness is not excluded, but nothing guarantees it. So there is no guarantee that every pair below is eventually resolved.
 
 For the single type $`τ_0`$ the question has a definite answer. But an exact M4 with a completeness justification (§8) needs an argument specific to $`τ_0`$; it cannot come from a general saturation engine.
 
@@ -102,4 +126,26 @@ Run over the 6,775 pair problems, each ending as definable, non-definable or ope
 2. **Non-definable side.** For pairs that synthesis does not settle, search for a violated Kripke relation: more worlds, larger arities, intersections of generators. By the fundamental lemma every definable element preserves every Kripke relation, so a violation is a proof of non-definability.
 3. **Open pairs.** These are where an argument specific to $`τ_0`$ is needed. If both sides settle every pair, the result is a complete picture of two-cone definability at $`τ_0`$. The first pair certified non-definable would be the counterexample candidate. It would still need an all-arity argument for membership in Sieber's model.
 
-M3 (high-throughput arity 4) is postponed unless the diagnostic shows arity 4 is strong.
+M3 (high-throughput arity 4) is postponed. See the diagnostic above.
+
+## M4 results (`m4.py`)
+
+The M4 search (definable side only) settled every survivor class. **All of them are definable**, so the Kripke side was not needed.
+
+| Survivor classes | Count | Settled by |
+|---|---|---|
+| Two-cone pair problems (covering 13,272 classes) | 6,775 | 6,497 by decision trees over the 11 closed calls $`F(φ)`$; the remaining 278 by one round of nested calls |
+| Three or four cones | 121 | Decision trees over the same columns |
+| Principal cones, and the constant $`\bot`$ | 67 | Definable by construction |
+
+The 6,497 pairs settled by closed calls are exactly the pairs with incompatible $`p,q`$. One closed call at a point where they disagree sends each $`F`$ to at most one cone, and a principal test does the rest. The 278 hard pairs are the **compatible** ones: unions of two cones with a common upper bound, where convergence on either cone looks parallel. Every one is separated by a single level of nested calls. These are arguments $`λz.\,\mathsf{case}\ z\ \mathsf{of}\ tt\mapsto a,\ ff\mapsto b`$ or $`λz.\,a`$, where $`a,b`$ are constants or $`\mathsf{case}\ F(φ)`$ of constants. They exploit the order in which $`F`$ interrogates its argument.
+
+**Direct verification.** Without using the union/race reduction, all 13,460 classes' own tables have decision trees over 4,233 columns: the 11 closed calls plus the first nested round.
+
+**Soundness.** Certificates are correct by construction. Each column is the semantics of an explicit term, computed with the same $`D_2`$ tables as M1. A tree is accepted only if it computes the target table exactly.
+
+### Consequence
+
+No element in this candidate language is a counterexample. Every table the §7 language generated (up to five principal cones) that survives the arity-3 tests is PCF-definable.
+
+If $`τ_0`$ has a non-definable Sieber element, it lies outside this family. It would need many cones with interlocking structure, or it could be that $`τ_0`$ is universal. The next step is to generate candidates that the definability side does *not* immediately solve. Examples are tables with many minimal cones, and tables built to defeat one level of nested calls. A second option is to widen the type (M5).
