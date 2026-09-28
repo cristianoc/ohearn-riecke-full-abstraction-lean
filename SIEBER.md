@@ -385,11 +385,10 @@ component must grow if arbitrarily many word positions are to remain distinguish
 
 On the other hand, undecidability gives a useful existential statement about this *explicit*
 family: it cannot be the case that every `σ_n` is universal.  Therefore there is a least
-finite `n₀` such that some element of `D^B_{σ_{n₀}}` is non-definable.  Loader's
-argument does not supply a computable upper bound on `n₀`: such a bound, together with
-the finite carrier computations, would turn the relevant finite prefix of the reduction into
-a decision procedure.  Determining `n₀` is therefore a genuinely new finite-model question,
-not information hidden in the undecidability proof.
+finite `n₀` such that some element of `D^B_{σ_{n₀}}` is non-definable.  Loader's argument does not identify `n₀`, nor does the reduction as stated provide an upper
+bound on it.  (Undecidability alone does **not** prove that no computable upper bound exists;
+that stronger claim would need a separate argument.)  Determining or bounding `n₀` is therefore
+a new finite-model question rather than information directly supplied by Loader's proof.
 
 Consequently the order-4 counterexample type obtained after the one-order separation step
 may be taken from the explicit family
