@@ -193,3 +193,19 @@ There are 17,240 distinct intersections of $`S^4_{A,B}`$, or 1,027 up to coordin
 **Next steps.**
 - Add arity-4 constraints to the universality SAT query, lazily, with this search as the oracle. That asks whether some table preserves all arity-4 tests and still has no admissible first call.
 - Test the conjecture that $`k`$ mutually "parallel" cones are killed at arity $`k+1`$. A counterexample must defeat the first call in a way no finite-arity relation of this shape can express.
+
+## Kripke-vs-ordinary separators (`kripke_separator.py`)
+
+Candidates are now derived from Kripke behaviour itself. For a computable Kripke relation $`K`$ with sequentiality relations as ground components, every PCF term satisfies the fundamental lemma. So a violation of $`K`$ proves non-definability.
+
+If $`h`$ preserves the ordinary test $`R(w)`$, any violation of $`K`$ at world $`w`$ must use a tuple in
+```math
+E = K_{D_2}(w)\setminus R^{\mathrm{ord}}_{D_2}(w),
+```
+the tuples made related only by world extension. Maps into the extension world reduce to ordinary tests there. For each $`K`$ the search computes $`E`$. If $`E\neq\emptyset`$, z3 looks for a monotone $`h`$ that preserves all arity-3 tests and violates $`K`$ on $`E`$, and each hit then goes through the arity-4 gauntlet.
+
+**Result.** $`E=\emptyset`$ for all 676 relations with worlds $`w`$ of arity 2 and $`w^+`$ of arity 3:
+- $`R(w)`$ ranges over the arity-2 tests and $`R(w^+)`$ over the arity-3 tests;
+- the maps $`w^+\to w`$ are, up to symmetry, a constant map, a map with fibre sizes 2 and 1, or all surjections.
+
+At this size the extension shrinks the relation at $`D_1`$, but the conditions it adds at $`D_2`$ (the reindexed $`G\circ p`$ must be related at $`w^+`$) remove every new pair. No separation is possible with these worlds.
