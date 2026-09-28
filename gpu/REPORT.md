@@ -176,3 +176,20 @@ The common upper bounds are 281 of 129 and 272, and 333 (also 335) of 129 and 32
 Neither $`h`$ nor $`h_3`$ is killed by the 61 elementary arity-4 relations $`S^4_{A,B}`$ either.
 
 **Status.** $`h_3`$ is a non-definable table that preserves every arity-3 Sieber test. It is a counterexample to universality of $`τ_0`$ if it also preserves Sieber's relations of **every** arity, and that is the open step. Point 3 relies on the head-call lemma: the first evaluated action of a non-constant normal form $`λF.G`$ is a strict call $`F(ψ)`$. That is standard for $`β`$-normal forms after commuting conversions of the conditional, but it should be written out.
+
+### Arity 4 kills both candidates (`arity4_h3.py`)
+
+There are 17,240 distinct intersections of $`S^4_{A,B}`$, or 1,027 up to coordinate permutation. For each one, z3 searches for a related tuple of $`D_2`$ whose image under the candidate lies outside the relation, and every witness is re-verified directly. The positive control (a random table) is killed.
+
+- $`h_3`$ is **killed**: 39 of the first 400 tests already have witnesses. The first is the relation
+  ```math
+  R = S^4_{\{0\},\{0123\}}\cap S^4_{\{1,2\},\{1,2\}}\cap S^4_{\{1,3\},\{1,3\}}\cap S^4_{\{1,2,3\},\{0123\}}
+  ```
+  with the tuple $`(12,\,129,\,323,\,276)`$. Coordinates 1–3 lie in the three cones (above 129, 321 and 272), and 12 is a common lower bound of all three. The outputs are $`(\bot,ff,ff,ff)`$, but $`R`$ requires coordinate 0 to be defined whenever coordinates 1, 2 and 3 all are. This is the four-coordinate form of the main arity-3 killer, and it detects exactly the three-way "parallel" convergence behind the non-definability proof.
+- The 20-cone table is **killed** too, by the tuple $`(2,\,259,\,321,\,78)`$.
+
+**Conclusion.** Neither table is in Sieber's model. The first-call obstruction ("no monotone $`ψ`$ makes the first call total") is sound for non-definability, but here the arity-4 relations see it as well.
+
+**Next steps.**
+- Add arity-4 constraints to the universality SAT query, lazily, with this search as the oracle. That asks whether some table preserves all arity-4 tests and still has no admissible first call.
+- Test the conjecture that $`k`$ mutually "parallel" cones are killed at arity $`k+1`$. A counterexample must defeat the first call in a way no finite-arity relation of this shape can express.
