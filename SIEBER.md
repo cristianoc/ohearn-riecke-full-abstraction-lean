@@ -280,90 +280,185 @@ useful global picture: there is a least failing order `k ≥ 4`, and inequationa
 fails at every exact order `n ≥ k`. The present argument does **not** determine whether
 `k = 4`; locating that first order is part of the concrete-counterexample problem.
 
-### 4.7 The first failing order is 4
+### 4.7 The first failing order is 4 — source-annotated proof
 
-The preceding argument can be sharpened using the order bounds already present in Loader's
-construction and the local form of the Milner--Stoughton compact-definability argument.
+This section is a mathematical argument, independent of the Lean endpoint.  Its purpose is
+to locate the first failure in the type hierarchy and to record exactly which parts come from
+the literature.
 
 Use the standard convention
 ```math
 \operatorname{ord}(B)=\operatorname{ord}(\mathsf{nat})=0,\qquad
 \operatorname{ord}(σ\to τ)=\max(\operatorname{ord}(σ)+1,\operatorname{ord}(τ)).
+\tag{17}
 ```
+This is also the convention used by Ong--Tzevelekos in *Functional Reachability*, so their
+order bounds require no shift.
 
-**Order-3 Loader lemma.** Loader's proof contains an undecidable problem of solving finite
-systems of finitary-PCF equations
+#### 4.7.1 Loader's obstruction is already at order 3
+
+Loader's undecidability proof contains the following finite equation-solvability problem:
 ```math
-X\,a^j_1\cdots a^j_n \simeq b^j \qquad (j=1,\ldots,m),
+X\,a^j_1\cdots a^j_n \simeq b^j\qquad(j=1,\ldots,m),
+\tag{18}
 ```
-already when the type of `X` has order 3.  Ong and Tzevelekos make this order bound
-explicit in *Functional Reachability* (LICS 2009, after Corollary 7): “Solvability of the
-system of equations (1) is undecidable at order 3 [Loader].”
+where the (a_i^j) are closed finitary-PCF terms and (b^j\in\{\mathsf{tt},\mathsf{ff}\}).
+Ong--Tzevelekos, *Functional Reachability* (LICS 2009), Lemma 6 / Corollary 7, use exactly
+this system and state explicitly:
 
-**Lemma 13 (order-3 non-universality).** The Boolean Sieber model contains a non-definable
-element at some type `τ` with `ord(τ) ≤ 3`.
+> “Solvability of the system of equations (1) is undecidable at order 3 [Loader].”
 
-*Proof.* Otherwise every Sieber carrier through order 3 is universal.  Given one of Loader's
-order-3 systems, enumerate the finite ambient monotone function space at the type of `X`.
-Membership in the Sieber carrier is decidable under this universality assumption by the same
-two-sided certificate argument as Lemma 6: failure of membership has a finite violated-test
-certificate, while membership has a closed-term witness because every carrier element is
-definable.  For each carrier element the finitely many equations are decidable by table
-evaluation.  Hence solvability of Loader's order-3 systems would be decidable, contradiction.
-$\square$
+They then obtain their reachability lower bounds at order 4 onwards.  Thus the relevant
+piece of Loader's construction is already localized to order 3.
 
-The natural transfer sends such an `h : D^B_τ` to the compact level-1 element
-`i_τ h : D^N_{\hat τ}`, at the same type order.
+**Lemma 13 (order-3 non-universality).** Some Boolean Sieber carrier (D^B_τ), with
+`ord(τ) ≤ 3`, contains a non-definable element.
 
-The relevant converse-to-full-abstraction theorem has a one-order-local proof.  Stoughton
-(1990, Theorem 5.7), reproduced as Lemma 10.9 in Streicher's *Domain-Theoretic Foundations
-of Functional Programming*, proves that an extensional equationally fully abstract PCF model
-has all compact elements definable.  Inspecting the proof gives the following sharper form.
+*Proof.* Suppose every Boolean Sieber carrier through order 3 were universal.  Given an
+order-3 Loader system (18), compute the finite carriers occurring in it bottom-up.  At a
+function type the ambient monotone function space is finite.  Membership in the Sieber
+carrier has two complementary semi-decisions:
 
-**Lemma 14 (local compact definability).** If the model is equationally fully abstract at
-all types of order at most `k+1`, then every compact element at every type of order at most
-`k` is definable.
+* enumerate arities, finite intersections of elementary Sieber relations, and related tuples;
+  a non-member is eventually rejected by a finite violated relation;
+* enumerate closed finitary-PCF terms and compare their finite semantic tables with the
+  candidate; by the assumed universality, every member is eventually accepted.
 
-*Proof.* Suppose not and choose a minimal type
+Dovetail these searches for the finitely many ambient candidates.  Hence the carrier at the
+type of (X) is computable.  Evaluate each candidate (x) on the finitely many tuples
+((a^j_1,\ldots,a^j_n)).  Ground adequacy makes (18) true exactly when these finite table
+values are the specified booleans, and universality says a semantic solution exists exactly
+when a term solution exists.  This decides Loader's order-3 problem, contradiction.
+`□`
+
+This is a localized version of the argument of Sections 2--3: global undecidability is not
+needed.
+
+#### 4.7.2 Transfer gives a compact order-≤3 obstruction
+
+Choose (h\in D^B_τ) from Lemma 13 and put
 ```math
-σ=σ_1\to\cdots\toσ_n\to\mathsf{nat}
+e=i_τ(h)\in D^N_{\widehat τ}.
+\tag{19}
 ```
-of order at most `k` containing a non-definable compact `e`.  The compact elements at
-the proper argument types `σ_i` are definable by minimality.  Stoughton's proof partitions
-the finite set of definable elements in the finite projection containing `e`, and from that
-partition constructs two closed terms which agree on every definable argument but have
-different denotations at `e`.  Both terms have type
+The translation of types preserves order.  By the transfer theorem,
+`ψ^1 e=e`; by Lemma P, (e) is compact.
+
+Assume for the moment that the natural Sieber model is **equationally** fully abstract at
+all types of order at most 4.  Then (e) cannot be PCF-definable.  For if
+(e=⟦M⟧), then
 ```math
-σ\to\mathsf{nat}.
+⟦Ψ^1M⟧=ψ^1e=e=⟦M⟧.
 ```
-By Milner's Context Lemma they are observationally equivalent.  Their type has order
-`ord(σ)+1 ≤ k+1`, contradicting equational full abstraction through order `k+1`.
-The proof needs only the finite projections, extensionality and compact witnesses used above;
-these are available in `D^N`. $\square$
+Equational full abstraction (already at the order-≤3 type of (M)) gives
+(Ψ^1M\simeq M).  Müller's Game Term Theorem gives an equivalent grade-1 game term.
+The grade-1 reinterpretation of §4.4 (Lemma 11) then gives a Boolean term denoting (h),
+contradicting its choice.
 
-We can now locate the failure exactly.
+Thus, under the hypothetical order-4 full abstraction, (D^N) contains a **non-definable
+compact element of order at most 3**.
 
-**Theorem C (first failing order).** Assuming Loader's order-3 equation-solvability result
-and Müller's grade-1 Game Term Theorem, the direct ordinary natural Sieber model `D^N`
-fails **equational** full abstraction at a type of order exactly 4.  Consequently it also fails
-inequational full abstraction at order 4, and by Lemma 12 at every exact order at least 4.
+#### 4.7.3 Stoughton's contradiction costs exactly one order
 
-*Proof.* Suppose `D^N` were equationally fully abstract through order 4.  Choose the
-non-definable Boolean `h : D^B_τ` of Lemma 13, with `ord(τ)≤3`.  The element `i_τh`
-is compact.  By Lemma 14 it is denoted by a closed natural-PCF term `M : \hat τ`.
-Since `i_τh` is fixed by `ψ^1`, `M` and `Ψ^1M` have equal denotations and hence,
-by equational full abstraction (already at order at most 3), are observationally equivalent.
-Müller's theorem supplies a grade-1 game term, hence by the formalized reinterpretation
-argument a Boolean term denoting `h`, contradiction.
+We use the converse compact-definability argument of Stoughton,
+*Equationally fully abstract models of PCF* (MFPS 1989 / LNCS 442, 1990),
+Theorem 5.7.  Streicher's *Domain-Theoretic Foundations of Functional Programming*
+reproduces the argument (Lemma 13.2 in the available version) and explicitly attributes it
+to Stoughton.
 
-Thus equational full abstraction fails at some type of order at most 4.  Sieber proved full
-abstraction for closed terms through order 3, so the first failing order is exactly 4.
-$\square$
+The relevant facts about that proof are:
 
-This sharpening is currently a mathematical consequence recorded here; the Lean endpoint
-`natural_sieber_not_inequationally_fully_abstract` formalizes the non-order-bounded
-inequational result.  Formalizing Lemmas 13--14 would upgrade the checked endpoint to
-Theorem C.
+1. Choose a minimal type
+   ```math
+   σ=σ_1\to\cdots\toσ_n\to\mathsf{nat}
+   ```
+   containing a non-definable compact (e).  Compact elements at each proper argument type
+   (σ_i) are then definable by minimality.
+2. Choose a finite projection level (k) with (e=ψ^k e).  The proof works entirely with
+   the finite image of (ψ^k).
+3. Order extensionality supplies the pointwise order.  Compact inequalities can be witnessed
+   on compact arguments, which are definable by step 1.
+4. The proof uses finite infima.  This is not a parallel operation: at flat ground type
+   (mathsf{glb}(x,y)) is PCF-definable sequentially (evaluate one numeral and then test
+   the other for the same numeral), and at arrow types it is defined pointwise.  Streicher
+   explicitly notes that in the order-extensional case these function-space infima are
+   pointwise and PCF-definable.
+5. From (e), the finite projection, and the finitely many definable elements at that level,
+   Stoughton's construction produces **two closed terms of type**
+   ```math
+   σ\to\mathsf{nat}
+   \tag{20}
+   ```
+   which agree on every closed PCF argument (P:σ), hence are observationally equivalent
+   by the Context Lemma, but whose denotations differ when applied semantically to (e).
+
+Point 5 is the crucial order bookkeeping.  From (17),
+```math
+\operatorname{ord}(σ\to\mathsf{nat})
+ =\operatorname{ord}(σ)+1.
+\tag{21}
+```
+Therefore a non-definable compact at order at most 3 contradicts equational full abstraction
+at a type of order at most 4.
+
+The hypotheses used by this construction are available in the direct ordinary Sieber model:
+continuity and pointwise order, the finite projections and their approximation property,
+compactness of finite-level elements, definable projection terms, standard ground tests,
+and definable finite infima.  Thus the local order accounting of Stoughton's proof applies
+directly; no global SFP presentation is needed beyond the finite-projection facts already
+proved for (D^N).
+
+#### 4.7.4 Exact order
+
+**Theorem C.** Assuming Loader's order-3 equation-solvability result and Müller's Game
+Term Theorem, the direct ordinary natural Sieber model fails equational full abstraction at
+a type of **exact order 4**.
+
+*Proof.* Suppose it were equationally fully abstract through order 4.  Lemma 13 gives the
+Boolean non-definable (h) at order at most 3.  Section 4.7.2 transfers it to a
+non-definable compact (e) of the same order in (D^N).  Stoughton's construction,
+§4.7.3, produces observationally equivalent but denotationally different terms at order at
+most 4, contradiction.
+
+Hence equational full abstraction fails at some order ≤4.  Sieber's 1992 result gives full
+abstraction for closed expressions through order 3.  Therefore the first possible failure
+is not 0, 1, 2 or 3, and so it is exactly
+```math
+\boxed{4}.
+```
+`□`
+
+Since equational failure implies failure of inequational full abstraction, order 4 is also
+the first failure for the inequational notion.  By the definable-retract construction of
+§4.6, failure then occurs at every exact order (n≥4).
+
+**Corollary (where to search concretely).** Under the same assumptions, the order-3
+non-universality obstruction cannot be eliminated by moving it to lower order in the
+order-4 contradiction.  The concrete Boolean search should therefore concentrate on
+order-3 types; `((B→B)→B)→B` is the smallest natural predicate-shaped candidate we have
+been investigating.
+
+#### 4.7.5 Dependency audit
+
+* **Sieber (1992):** positive full-abstraction/completeness result through third-order closed
+  terms.  This supplies the lower bound (k>3).
+* **Loader (2001):** undecidability construction for finitary PCF.  The order-local equation
+  problem used here is the key problem inside that construction.
+* **Ong--Tzevelekos (2009):** explicitly record that Loader's equation-solvability problem is
+  undecidable at order 3, and use it to obtain order-4 reachability lower bounds.  This is
+  the source of the precise order bound in Lemma 13.
+* **Stoughton (1990):** equational full abstraction forces compact definability in
+  extensional PCF models.  We use the internal shape of his proof: a bad compact at (σ)
+  yields the separating pair at (σ→\mathsf{nat}), hence exactly one extra order.
+* **Streicher:** gives a detailed exposition of Stoughton's proof and explicitly notes the
+  PCF-definability of the pointwise infima used there.
+* **Müller (2012):** converts a term fixed observationally by the level-1 projection to a
+  grade-1 game term.  This is used only to show that if the transferred compact (i(h))
+  were natural-PCF definable, then the original Boolean (h) would be definable.
+
+The conclusion concerns the **direct ordinary Sieber model (D^N)** defined in §4.1.
+It still does not identify this direct presentation with Sieber's alternative extensional
+collapse presentation.
 
 ### 4.8 What remains open
 
