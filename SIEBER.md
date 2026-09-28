@@ -376,6 +376,21 @@ semi-Thue-specific higher-type structure is bounded by a fixed order-2 prefix; t
 unbounded feature of Loader's guaranteed family is exactly the first-order tail
 `B^{2n+2}`.
 
+There is no uniform definable retraction of all the growing tails `B^m→B` into one fixed
+finitary-PCF type: every fixed type has a finite semantic carrier, whereas the family has
+arbitrarily many distinct definable coordinate projections as `m` grows.  Thus Loader's
+use of type length is not removable by a fixed finite packing trick.  Moving the input word
+from type arity into term syntax does not evade this finite-state obstruction; some semantic
+component must grow if arbitrarily many word positions are to remain distinguishable.
+
+On the other hand, undecidability gives a useful existential statement about this *explicit*
+family: it cannot be the case that every `σ_n` is universal.  Therefore there is a least
+finite `n₀` such that some element of `D^B_{σ_{n₀}}` is non-definable.  Loader's
+argument does not supply a computable upper bound on `n₀`: such a bound, together with
+the finite carrier computations, would turn the relevant finite prefix of the reduction into
+a decision procedure.  Determining `n₀` is therefore a genuinely new finite-model question,
+not information hidden in the undecidability proof.
+
 Consequently the order-4 counterexample type obtained after the one-order separation step
 may be taken from the explicit family
 ```math
