@@ -45,7 +45,7 @@ def arity3_tests():
 
 def ground_member(R, values):
     a, b, c = values
-    return bool(R >> (9 * a + 3 * b + c) & 1)
+    return bool(R >> (9 * int(a) + 3 * int(b) + int(c)) & 1)
 
 
 # ---------------------------------------------------------------------------
