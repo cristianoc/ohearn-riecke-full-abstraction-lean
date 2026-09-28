@@ -334,6 +334,65 @@ when a term solution exists.  This decides Loader's order-3 problem, contradicti
 This is a localized version of the argument of Sections 2--3: global undecidability is not
 needed.
 
+#### 4.7.1a The concrete Loader type family
+
+Loader's reduction gives substantially more type information than the bare order bound.
+He fixes once and for all an undecidable semi-Thue system
+`W₀, R₁, …, R_N` over `{tt,ff}`.  For a word of length `m`, its encoding has type
+```math
+T_m = B^{,2m+2}\to B.
+```
+Thus `ord(T_m)=1` in the convention (17).  If the fixed rule
+`R_i=[C_i\to C'_i]` has left/right lengths `c_i,c'_i`, Loader's Definition 9 /
+Lemma 8 gives its encoding the type
+```math
+U_i=T_{c_i}\to T_{c'_i},
+```
+of order 2.
+
+For a target word `W` of length `n`, the unknown in Loader's equation system therefore
+has the explicit type
+```math
+σ_n =
+T_{|W_0|}
+\to U_1\to\cdots\to U_N
+\to B^{,2n+2}\to B.                              \tag{19a}
+```
+The prefix through `U_N` is fixed once and for all with the chosen semi-Thue system;
+only the final `2n+2` Boolean arguments grow with the target word.  Since some rule
+argument has order 2, `ord(σ_n)=3`.
+
+This also explains Loader's concluding bookkeeping (he uses the shifted convention
+`ord(B)=1`): word encodings have his order 2, rule encodings order 3, the equation
+variable order 4, and the equivalence terms constructed from it order 5.  Subtracting one
+gives orders 1,2,3,4 here.  Loader states that the latter order bound is optimal and that
+the remaining type lengths are inherited from the semi-Thue system.
+
+The fixed prefix can be normalized further.  Let `L` be the maximum of
+`|W₀|,c_i,c'_i`.  Padding unused Boolean arguments with a fixed Boolean and forgetting
+them gives definable retractions `T_m ◁ T_L` for every fixed `m≤L`.  Retractions lift
+through arrows, so each fixed `U_i` retracts into `T_L→T_L`.  Thus all the
+semi-Thue-specific higher-type structure is bounded by a fixed order-2 prefix; the
+unbounded feature of Loader's guaranteed family is exactly the first-order tail
+`B^{2n+2}`.
+
+Consequently the order-4 counterexample type obtained after the one-order separation step
+may be taken from the explicit family
+```math
+τ_n = σ_n\to B
+```
+on the Boolean side, or after the Boolean-to-natural translation,
+```math
+\widehat τ_n =
+\bigl(
+\widehat T_{|W_0|}
+\to \widehat U_1\to\cdots\to\widehat U_N
+\to \mathsf{nat}^{,2n+2}\to\mathsf{nat}
+\bigr)\to\mathsf{nat}.                           \tag{19b}
+```
+The undecidability argument guarantees that some member of this family carries the
+obstruction; it does **not** identify a particular `n`.
+
 #### 4.7.2 Transfer gives a compact order-≤3 obstruction
 
 Choose (h\in D^B_τ) from Lemma 13 and put
