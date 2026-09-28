@@ -427,6 +427,13 @@ Thus in (19a) one may take `N=3`:
 T_{|W_0|}\to U_1\to U_2\to U_3\to B^{,2n+2}\to B.
 \tag{19c}
 ```
+The system may furthermore be taken over Loader's binary alphabet without increasing the
+number of rules.  If its alphabet is `{a₁,…,a_k}`, use the injective synchronizing code
+`φ(a_i)=a b^i a` and replace each rule `u→v` by `φ(u)→φ(v)`.  Standard accounts of
+the Matiyasevich--Sénizergues reduction note that
+`w→*w'` iff `φ(w)→*φ(w')`; hence individual accessibility and the three-rule count are
+preserved.  The cost is only an increase in the fixed rule lengths.
+
 The final three-rule system in their construction has rules
 ```math
 \rho(L)y\to\rho(M)y,\qquad
