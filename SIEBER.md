@@ -229,7 +229,58 @@ Suppose $`D^N`$ is inequationally fully abstract. Let $`h \in D^B_\tau`$.
 
 So $`D^B`$ is universal, contradicting the theorem of Section 3. $`\square`$
 
-### 4.6 What remains open
+### 4.6 Failure propagates to every higher type order
+
+The location of the first counterexample is not known, but failure cannot disappear again at a
+higher order.
+
+**Lemma 12 (retract transport).** Let `M, N : τ` satisfy
+```math
+M \sqsubseteq N \qquad\text{but}\qquad \llbracket M\rrbracket \not\le \llbracket N\rrbracket.
+```
+Suppose `τ` is a PCF-definable retract of `σ`: there are closed terms
+`e : τ → σ` and `d : σ → τ` such that `d (e x) \simeq x` and, in the model,
+```math
+\llbracket d\rrbracket\circ\llbracket e\rrbracket=\mathrm{id}.
+```
+Then inequational full abstraction also fails at `σ`.
+
+*Proof.* Contextual preorder is a precongruence, so `e M \sqsubseteq e N`. If
+`\llbracket eM\rrbracket\le\llbracket eN\rrbracket`, monotonicity of
+`\llbracket d\rrbracket` and the retraction equation would give
+```math
+\llbracket M\rrbracket
+=\llbracket d(eM)\rrbracket
+\le\llbracket d(eN)\rrbracket
+=\llbracket N\rrbracket,
+```
+a contradiction. $\square$
+
+There is a uniform order-raising retract. Put
+```math
+R(τ)=τ\to τ,\qquad
+e_τ(x)=λz^τ.x,\qquad
+d_τ(f)=f\,Ω_τ.
+```
+Then `d_τ(e_τ x)=x` by β-reduction, both operationally and denotationally. With the
+standard convention
+```math
+\operatorname{ord}(B)=\operatorname{ord}(\mathsf{nat})=0,\qquad
+\operatorname{ord}(σ\to τ)=\max(\operatorname{ord}(σ)+1,\operatorname{ord}(τ)),
+```
+we have
+```math
+\operatorname{ord}(R(τ))=\operatorname{ord}(τ)+1.
+```
+Consequently, if failure occurs at any type of order `k`, then it occurs at a type of
+**every exact order** `n ≥ k`, by iterating `R`.
+
+Combining Theorem B with Sieber's full-abstraction theorem through third-order types gives a
+useful global picture: there is a least failing order `k ≥ 4`, and inequational full abstraction
+fails at every exact order `n ≥ k`. The present argument does **not** determine whether
+`k = 4`; locating that first order is part of the concrete-counterexample problem.
+
+### 4.7 What remains open
 
 - **Equational full abstraction.** Theorem B does not say whether $`M \simeq N \iff ⟦M⟧ = ⟦N⟧`$ fails. The two notions differ in general; see Stoughton, *Equationally fully abstract models of PCF* (MFPS 1989, LNCS 442). (MP) is the only step that needs the inequational form.
 - **Sieber's collapse presentation.** The theorem is about the direct presentation $`D^N`$ (see §4.1), not about the collapse of the invariant elements of the continuous hierarchy.
