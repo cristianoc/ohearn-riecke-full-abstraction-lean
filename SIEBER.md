@@ -236,23 +236,23 @@ higher order.
 
 **Lemma 12 (retract transport).** Let `M, N : τ` satisfy
 ```math
-M \sqsubseteq N \qquad\text{but}\qquad \llbracket M\rrbracket \not\le \llbracket N\rrbracket.
+M \sqsubseteq N \qquad\text{but}\qquad ⟦M⟧ \not\le ⟦N⟧.
 ```
 Suppose `τ` is a PCF-definable retract of `σ`: there are closed terms
 `e : τ → σ` and `d : σ → τ` such that `d (e x) \simeq x` and, in the model,
 ```math
-\llbracket d\rrbracket\circ\llbracket e\rrbracket=\mathrm{id}.
+⟦d⟧\circ⟦e⟧=\mathrm{id}.
 ```
 Then inequational full abstraction also fails at `σ`.
 
 *Proof.* Contextual preorder is a precongruence, so `e M \sqsubseteq e N`. If
-`\llbracket eM\rrbracket\le\llbracket eN\rrbracket`, monotonicity of
-`\llbracket d\rrbracket` and the retraction equation would give
+$`⟦eM⟧\le⟦eN⟧`$, monotonicity of
+$`⟦d⟧`$ and the retraction equation would give
 ```math
-\llbracket M\rrbracket
-=\llbracket d(eM)\rrbracket
-\le\llbracket d(eN)\rrbracket
-=\llbracket N\rrbracket,
+⟦M⟧
+=⟦d(eM)⟧
+\le⟦d(eN)⟧
+=⟦N⟧,
 ```
 a contradiction. $\square$
 
@@ -262,15 +262,15 @@ R(τ)=τ\to τ,\qquad
 e_τ(x)=λz^τ.x,\qquad
 d_τ(f)=f\,Ω_τ.
 ```
-Then `d_τ(e_τ x)=x` by β-reduction, both operationally and denotationally. With the
+Then $`d_τ(e_τ x)=x`$ by β-reduction, both operationally and denotationally. With the
 standard convention
 ```math
-\operatorname{ord}(B)=\operatorname{ord}(\mathsf{nat})=0,\qquad
-\operatorname{ord}(σ\to τ)=\max(\operatorname{ord}(σ)+1,\operatorname{ord}(τ)),
+\mathrm{ord}(B)=\mathrm{ord}(\mathsf{nat})=0,\qquad
+\mathrm{ord}(σ\to τ)=\max(\mathrm{ord}(σ)+1,\mathrm{ord}(τ)),
 ```
 we have
 ```math
-\operatorname{ord}(R(τ))=\operatorname{ord}(τ)+1.
+\mathrm{ord}(R(τ))=\mathrm{ord}(τ)+1.
 ```
 Consequently, if failure occurs at any type of order `k`, then it occurs at a type of
 **every exact order** `n ≥ k`, by iterating `R`.
@@ -288,8 +288,8 @@ the literature.
 
 Use the standard convention
 ```math
-\operatorname{ord}(B)=\operatorname{ord}(\mathsf{nat})=0,\qquad
-\operatorname{ord}(σ\to τ)=\max(\operatorname{ord}(σ)+1,\operatorname{ord}(τ)).
+\mathrm{ord}(B)=\mathrm{ord}(\mathsf{nat})=0,\qquad
+\mathrm{ord}(σ\to τ)=\max(\mathrm{ord}(σ)+1,\mathrm{ord}(τ)).
 \tag{17}
 ```
 This is also the convention used by Ong--Tzevelekos in *Functional Reachability*, so their
@@ -302,7 +302,7 @@ Loader's undecidability proof contains the following finite equation-solvability
 X\,a^j_1\cdots a^j_n \simeq b^j\qquad(j=1,\ldots,m),
 \tag{18}
 ```
-where the (a_i^j) are closed finitary-PCF terms and (b^j\in\{\mathsf{tt},\mathsf{ff}\}).
+where the $`a_i^j`$ are closed finitary-PCF terms and $`b^j\in\{\mathsf{tt},\mathsf{ff}\}`$.
 Ong--Tzevelekos, *Functional Reachability* (LICS 2009), Lemma 6 / Corollary 7, use exactly
 this system and state explicitly:
 
@@ -311,7 +311,7 @@ this system and state explicitly:
 They then obtain their reachability lower bounds at order 4 onwards.  Thus the relevant
 piece of Loader's construction is already localized to order 3.
 
-**Lemma 13 (order-3 non-universality).** Some Boolean Sieber carrier (D^B_τ), with
+**Lemma 13 (order-3 non-universality).** Some Boolean Sieber carrier $`D^B_τ`$, with
 `ord(τ) ≤ 3`, contains a non-definable element.
 
 *Proof.* Suppose every Boolean Sieber carrier through order 3 were universal.  Given an
@@ -325,8 +325,8 @@ carrier has two complementary semi-decisions:
   candidate; by the assumed universality, every member is eventually accepted.
 
 Dovetail these searches for the finitely many ambient candidates.  Hence the carrier at the
-type of (X) is computable.  Evaluate each candidate (x) on the finitely many tuples
-((a^j_1,\ldots,a^j_n)).  Ground adequacy makes (18) true exactly when these finite table
+type of $`X`$ is computable.  Evaluate each candidate $`x`$ on the finitely many tuples
+($`a^j_1,\ldots,a^j_n`$).  Ground adequacy makes (18) true exactly when these finite table
 values are the specified booleans, and universality says a semantic solution exists exactly
 when a term solution exists.  This decides Loader's order-3 problem, contradiction.
 `□`
@@ -356,8 +356,8 @@ under all Sieber relations at a type of order at most 2, it is itself PCF-defina
 the carrier of the ordinary Sieber model consists exactly of the invariant elements.
 Thus
 ```math
-D^B_τ=\{\llbracket M\rrbracket:M:τ\}
-\qquad(\operatorname{ord}(τ)\le2).
+D^B_τ=\{⟦M⟧:M:τ\}
+\qquad(\mathrm{ord}(τ)\le2).
 \tag{18a}
 ```
 
@@ -387,12 +387,12 @@ sequentiality relations.
 
 Loader's reduction gives substantially more type information than the bare order bound.
 He fixes once and for all an undecidable semi-Thue system
-`W₀, R₁, …, R_N` over `{tt,ff}`.  For a word of length `m`, its encoding has type
+$`W₀, R₁, …, R_N`$ over `{tt,ff}`.  For a word of length `m`, its encoding has type
 ```math
 T_m = B^{,2m+2}\to B.
 ```
-Thus `ord(T_m)=1` in the convention (17).  If the fixed rule
-`R_i=[C_i\to C'_i]` has left/right lengths `c_i,c'_i`, Loader's Definition 9 /
+Thus $`\mathrm{ord}(T_m)=1`$ in the convention (17).  If the fixed rule
+$`R_i=[C_i\to C'_i]`$ has left/right lengths $`c_i,c'_i`$, Loader's Definition 9 /
 Lemma 8 gives its encoding the type
 ```math
 U_i=T_{c_i}\to T_{c'_i},
@@ -407,9 +407,9 @@ T_{|W_0|}
 \to U_1\to\cdots\to U_N
 \to B^{,2n+2}\to B.                              \tag{19a}
 ```
-The prefix through `U_N` is fixed once and for all with the chosen semi-Thue system;
+The prefix through $`U_N`$ is fixed once and for all with the chosen semi-Thue system;
 only the final `2n+2` Boolean arguments grow with the target word.  Since some rule
-argument has order 2, `ord(σ_n)=3`.
+argument has order 2, $`\mathrm{ord}(σ_n)=3`$.
 
 This also explains Loader's concluding bookkeeping (he uses the shifted convention
 `ord(B)=1`): word encodings have his order 2, rule encodings order 3, the equation
@@ -428,8 +428,8 @@ T_{|W_0|}\to U_1\to U_2\to U_3\to B^{,2n+2}\to B.
 \tag{19c}
 ```
 The system may furthermore be taken over Loader's binary alphabet without increasing the
-number of rules.  If its alphabet is `{a₁,…,a_k}`, use the injective synchronizing code
-`φ(a_i)=a b^i a` and replace each rule `u→v` by `φ(u)→φ(v)`.  Standard accounts of
+number of rules.  If its alphabet is $`\{a₁,…,a_k\}`$, use the injective synchronizing code
+$`φ(a_i)=a b^i a`$ and replace each rule `u→v` by `φ(u)→φ(v)`.  Standard accounts of
 the Matiyasevich--Sénizergues reduction note that
 `w→*w'` iff `φ(w)→*φ(w')`; hence individual accessibility and the three-rule count are
 preserved.  The cost is only an increase in the fixed rule lengths.
@@ -448,14 +448,14 @@ a bound on the Loader encoding, not a lower bound saying that a non-universal Si
 itself needs three order-2 arguments.
 
 The fixed prefix can be normalized further.  Let `L` be the maximum of
-`|W₀|,c_i,c'_i`.  Padding unused Boolean arguments with a fixed Boolean and forgetting
-them gives definable retractions `T_m ◁ T_L` for every fixed `m≤L`.  Retractions lift
-through arrows, so each fixed `U_i` retracts into `T_L→T_L`.  Thus all the
+$`|W₀|,c_i,c'_i`$.  Padding unused Boolean arguments with a fixed Boolean and forgetting
+them gives definable retractions $`T_m ◁ T_L`$ for every fixed `m≤L`.  Retractions lift
+through arrows, so each fixed $`U_i`$ retracts into $`T_L→T_L`$.  Thus all the
 semi-Thue-specific higher-type structure is bounded by a fixed order-2 prefix; the
 unbounded feature of Loader's guaranteed family is exactly the first-order tail
-`B^{2n+2}`.
+$`B^{2n+2}`$.
 
-There is no uniform definable retraction of all the growing tails `B^m→B` into one fixed
+There is no uniform definable retraction of all the growing tails $`B^m→B`$ into one fixed
 finitary-PCF type: every fixed type has a finite semantic carrier, whereas the family has
 arbitrarily many distinct definable coordinate projections as `m` grows.  Thus Loader's
 use of type length is not removable by a fixed finite packing trick.  Moving the input word
@@ -463,8 +463,8 @@ from type arity into term syntax does not evade this finite-state obstruction; s
 component must grow if arbitrarily many word positions are to remain distinguishable.
 
 On the other hand, undecidability gives a useful existential statement about this *explicit*
-family: it cannot be the case that every `σ_n` is universal.  Therefore there is a least
-finite `n₀` such that some element of `D^B_{σ_{n₀}}` is non-definable.  Loader's argument does not identify `n₀`, nor does the reduction as stated provide an upper
+family: it cannot be the case that every $`σ_n`$ is universal.  Therefore there is a least
+finite `n₀` such that some element of $`D^B_{σ_{n₀}}`$ is non-definable.  Loader's argument does not identify `n₀`, nor does the reduction as stated provide an upper
 bound on it.  (Undecidability alone does **not** prove that no computable upper bound exists;
 that stronger claim would need a separate argument.)  Determining or bounding `n₀` is therefore
 a new finite-model question rather than information directly supplied by Loader's proof.
@@ -488,26 +488,26 @@ obstruction; it does **not** identify a particular `n`.
 
 #### 4.7.2 Transfer gives a compact order-≤3 obstruction
 
-Choose (h\in D^B_τ) from Lemma 13 and put
+Choose $`h\in D^B_τ`$ from Lemma 13 and put
 ```math
 e=i_τ(h)\in D^N_{\widehat τ}.
 \tag{19}
 ```
 The translation of types preserves order.  By the transfer theorem,
-`ψ^1 e=e`; by Lemma P, (e) is compact.
+$`ψ^1 e=e`$; by Lemma P, $`e`$ is compact.
 
 Assume for the moment that the natural Sieber model is **equationally** fully abstract at
-all types of order at most 4.  Then (e) cannot be PCF-definable.  For if
-(e=⟦M⟧), then
+all types of order at most 4.  Then $`e`$ cannot be PCF-definable.  For if
+$`e=⟦M⟧`$, then
 ```math
 ⟦Ψ^1M⟧=ψ^1e=e=⟦M⟧.
 ```
-Equational full abstraction (already at the order-≤3 type of (M)) gives
-(Ψ^1M\simeq M).  Müller's Game Term Theorem gives an equivalent grade-1 game term.
-The grade-1 reinterpretation of §4.4 (Lemma 11) then gives a Boolean term denoting (h),
+Equational full abstraction (already at the order-≤3 type of $`M`$) gives
+$`Ψ^1M\simeq M`$.  Müller's Game Term Theorem gives an equivalent grade-1 game term.
+The grade-1 reinterpretation of §4.4 (Lemma 11) then gives a Boolean term denoting $`h`$,
 contradicting its choice.
 
-Thus, under the hypothetical order-4 full abstraction, (D^N) contains a **non-definable
+Thus, under the hypothetical order-4 full abstraction, $`D^N`$ contains a **non-definable
 compact element of order at most 3**.
 
 #### 4.7.3 Stoughton's contradiction costs exactly one order
@@ -524,10 +524,10 @@ The relevant facts about that proof are:
    ```math
    σ=σ_1\to\cdots\toσ_n\to\mathsf{nat}
    ```
-   containing a non-definable compact (e).  Compact elements at each proper argument type
-   (σ_i) are then definable by minimality.
-2. Choose a finite projection level (k) with (e=ψ^k e).  The proof works entirely with
-   the finite image of (ψ^k).
+   containing a non-definable compact $`e`$.  Compact elements at each proper argument type
+   $`σ_i`$ are then definable by minimality.
+2. Choose a finite projection level $`k`$ with $`e=ψ^k e`$.  The proof works entirely with
+   the finite image of $`ψ^k`$.
 3. Order extensionality supplies the pointwise order.  Compact inequalities can be witnessed
    on compact arguments, which are definable by step 1.
 4. The proof uses finite infima.  This is not a parallel operation: at flat ground type
@@ -535,19 +535,19 @@ The relevant facts about that proof are:
    the other for the same numeral), and at arrow types it is defined pointwise.  Streicher
    explicitly notes that in the order-extensional case these function-space infima are
    pointwise and PCF-definable.
-5. From (e), the finite projection, and the finitely many definable elements at that level,
+5. From $`e`$, the finite projection, and the finitely many definable elements at that level,
    Stoughton's construction produces **two closed terms of type**
    ```math
    σ\to\mathsf{nat}
    \tag{20}
    ```
    which agree on every closed PCF argument (P:σ), hence are observationally equivalent
-   by the Context Lemma, but whose denotations differ when applied semantically to (e).
+   by the Context Lemma, but whose denotations differ when applied semantically to $`e`$.
 
 Point 5 is the crucial order bookkeeping.  From (17),
 ```math
-\operatorname{ord}(σ\to\mathsf{nat})
- =\operatorname{ord}(σ)+1.
+\mathrm{ord}(σ\to\mathsf{nat})
+ =\mathrm{ord}(σ)+1.
 \tag{21}
 ```
 Therefore a non-definable compact at order at most 3 contradicts equational full abstraction
@@ -558,7 +558,7 @@ continuity and pointwise order, the finite projections and their approximation p
 compactness of finite-level elements, definable projection terms, standard ground tests,
 and definable finite infima.  Thus the local order accounting of Stoughton's proof applies
 directly; no global SFP presentation is needed beyond the finite-projection facts already
-proved for (D^N).
+proved for $`D^N`$.
 
 #### 4.7.4 Exact order
 
@@ -567,8 +567,8 @@ Term Theorem, the direct ordinary natural Sieber model fails equational full abs
 a type of **exact order 4**.
 
 *Proof.* Suppose it were equationally fully abstract through order 4.  Lemma 13 gives the
-Boolean non-definable (h) at order at most 3.  Section 4.7.2 transfers it to a
-non-definable compact (e) of the same order in (D^N).  Stoughton's construction,
+Boolean non-definable $`h`$ at order at most 3.  Section 4.7.2 transfers it to a
+non-definable compact $`e`$ of the same order in $`D^N`$.  Stoughton's construction,
 §4.7.3, produces observationally equivalent but denotationally different terms at order at
 most 4, contradiction.
 
@@ -600,15 +600,15 @@ been investigating.
   undecidable at order 3, and use it to obtain order-4 reachability lower bounds.  This is
   the source of the precise order bound in Lemma 13.
 * **Stoughton (1990):** equational full abstraction forces compact definability in
-  extensional PCF models.  We use the internal shape of his proof: a bad compact at (σ)
-  yields the separating pair at (σ→\mathsf{nat}), hence exactly one extra order.
+  extensional PCF models.  We use the internal shape of his proof: a bad compact at $`σ`$
+  yields the separating pair at $`σ→\mathsf{nat}`$, hence exactly one extra order.
 * **Streicher:** gives a detailed exposition of Stoughton's proof and explicitly notes the
   PCF-definability of the pointwise infima used there.
 * **Müller (2012):** converts a term fixed observationally by the level-1 projection to a
-  grade-1 game term.  This is used only to show that if the transferred compact (i(h))
-  were natural-PCF definable, then the original Boolean (h) would be definable.
+  grade-1 game term.  This is used only to show that if the transferred compact $`i(h)`$
+  were natural-PCF definable, then the original Boolean $`h`$ would be definable.
 
-The conclusion concerns the **direct ordinary Sieber model (D^N)** defined in §4.1.
+The conclusion concerns the **direct ordinary Sieber model $`D^N`$** defined in §4.1.
 It still does not identify this direct presentation with Sieber's alternative extensional
 collapse presentation.
 

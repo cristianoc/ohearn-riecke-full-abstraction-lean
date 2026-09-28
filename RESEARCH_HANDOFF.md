@@ -23,7 +23,9 @@ The O'Hearn--Riecke Kripke development, including `finiteTest`, is also kernel c
 `SIEBER.md` records order-local consequences:
 
 * ordinary-Sieber universality holds through order 2 and fails somewhere at exact order 3;
-* full abstraction holds through order 3 and first fails at exact order 4;
+* equational full abstraction of the direct natural model holds through order 3 and first
+  fails at exact order 4, assuming Loader's order-3 result, Müller's Game Term Theorem and
+  Stoughton's compact-definability construction;
 * failure propagates to every higher exact order by a definable retract;
 * Loader's guaranteed order-3 obstruction can be localized to an explicit family
   `T_|W0| -> U1 -> U2 -> U3 -> B^(2n+2) -> B` using a fixed three-rule accessibility
@@ -49,8 +51,10 @@ finite certificate is explicitly verified.
   `gpu/data/m4_export/`.
 * SAT then constructed genuinely non-definable arity-3-preserving candidates.  A particularly
   small three-cone candidate is ff on `up(129) U up(272) U up(321)` and bottom elsewhere.
-  Its non-definability has a small first-call compatibility argument.
-* These are NOT Sieber counterexamples: complete arity-4 intersection search finds ordinary
+  Its non-definability has a small first-call compatibility argument, which relies on the
+  standard head-call lemma for normal forms (not yet written out).
+* These are NOT Sieber counterexamples: a search over all 17,240 arity-4 intersections
+  (1,027 up to coordinate permutation), stopped once witnesses were found, finds ordinary
   relations killing both the three-cone and 20-cone candidates.  The first three-cone killer
   and tuple are documented in `gpu/REPORT.md`.
 * Lesson: elementary arity-4 tests are insufficient; intersections are essential.  Finite
@@ -96,13 +100,15 @@ complete.
 
 ## 4. Kripke separator search already performed
 
-See `gpu/search_kripke_two_world.py` and `gpu/data/kripke_separator.json`.
+See `gpu/kripke_separator.py` (the search), `gpu/search_kripke_two_world.py` (the relation
+generator) and `gpu/data/kripke_separator.json`.
 
 Smallest case searched:
 
 * lower world arity 2;
 * one extension of arity 3;
-* every relevant reindexing map up to symmetry;
+* reindexing maps up to symmetry: a constant map, a map with fibres of sizes 2 and 1, and the
+  set of all surjections (other sets of maps were not tried);
 * all 676 compatible computable two-world Kripke relations built from arbitrary ordinary
   sequentiality relations.
 
@@ -116,12 +122,14 @@ Only tuples in E could separate a functional already preserving R.
 
 Result: **E is empty for every one of the 676 cases.**
 
-The implementation observed a structural cancellation:
+What was observed is only the inclusion `K_D2(w) ⊆ R^ord_D2(w)`.  The reverse inclusion was
+not checked, and the size of the enlargement before reindexing was not measured.  The likely
+mechanism:
 
 * extension shrinks the admissible relation at D1, which alone would enlarge the arrow
   relation at D2;
 * the Kripke reindexing/future-world obligation requires the pulled-back tuple to satisfy the
-  ordinary relation upstairs, and removes exactly those apparent extra D2 tuples.
+  ordinary relation upstairs, which apparently removes those extra D2 tuples.
 
 This is the current frontier.
 
@@ -131,7 +139,8 @@ Before running the expensive arity-3 -> arity-4 one-extension search, investigat
 
 > **One-step collapse conjecture.**  For a two-world frame w < w+ with compatible
 > sequentiality relations at ground type, does the lower-world Kripke relation at
-> D2 = (B->B)->B always equal the corresponding ordinary single-world lift?
+> D2 = (B->B)->B always equal the corresponding ordinary single-world lift?  (The data so far
+> shows only `⊆` in the 676 cases searched.)
 
 If yes in general, skip every larger one-step experiment.
 

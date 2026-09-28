@@ -208,4 +208,4 @@ the tuples made related only by world extension. Maps into the extension world r
 - $`R(w)`$ ranges over the arity-2 tests and $`R(w^+)`$ over the arity-3 tests;
 - the maps $`w^+\to w`$ are, up to symmetry, a constant map, a map with fibre sizes 2 and 1, or all surjections.
 
-At this size the extension shrinks the relation at $`D_1`$, but the conditions it adds at $`D_2`$ (the reindexed $`G\circ p`$ must be related at $`w^+`$) remove every new pair. No separation is possible with these worlds.
+In other words $`K_{D_2}(w)\subseteq R^{\mathrm{ord}}_{D_2}(w)`$ in every case; the reverse inclusion was not checked. The likely mechanism is that the extension shrinks the relation at $`D_1`$, while the condition it adds at $`D_2`$ (the reindexed $`G\circ p`$ must be related at $`w^+`$) removes the new pairs. No separation is possible with these worlds.
