@@ -280,7 +280,92 @@ useful global picture: there is a least failing order `k ≥ 4`, and inequationa
 fails at every exact order `n ≥ k`. The present argument does **not** determine whether
 `k = 4`; locating that first order is part of the concrete-counterexample problem.
 
-### 4.7 What remains open
+### 4.7 The first failing order is 4
+
+The preceding argument can be sharpened using the order bounds already present in Loader's
+construction and the local form of the Milner--Stoughton compact-definability argument.
+
+Use the standard convention
+```math
+\operatorname{ord}(B)=\operatorname{ord}(\mathsf{nat})=0,\qquad
+\operatorname{ord}(σ\to τ)=\max(\operatorname{ord}(σ)+1,\operatorname{ord}(τ)).
+```
+
+**Order-3 Loader lemma.** Loader's proof contains an undecidable problem of solving finite
+systems of finitary-PCF equations
+```math
+X\,a^j_1\cdots a^j_n \simeq b^j \qquad (j=1,\ldots,m),
+```
+already when the type of `X` has order 3.  Ong and Tzevelekos make this order bound
+explicit in *Functional Reachability* (LICS 2009, after Corollary 7): “Solvability of the
+system of equations (1) is undecidable at order 3 [Loader].”
+
+**Lemma 13 (order-3 non-universality).** The Boolean Sieber model contains a non-definable
+element at some type `τ` with `ord(τ) ≤ 3`.
+
+*Proof.* Otherwise every Sieber carrier through order 3 is universal.  Given one of Loader's
+order-3 systems, enumerate the finite ambient monotone function space at the type of `X`.
+Membership in the Sieber carrier is decidable under this universality assumption by the same
+two-sided certificate argument as Lemma 6: failure of membership has a finite violated-test
+certificate, while membership has a closed-term witness because every carrier element is
+definable.  For each carrier element the finitely many equations are decidable by table
+evaluation.  Hence solvability of Loader's order-3 systems would be decidable, contradiction.
+$\square$
+
+The natural transfer sends such an `h : D^B_τ` to the compact level-1 element
+`i_τ h : D^N_{\hat τ}`, at the same type order.
+
+The relevant converse-to-full-abstraction theorem has a one-order-local proof.  Stoughton
+(1990, Theorem 5.7), reproduced as Lemma 10.9 in Streicher's *Domain-Theoretic Foundations
+of Functional Programming*, proves that an extensional equationally fully abstract PCF model
+has all compact elements definable.  Inspecting the proof gives the following sharper form.
+
+**Lemma 14 (local compact definability).** If the model is equationally fully abstract at
+all types of order at most `k+1`, then every compact element at every type of order at most
+`k` is definable.
+
+*Proof.* Suppose not and choose a minimal type
+```math
+σ=σ_1\to\cdots\toσ_n\to\mathsf{nat}
+```
+of order at most `k` containing a non-definable compact `e`.  The compact elements at
+the proper argument types `σ_i` are definable by minimality.  Stoughton's proof partitions
+the finite set of definable elements in the finite projection containing `e`, and from that
+partition constructs two closed terms which agree on every definable argument but have
+different denotations at `e`.  Both terms have type
+```math
+σ\to\mathsf{nat}.
+```
+By Milner's Context Lemma they are observationally equivalent.  Their type has order
+`ord(σ)+1 ≤ k+1`, contradicting equational full abstraction through order `k+1`.
+The proof needs only the finite projections, extensionality and compact witnesses used above;
+these are available in `D^N`. $\square$
+
+We can now locate the failure exactly.
+
+**Theorem C (first failing order).** Assuming Loader's order-3 equation-solvability result
+and Müller's grade-1 Game Term Theorem, the direct ordinary natural Sieber model `D^N`
+fails **equational** full abstraction at a type of order exactly 4.  Consequently it also fails
+inequational full abstraction at order 4, and by Lemma 12 at every exact order at least 4.
+
+*Proof.* Suppose `D^N` were equationally fully abstract through order 4.  Choose the
+non-definable Boolean `h : D^B_τ` of Lemma 13, with `ord(τ)≤3`.  The element `i_τh`
+is compact.  By Lemma 14 it is denoted by a closed natural-PCF term `M : \hat τ`.
+Since `i_τh` is fixed by `ψ^1`, `M` and `Ψ^1M` have equal denotations and hence,
+by equational full abstraction (already at order at most 3), are observationally equivalent.
+Müller's theorem supplies a grade-1 game term, hence by the formalized reinterpretation
+argument a Boolean term denoting `h`, contradiction.
+
+Thus equational full abstraction fails at some type of order at most 4.  Sieber proved full
+abstraction for closed terms through order 3, so the first failing order is exactly 4.
+$\square$
+
+This sharpening is currently a mathematical consequence recorded here; the Lean endpoint
+`natural_sieber_not_inequationally_fully_abstract` formalizes the non-order-bounded
+inequational result.  Formalizing Lemmas 13--14 would upgrade the checked endpoint to
+Theorem C.
+
+### 4.8 What remains open
 
 - **Equational full abstraction.** Theorem B does not say whether $`M \simeq N \iff ⟦M⟧ = ⟦N⟧`$ fails. The two notions differ in general; see Stoughton, *Equationally fully abstract models of PCF* (MFPS 1989, LNCS 442). (MP) is the only step that needs the inequational form.
 - **Sieber's collapse presentation.** The theorem is about the direct presentation $`D^N`$ (see §4.1), not about the collapse of the invariant elements of the continuous hierarchy.
