@@ -102,7 +102,7 @@ Full abstraction for open terms implies this, so failing it for closed terms is 
 
 **(MP) Milner's compact-definability theorem** (R. Milner, *Fully abstract models of typed λ-calculi*, TCS 4, 1977). In an order-extensional, ω-algebraic model of PCF in which $`\mathsf{fix}`$ denotes least fixed points, inequational full abstraction implies that every compact element is definable. Lemma P below shows that $`D^N`$ meets these premises. Constants are interpreted standardly and application is continuous, by construction. Curien (*Definability and full abstraction*, GDP Festschrift, ENTCS) states Milner's result in this form: a fully abstract model of PCF on algebraic cpos must be order-extensional and have all compact elements definable.
 
-**(GT) Müller's Game Term Theorem** (F. Müller, *On Berry's conjectures about the stable order in PCF*, LMCS 8(4), 2012, Theorem 4.12, taking $`M = N`$ and $`i = j`$). A *finite term of grade $`i`$* is a closed term with $`M \simeq Ψ^i M`$ (Definition 3.1). Every such term is observationally equivalent to a *game term of grade $`i`$* (Definition 4.1). At grade 1, his projection is
+**(GT) Müller's Game Term Theorem** (F. Müller, *On Berry's conjectures about the stable order in PCF*, LMCS 8(4), 2012, Theorem 4.12, taking $`M = N`$ and $`i = j`$). A *finite term of grade* $`i`$ is a closed term with $`M \simeq Ψ^i M`$ (Definition 3.1). Every such term is observationally equivalent to a *game term of grade* $`i`$ (Definition 4.1). At grade 1, his projection is
 ```math
 Ψ_1^{\mathsf{nat}} = λx.\,\mathsf{if}\ x\ \mathsf{then}\ 0\ \mathsf{else}\ \mathsf{if}\ \mathsf{pre}\ x\ \mathsf{then}\ 1\ \mathsf{else}\ ⊥,
 \qquad
@@ -185,12 +185,7 @@ i_{\sigma\to\rho}(f) = i_\rho \circ f \circ r_\sigma, \qquad r_{\sigma\to\rho}(F
 *Proof.* The four items are proved together, by induction on $`\tau`$. The ground case is Lemma 7 together with $`\bigsqcup E \in E`$ in a flat domain. Let $`\tau = \sigma\to\rho`$.
 - *Relations.* For the first half of 2, apply the inductive 2 at $`\sigma`$ (second half) and at $`\rho`$ (first half), and use $`r_\sigma i_\sigma = \mathrm{id}`$ for the converse direction. The second half of 2 is similar. Applied to constant tuples, 2 shows that $`i_{\sigma\to\rho}(f)`$ and $`r_{\sigma\to\rho}(F)`$ preserve every test.
 - *Continuity.* $`i_{\sigma\to\rho}(f)`$ is continuous because, by 4 at $`\sigma`$, $`r_\sigma(\bigsqcup E) = r_\sigma(e)`$ for some $`e \in E`$.
-- *Inverse laws.* These are the computations
-  ```math
-  r_\rho(i_\rho(f(r_\sigma(i_\sigma a)))) = f(a),
-  \qquad
-  i_\rho(r_\rho(F(i_\sigma(r_\sigma x)))) = ψ^1(F(ψ^1 x)).
-  ```
+- *Inverse laws.* These are the computations $`r_\rho(i_\rho(f(r_\sigma(i_\sigma a)))) = f(a)`$ and $`i_\rho(r_\rho(F(i_\sigma(r_\sigma x)))) = ψ^1(F(ψ^1 x))`$.
 - *Item 4.* Since $`D^B_\sigma`$ is finite, 4 at $`\rho`$ gives, for each $`a`$, some $`F_a \in E`$ with $`r_\rho((\bigsqcup E)(i_\sigma a)) = r_\rho(F_a(i_\sigma a))`$. Let $`e \in E`$ be an upper bound of the finitely many $`F_a`$. Then $`r_{\sigma\to\rho}(e)`$ and $`r_{\sigma\to\rho}(\bigsqcup E)`$ agree, by monotonicity and antisymmetry. $`\square`$
 
 **Lemma 9.** $`D^B_\tau \cong \{x \in D^N_{\hat\tau} \mid ψ^1 x = x\}`$ via $`i_\tau`$ and $`r_\tau`$. This follows from item 3.
@@ -222,10 +217,7 @@ Suppose $`D^N`$ is inequationally fully abstract. Let $`h \in D^B_\tau`$.
 1. By Lemma 10 and (MP) there is a closed $`M`$ with $`⟦M⟧ = i_\tau h`$.
 2. Since $`ψ^1(i_\tau h) = i_\tau h`$, we have $`⟦Ψ^1 M⟧ = ⟦M⟧`$, so $`Ψ^1 M \simeq M`$ by full abstraction.
 3. By (GT) there is a Boolean term $`G`$ with $`\widehat G \simeq M`$, and full abstraction gives $`⟦\widehat G⟧ = i_\tau h`$.
-4. By Lemma 11, $`L_\tau(i_\tau h, ⟦G⟧_B)`$, hence
-   ```math
-   ⟦G⟧_B = r_\tau(i_\tau h) = h.
-   ```
+4. By Lemma 11, $`L_\tau(i_\tau h, ⟦G⟧_B)`$, hence $`⟦G⟧_B = r_\tau(i_\tau h) = h`$.
 
 So $`D^B`$ is universal, contradicting the theorem of Section 3. $`\square`$
 
@@ -520,10 +512,7 @@ to Stoughton.
 
 The relevant facts about that proof are:
 
-1. Choose a minimal type
-   ```math
-   σ=σ_1\to\cdots\toσ_n\to\mathsf{nat}
-   ```
+1. Choose a minimal type $`σ=σ_1\to\cdots\toσ_n\to\mathsf{nat}`$
    containing a non-definable compact $`e`$.  Compact elements at each proper argument type
    $`σ_i`$ are then definable by minimality.
 2. Choose a finite projection level $`k`$ with $`e=ψ^k e`$.  The proof works entirely with
@@ -536,12 +525,8 @@ The relevant facts about that proof are:
    explicitly notes that in the order-extensional case these function-space infima are
    pointwise and PCF-definable.
 5. From $`e`$, the finite projection, and the finitely many definable elements at that level,
-   Stoughton's construction produces **two closed terms of type**
-   ```math
-   σ\to\mathsf{nat}
-   \tag{20}
-   ```
-   which agree on every closed PCF argument (P:σ), hence are observationally equivalent
+   Stoughton's construction produces **two closed terms of type** $`σ\to\mathsf{nat}`$ (20),
+   which agree on every closed PCF argument $`P:σ`$, hence are observationally equivalent
    by the Context Lemma, but whose denotations differ when applied semantically to $`e`$.
 
 Point 5 is the crucial order bookkeeping.  From (17),

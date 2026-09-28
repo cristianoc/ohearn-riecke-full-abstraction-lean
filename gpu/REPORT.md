@@ -57,24 +57,24 @@ Classes are taken up to the 16 symmetries of $`τ_0`$. These swap $`tt/ff`$ inde
   - $`S^3_{\{0\},\{012\}}\cap S^3_{\{1,2\},\{012\}}`$: 761 certificates;
   - $`S^3_{\{0\},\{012\}}\cap S^3_{\{1,2\},\{1,2\}}`$: 29 certificates.
 
-  The single relation $`S^3_{01,012}`$ kills nothing here.
+The single relation $`S^3_{01,012}`$ kills nothing here.
 
-  Explicitly, as ground relations on $`B^3`$:
-  ```math
-  R_1 = S^3_{\{0\},\{012\}}\cap S^3_{\{1,2\},\{012\}}
-      = \{ttt,\ fff\}\cup\{\bot\bot\bot,\ \bot\bot t,\ \bot\bot f,\ \bot t\bot,\ \bot f\bot\},
-  ```
-  ```math
-  R_2 = S^3_{\{0\},\{012\}}\cap S^3_{\{1,2\},\{1,2\}}
-      = R_1\cup\{\bot tt,\ \bot ff\}.
-  ```
-  Both say that if $`x_0`$ is defined, the triple is constant. They differ on the other two coordinates:
-  - $`R_1`$: if $`x_1`$ and $`x_2`$ are both defined, the whole triple is constant, so $`x_0`$ must be defined too;
-  - $`R_2`$: if $`x_1`$ and $`x_2`$ are both defined, they must be equal, but $`x_0`$ may be $`\bot`$.
+Explicitly, as ground relations on $`B^3`$:
+```math
+R_1 = S^3_{\{0\},\{012\}}\cap S^3_{\{1,2\},\{012\}}
+    = \{ttt,\ fff\}\cup\{\bot\bot\bot,\ \bot\bot t,\ \bot\bot f,\ \bot t\bot,\ \bot f\bot\},
+```
+```math
+R_2 = S^3_{\{0\},\{012\}}\cap S^3_{\{1,2\},\{1,2\}}
+    = R_1\cup\{\bot tt,\ \bot ff\}.
+```
+Both say that if $`x_0`$ is defined, the triple is constant. They differ on the other two coordinates:
+- $`R_1`$: if $`x_1`$ and $`x_2`$ are both defined, the whole triple is constant, so $`x_0`$ must be defined too;
+- $`R_2`$: if $`x_1`$ and $`x_2`$ are both defined, they must be equal, but $`x_0`$ may be $`\bot`$.
 
-  For a candidate $`h`$, a violation is a related triple $`(F_0,F_1,F_2)`$ of $`D_2`$ on which:
-  - $`R_1`$: $`h`$ is defined on $`F_0`$ but not constant; or $`h`$ is defined on $`F_1`$ and $`F_2`$ but not on $`F_0`$, or not constant.
-  - $`R_2`$: $`h`$ is defined on $`F_0`$ but not constant; or $`h`$ is defined on $`F_1`$ and $`F_2`$ with different values.
+For a candidate $`h`$, a violation is a related triple $`(F_0,F_1,F_2)`$ of $`D_2`$ on which:
+- $`R_1`$: $`h`$ is defined on $`F_0`$ but not constant; or $`h`$ is defined on $`F_1`$ and $`F_2`$ but not on $`F_0`$, or not constant.
+- $`R_2`$: $`h`$ is defined on $`F_0`$ but not constant; or $`h`$ is defined on $`F_1`$ and $`F_2`$ with different values.
 
 ## Arity-4 diagnostic (`diag_arity4.py`)
 
@@ -181,11 +181,7 @@ Neither $`h`$ nor $`h_3`$ is killed by the 61 elementary arity-4 relations $`S^4
 
 There are 17,240 distinct intersections of $`S^4_{A,B}`$, or 1,027 up to coordinate permutation. For each one, z3 searches for a related tuple of $`D_2`$ whose image under the candidate lies outside the relation, and every witness is re-verified directly. The positive control (a random table) is killed.
 
-- $`h_3`$ is **killed**: 39 of the first 400 tests already have witnesses. The first is the relation
-  ```math
-  R = S^4_{\{0\},\{0123\}}\cap S^4_{\{1,2\},\{1,2\}}\cap S^4_{\{1,3\},\{1,3\}}\cap S^4_{\{1,2,3\},\{0123\}}
-  ```
-  with the tuple $`(12,\,129,\,323,\,276)`$. Coordinates 1–3 lie in the three cones (above 129, 321 and 272), and 12 is a common lower bound of all three. The outputs are $`(\bot,ff,ff,ff)`$, but $`R`$ requires coordinate 0 to be defined whenever coordinates 1, 2 and 3 all are. This is the four-coordinate form of the main arity-3 killer, and it detects exactly the three-way "parallel" convergence behind the non-definability proof.
+- $`h_3`$ is **killed**: 39 of the first 400 tests already have witnesses. The first is the relation $`R = S^4_{\{0\},\{0123\}}\cap S^4_{\{1,2\},\{1,2\}}\cap S^4_{\{1,3\},\{1,3\}}\cap S^4_{\{1,2,3\},\{0123\}}`$ with the tuple $`(12,\,129,\,323,\,276)`$. Coordinates 1–3 lie in the three cones (above 129, 321 and 272), and 12 is a common lower bound of all three. The outputs are $`(\bot,ff,ff,ff)`$, but $`R`$ requires coordinate 0 to be defined whenever coordinates 1, 2 and 3 all are. This is the four-coordinate form of the main arity-3 killer, and it detects exactly the three-way "parallel" convergence behind the non-definability proof.
 - The 20-cone table is **killed** too, by the tuple $`(2,\,259,\,321,\,78)`$.
 
 **Conclusion.** Neither table is in Sieber's model. The first-call obstruction ("no monotone $`ψ`$ makes the first call total") is sound for non-definability, but here the arity-4 relations see it as well.
