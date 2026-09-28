@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+"""Finite search scaffolding for a concrete Sieber counterexample.
+
+Exact for the ordinary Boolean Sieber model at the types currently implemented.
+It canonicalises a test by its ground relation (so all finite intersections are
+covered, not merely elementary generators).
+
+Current exact results (tests through arity 3):
+  B -> B:                  11 elements
+  (B -> B) -> B:
+      monotone candidates 397
+      after arity <= 2     397
+      after arity <= 3     355
+
+The next target is an order-4 type.  Do not enumerate 3^355 tables: encode
+monotonicity + preservation as SAT/SMT constraints.
+"""
+from itertools import product
+
+BOT, TT, FF = 0, 1, 2
+VALS = range(3)
+
+def flat_le(a, b):
+    return a == BOT or a == b
+
+def elementary(w, A, B, tup):
+    return any(tup[i] == BOT for i in A) or all(tup[i] == tup[j] for i in B for j in B)
+
+def tests(w):
+    """All distinct finite intersections of elementary relations at arity w."""
+    tuples = list(product(VALS, repeat=w))
+    subs = [{i for i in range(w) if mask >> i & 1} for mask in range(1 << w)]
+    gens = []
+    for A in subs:
+        for B in subs:
+            if A <= B:
+                r = tuple(elementary(w, A, B, t) for t in tuples)
+                if r not in gens:
+                    gens.append(r)
+    closure = {tuple(True for _ in tuples)}
+    for g in gens:
+        closure |= {tuple(a and b for a, b in zip(r, g)) for r in list(closure)}
+    return tuples, list(closure)
+
+def monotone_B_B():
+    return [f for f in product(VALS, repeat=3)
+            if all(not flat_le(a,b) or flat_le(f[a],f[b]) for a in VALS for b in VALS)]
+
+B1 = monotone_B_B()
+
+def pointwise_le(f, g):
+    return all(flat_le(a,b) for a,b in zip(f,g))
+
+def monotone_B1_B():
+    les = [(i,j) for i,f in enumerate(B1) for j,g in enumerate(B1) if pointwise_le(f,g)]
+    return [h for h in product(VALS, repeat=len(B1))
+            if all(flat_le(h[i],h[j]) for i,j in les)]
+
+def related_B1_tuple(F, ground, R, index):
+    for n,t in enumerate(ground):
+        if R[n]:
+            out = tuple(B1[F[k]][t[k]] for k in range(len(F)))
+            if not R[index[out]]:
+                return False
+    return True
+
+def filter_B2(candidates, max_arity=3):
+    cur = candidates
+    for w in range(1, max_arity+1):
+        ground, rs = tests(w)
+        index = {t:i for i,t in enumerate(ground)}
+        for R in rs:
+            related = [F for F in product(range(len(B1)), repeat=w)
+                       if related_B1_tuple(F, ground, R, index)]
+            cur = [h for h in cur
+                   if all(R[index[tuple(h[i] for i in F)]] for F in related)]
+        print(f"arity {w}: {len(rs)} distinct tests; {len(cur)} elements remain")
+    return cur
+
+
+
+
+if __name__ == "__main__":
+    print("B->B:", len(B1))
+    B2mono = monotone_B1_B()
+    print("(B->B)->B monotone:", len(B2mono))
+    B2 = filter_B2(B2mono, 3)
+    print("(B->B)->B ordinary-Sieber through arity 3:", len(B2))
+    defs = definable_B2()
+    print("(B->B)->B definable:", len(defs))
+    assert len(defs) == len(B2) == 355

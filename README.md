@@ -72,6 +72,18 @@ Each type denotes a domain together with, for every test and world, a relation o
 
 `Examples` checks, among other things, that parallel-or is not in the model (`no_parallel_or`): the uniform arrow carrier excludes it, as the full Scott function space would not.
 
+## Sieber's ordinary relations fail inequational full abstraction
+
+The paper leaves open whether Sieber's fixed-arity sequentiality relations already give full abstraction. `OR/Sieber/` proves two results; [`SIEBER.md`](SIEBER.md) gives the mathematics.
+
+- **Not universal** (`sieber_not_universal`). For finitary PCF, with Loader's undecidability theorem as a hypothesis, some element of Sieber's model is not the denotation of any closed term. This alone does not settle the question, since a model with non-definable elements can still be fully abstract.
+- **Not inequationally fully abstract** (`natural_sieber_not_inequationally_fully_abstract`). For PCF over $`\mathbb N_\bot`$, the model built like this paper's but with Sieber's relations in place of Kripke relations does not have $`M \sqsubseteq N \iff ⟦M⟧ \le ⟦N⟧`$ for all closed terms. The hypotheses are:
+  - Loader's theorem;
+  - Milner's compact-definability theorem (1977), whose premises are proved for the model;
+  - Müller's Game Term Theorem (2012).
+
+  Equational full abstraction remains open.
+
 ## Layout
 
 | Files | Contents |
@@ -86,8 +98,10 @@ Each type denotes a domain together with, for every test and world, a relation o
 | `OR/FullAbstraction.lean` | Contexts, separation, denotational full abstraction. |
 | `OR/Operational.lean`, `OR/Adequacy.lean`, `OR/Observations.lean` | Operational semantics, adequacy, operational full abstraction. |
 | `OR/Examples.lean`, `OR/AxiomAudit.lean` | Regression examples; axiom audit. |
+| `OR/Sieber/` | Finitary PCF and Sieber's model (not universal); Sieber's model over $`ℕ_⊥`$ (not inequationally fully abstract). See `SIEBER.md`. |
+| `SIEBER.md` | The mathematical proofs of the two Sieber results, the external theorems they assume, and what remains open. |
 | `paper/` | The paper (SURFACE copy). |
-| `scripts/` | `check.sh` and the two audit scripts. |
+| `scripts/` | `check.sh` and the two audit scripts; `search_*.py` are unmaintained notes from a counterexample search, not part of the proof. |
 
 ## Build
 

@@ -14,6 +14,8 @@ import OR.Operational
 import OR.Adequacy
 import OR.Observations
 import OR.Examples
+import OR.Sieber.Main
+import OR.Sieber.NotFullyAbstract
 
 /-!
 # O'Hearn--Riecke: Kripke Logical Relations and PCF
