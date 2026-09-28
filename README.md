@@ -82,7 +82,7 @@ The paper leaves open whether Sieber's fixed-arity sequentiality relations alrea
   - Milner's compact-definability theorem (1977), whose premises are proved for the model;
   - Müller's Game Term Theorem (2012).
 
-  A further order-local argument in `SIEBER.md` derives failure of **equational** full abstraction already at exact order 4; this strengthening is not yet formalised in Lean.
+  `SIEBER.md` also records source-audited order-local consequences (not new Lean endpoints): ordinary-Sieber universality first fails at order 3, and full abstraction first fails at order 4. The separate research tooling and negative counterexample search are documented in `gpu/REPORT.md` and `RESEARCH_HANDOFF.md`.
 
 ## Layout
 
