@@ -417,6 +417,19 @@ variable order 4, and the equivalence terms constructed from it order 5.  Subtra
 gives orders 1,2,3,4 here.  Loader states that the latter order bound is optimal and that
 the remaining type lengths are inherited from the semi-Thue system.
 
+Loader points specifically to Matiyasevich's few-relation construction for making this
+prefix economical.  One may choose the fixed undecidable Thue system over a two-letter
+alphabet with only **three defining relations**.  Thus in (19a) one may take `N=3`:
+```math
+σ_n =
+T_{|W_0|}\to U_1\to U_2\to U_3\to B^{,2n+2}\to B.
+\tag{19c}
+```
+Three is the best known number of relations for an undecidable (one-dimensional) Thue
+word problem; whether two relations suffice remains open.  This is a bound on the Loader
+encoding, not a lower bound saying that a non-universal Sieber type itself needs three
+order-2 arguments.
+
 The fixed prefix can be normalized further.  Let `L` be the maximum of
 `|W₀|,c_i,c'_i`.  Padding unused Boolean arguments with a fixed Boolean and forgetting
 them gives definable retractions `T_m ◁ T_L` for every fixed `m≤L`.  Retractions lift
