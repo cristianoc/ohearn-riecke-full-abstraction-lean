@@ -98,8 +98,17 @@ def falsify_subprocess(h, order, budget):
     with tempfile.TemporaryDirectory() as d:
         hp = os.path.join(d, "h.npy"); np.save(hp, h); jp = os.path.join(d, "out.json")
         # result via a file: multiprocessing helpers can keep inherited pipes open
-        subprocess.run([sys.executable, os.path.abspath(__file__), hp, str(budget), "--json=" + jp] +
-                       [hex(m) for m in order], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        # own process group with a hard deadline, so no worker outlives the caller's budget
+        p = subprocess.Popen(["perl", "-e", "alarm shift; exec @ARGV", str(int(budget) + 30), sys.executable,
+                              os.path.abspath(__file__), hp, str(budget), "--json=" + jp] + [hex(m) for m in order],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        try:
+            p.wait()
+        finally:
+            import signal
+            try: os.killpg(p.pid, signal.SIGKILL)
+            except ProcessLookupError: pass
+        if not os.path.exists(jp): return [], False
         r = json.load(open(jp))
     return [(int(m, 16), t) for m, t in r["found"]], r["complete"]
 
