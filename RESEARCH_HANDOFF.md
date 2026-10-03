@@ -77,8 +77,8 @@ finite certificate is explicitly verified.
   `gpu/data/m4_export/`.
 * SAT then constructed genuinely non-definable arity-3-preserving candidates.  A particularly
   small three-cone candidate is ff on `up(129) U up(272) U up(321)` and bottom elsewhere.
-  Its non-definability has a small first-call compatibility argument, which relies on the
-  standard head-call lemma for normal forms (not yet written out).
+  Its non-definability has a small first-call compatibility argument, which rests on the
+  head-call lemma proved in `HEADCALL.md`.
 * These are NOT Sieber counterexamples: a search over all 17,240 arity-4 intersections
   (1,027 up to coordinate permutation), stopped once witnesses were found, finds ordinary
   relations killing both the three-cone and 20-cone candidates.  The first three-cone killer
@@ -149,62 +149,50 @@ Only tuples in E could separate a functional already preserving R.
 
 Result: **E is empty for every one of the 676 cases.**
 
-What was observed is only the inclusion `K_D2(w) ⊆ R^ord_D2(w)`.  The reverse inclusion was
-not checked, and the size of the enlargement before reindexing was not measured.  The likely
-mechanism:
+Both inclusions are recorded per case in `gpu/data/kripke_separator_all.json`:
 
-* extension shrinks the admissible relation at D1, which alone would enlarge the arrow
-  relation at D2;
-* the Kripke reindexing/future-world obligation requires the pulled-back tuple to satisfy the
-  ordinary relation upstairs, which apparently removes those extra D2 tuples.
+* `K_D1(w) ⊆ R^ord_D1(w)` and `K_D2(w) ⊆ R^ord_D2(w)` in all 676 cases, so no case can
+  separate a functional that preserves the ordinary test;
+* the reverse inclusion `R^ord_D2(w) ⊆ K_D2(w)` holds in 636 cases and fails in 40 (R(w)
+  indices 1 and 3; 36 with the map set {(0,0,1)}, 4 with all surjections).  In 33 of the 40,
+  `K_D1(w)` is already strictly smaller than `R^ord_D1(w)`; in the other 7 the reindexing
+  condition alone removes D2 tuples.
 
-This is the current frontier.
+So a one-step extension makes the Kripke relation at the lower world equal to the ordinary
+lift or strictly smaller, never larger.  Smaller relations reject fewer functionals at the
+lower world, which is why these frames cannot separate.
 
-## 5. Highest-value next question
+## 5. Highest-value next questions
 
-Before running the expensive arity-3 -> arity-4 one-extension search, investigate:
+### 5.1 Kripke side: larger frames
 
-> **One-step collapse conjecture.**  For a two-world frame w < w+ with compatible
-> sequentiality relations at ground type, does the lower-world Kripke relation at
-> D2 = (B->B)->B always equal the corresponding ordinary single-world lift?  (The data so far
-> shows only `⊆` in the 676 cases searched.)
-
-If yes in general, skip every larger one-step experiment.
-
-The proof should compare the two arrow liftings explicitly.  Export/inspect:
-
-```
-K_D1(w)
-Rord_D1(w)
-K_D2(w)
-Rord_D2(w)
-```
-
-and the reindexing map.  Try both inclusions.  Identify whether the argument uses the fact
-that w+ is terminal.
-
-### If collapse uses terminality
-
-The next meaningful experiment is the smallest chain
+Equality of the lower-world Kripke relation with the ordinary lift fails in 40 of the 676
+one-step frames (§4), but in every frame the Kripke relation is the smaller one, so one-step
+frames cannot separate.  What a separating frame needs is a tuple related at the lower world
+by the Kripke relation and not by the ordinary lift (`E` nonempty).  Before the expensive
+arity-3 -> arity-4 one-extension search, establish whether `K ⊆ R^ord` at the lower world is a
+theorem for one-step frames (the data says it holds in all 676 cases); if it is, no one-step
+frame of any arity separates, and the next experiment is the smallest chain
 
 ```
 w0 < w1 < w2
 ```
 
-because at w1 the argument relation itself anticipates w2.  This introduces nested future
-dependence and is qualitatively different from a terminal one-step extension.
+where the argument relation at w1 itself anticipates w2.  If `K ⊆ R^ord` is not a theorem,
+the one-extension search at arity 3 -> 4 is the next experiment (about 85 x 1,027
+ground-relation pairs before compatibility filtering; reuse the grouping, symmetry and GPU
+lifting machinery).
 
-### If collapse does not use terminality and composes
+### 5.2 Ordinary side: certifying membership
 
-Small linear chains may be dead too.  Then investigate whether branching worlds are needed,
-or widen the semantic type.  Do not spend days on the arity-3 -> 4 one-step enumeration
-until this is understood.
-
-### If one-step collapse is false in general
-
-Then optimize and run the arity-3 -> 4 one-extension search.  There are roughly
-85 x 1,027 ground-relation pairs before compatibility filtering, so reuse the grouping,
-symmetry and GPU lifting machinery rather than a naive product.
+A counterexample must preserve ordinary tests of every arity, and a search can only check
+finitely many arities.  `ARITY.md` reduces this to a finite check whenever the pullback
+inclusion `π*(R_σ) ⊆ (π*R)_σ` holds at every argument type σ (Lemma R6).  This holds at every
+type of order at most 2.  At `τ0 = ((B->B)->B)->B` it is Conjecture R7, which would bound
+the needed arity by 355; the arity needed there is at least 4.  Proving R7, or a computable
+arity bound at each type, turns candidate certification into a finite computation, and a
+bound at every type would also settle equational full abstraction of the finitary model
+(ARITY.md, L1-L2).
 
 ## 6. Progress metric for future Kripke-derived candidates
 
@@ -215,7 +203,8 @@ For any candidate obtained by violating an explicit computable Kripke relation:
 3. then all 1,027 symmetry classes of arity-4 intersections;
 4. continue to higher ordinary arity only for survivors.
 
-Record the maximum **complete ordinary arity survived**.
+Record the maximum **complete ordinary arity survived**; `gpu/score_candidate.py` computes it
+for a table on D2 (arities 3 and 4, with a time limit and partial results).
 
 The previous explicit non-definable candidates score only 3: they survive all arity-3 tests
 and die at arity 4.  A fixed Kripke-derived candidate surviving complete arities 4, 5, ...
@@ -232,7 +221,13 @@ would be qualitatively new evidence.
 * `gpu/m4.py`, `gpu/export_m4.py` -- definability synthesis and exported columns/trees.
 * `gpu/arity4_h3.py` -- complete arity-4 intersection search for the small candidate.
 * `gpu/verify_candidate.py` -- independent numpy checks for the failed non-definable candidates.
-* `gpu/search_kripke_two_world.py` -- smallest computable Kripke-vs-ordinary separator search.
+* `gpu/search_kripke_two_world.py`, `gpu/kripke_separator.py` -- smallest computable
+  Kripke-vs-ordinary separator search; per-case record in `gpu/data/kripke_separator_all.json`.
+* `ARITY.md` -- arity reduction for ordinary tests (R1-R6), Conjecture R7 at τ0.
+* `gpu/arity_lib.py`, `gpu/arity_reindex.py`, `gpu/arity_focus.py` -- numerical checks of the
+  pullback inclusions.
+* `HEADCALL.md` -- head-call lemma and the first-call non-definability criterion.
+* `gpu/score_candidate.py` -- score a candidate: highest complete ordinary arity preserved.
 * `gpu/data/` -- certificates and exported search data.
 
 ## 8. Things not to claim

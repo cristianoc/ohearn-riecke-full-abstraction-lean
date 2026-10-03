@@ -175,7 +175,7 @@ The common upper bounds are 281 of 129 and 272, and 333 (also 335) of 129 and 32
 
 Neither $`h`$ nor $`h_3`$ is killed by the 61 elementary arity-4 relations $`S^4_{A,B}`$ either.
 
-**Status.** $`h_3`$ is a non-definable table that preserves every arity-3 Sieber test. It is a counterexample to universality of $`τ_0`$ if it also preserves Sieber's relations of **every** arity, and that is the open step. Point 3 relies on the head-call lemma: the first evaluated action of a non-constant normal form $`λF.G`$ is a strict call $`F(ψ)`$. That is standard for $`β`$-normal forms after commuting conversions of the conditional, but it should be written out.
+**Status.** $`h_3`$ is a non-definable table that preserves every arity-3 Sieber test. It is a counterexample to universality of $`τ_0`$ if it also preserves Sieber's relations of **every** arity, and that is the open step. Point 3 relies on the head-call lemma, proved in [`HEADCALL.md`](../HEADCALL.md) (Lemma 4 and Theorem 6).
 
 ### Arity 4 kills both candidates (`arity4_h3.py`)
 
@@ -206,4 +206,4 @@ the tuples made related only by world extension. Maps into the extension world r
 
 The per-case record, one entry per relation including those with $`E=\emptyset`$, is `data/kripke_separator_all.json`; `data/kripke_separator.json` lists only the cases with $`E\neq\emptyset`$.
 
-In other words $`K_{D_2}(w)\subseteq R^{\mathrm{ord}}_{D_2}(w)`$ in every case; the reverse inclusion was not checked. The likely mechanism is that the extension shrinks the relation at $`D_1`$, while the condition it adds at $`D_2`$ (the reindexed $`G\circ p`$ must be related at $`w^+`$) removes the new pairs. No separation is possible with these worlds.
+In other words $`K_{D_2}(w)\subseteq R^{\mathrm{ord}}_{D_2}(w)`$ in every case, and $`K_{D_1}(w)\subseteq R^{\mathrm{ord}}_{D_1}(w)`$ as well. The reverse inclusion $`R^{\mathrm{ord}}_{D_2}(w)\subseteq K_{D_2}(w)`$ holds in 636 cases and fails in 40 (test indices 1 and 3); in 33 of those $`K_{D_1}(w)`$ is already strictly smaller, and in the other 7 the reindexing condition alone removes tuples. The Kripke relation is therefore equal to the ordinary lift or strictly smaller, and no separation is possible with these worlds.
