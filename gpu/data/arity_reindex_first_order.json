@@ -1,0 +1,222 @@
+{
+ "seed": 1,
+ "n_arity3_tests": 86,
+ "n_arity4_tests_total": 17240,
+ "n_arity4_sampled": 40,
+ "n_arity4_sampled_D2": 12,
+ "D1_order": [
+  "⊥⊥⊥",
+  "⊥⊥t",
+  "⊥⊥f",
+  "⊥t⊥",
+  "⊥tt",
+  "⊥tf",
+  "⊥f⊥",
+  "⊥ft",
+  "⊥ff",
+  "ttt",
+  "fff"
+ ],
+ "runs": [
+  {
+   "level": "B->B",
+   "tests": "all arity-3, pi:3->2",
+   "pairs_checked": 516,
+   "tuples_checked": 62436,
+   "P_subset_Q": 516,
+   "Q_subset_P": 390,
+   "equal": 390,
+   "lemma_R2_holds": 516,
+   "complete": true,
+   "first_Q_not_P": {
+    "R_generators": [
+     [
+      [
+       0
+      ],
+      [
+       0,
+       1,
+       2
+      ]
+     ],
+     [
+      [
+       1,
+       2
+      ],
+      [
+       0,
+       1,
+       2
+      ]
+     ]
+    ],
+    "R_size": 7,
+    "pi": [
+     0,
+     0,
+     1
+    ],
+    "x": [
+     "⊥⊥t",
+     "ttt"
+    ],
+    "x_index": [
+     1,
+     9
+    ],
+    "violating_argument": [
+     0,
+     2,
+     0
+    ],
+    "output": "⊥tt"
+   },
+   "first_P_not_Q": null,
+   "count_Q_not_P_tuples": 756,
+   "count_P_not_Q_tuples": 0,
+   "elapsed_s": 3.5
+  },
+  {
+   "level": "B->B->B",
+   "tests": "all arity-3, pi:3->2",
+   "pairs_checked": 516,
+   "tuples_checked": 13709604,
+   "P_subset_Q": 516,
+   "Q_subset_P": 372,
+   "equal": 372,
+   "lemma_R2_holds": 516,
+   "complete": true,
+   "first_Q_not_P": {
+    "R_generators": [
+     [
+      [
+       0
+      ],
+      [
+       0,
+       1,
+       2
+      ]
+     ],
+     [
+      [
+       1,
+       2
+      ],
+      [
+       0,
+       1,
+       2
+      ]
+     ]
+    ],
+    "R_size": 7,
+    "pi": [
+     0,
+     0,
+     1
+    ],
+    "x": [
+     "⊥⊥⊥⊥⊥⊥⊥⊥t",
+     "⊥⊥⊥⊥⊥⊥ttt"
+    ],
+    "x_index": [
+     1,
+     9
+    ],
+    "violating_argument": [
+     6,
+     8,
+     6
+    ],
+    "output": "⊥tt"
+   },
+   "first_P_not_Q": null,
+   "count_Q_not_P_tuples": 199836,
+   "count_P_not_Q_tuples": 0,
+   "elapsed_s": 36.3
+  },
+  {
+   "level": "B->B",
+   "tests": "sampled arity-4, pi:4->2,3",
+   "pairs_checked": 2000,
+   "tuples_checked": 1984400,
+   "P_subset_Q": 2000,
+   "Q_subset_P": 854,
+   "equal": 854,
+   "lemma_R2_holds": 2000,
+   "complete": true,
+   "first_Q_not_P": {
+    "R_generators": [
+     [
+      [
+       2
+      ],
+      [
+       1,
+       2
+      ]
+     ],
+     [
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       1,
+       2,
+       3
+      ]
+     ],
+     [
+      [
+       0,
+       1,
+       3
+      ],
+      [
+       0,
+       1,
+       2,
+       3
+      ]
+     ]
+    ],
+    "R_size": 27,
+    "pi": [
+     0,
+     0,
+     0,
+     1
+    ],
+    "x": [
+     "⊥⊥t",
+     "ttt"
+    ],
+    "x_index": [
+     1,
+     9
+    ],
+    "violating_argument": [
+     2,
+     2,
+     0,
+     0
+    ],
+    "output": "tt⊥t"
+   },
+   "first_P_not_Q": null,
+   "count_Q_not_P_tuples": 19788,
+   "count_P_not_Q_tuples": 0,
+   "elapsed_s": 38.6
+  }
+ ],
+ "parts": [
+  0,
+  1,
+  2
+ ]
+}
