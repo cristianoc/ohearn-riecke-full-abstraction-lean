@@ -224,7 +224,7 @@ them lazily.
 
 ## 6. Compatibility obstructions are seen by Sieber's tests
 
-**Theorem 7 (proved).** Let $`a_1,\dots,a_k \in D_2`$ with $`k\ge 2`$, and let $`P`$ be a set of pairs $`\{i,j\}`$ such that $`a_i`$ and $`a_j`$ have a common upper bound in $`D_{τ_1}`$. Suppose no choice of $`φ_1,\dots,φ_k \in D_1`$ with $`a_i(φ_i)\neq\bot`$ is pairwise compatible on $`P`$. Let
+**Theorem 7 (proved; Lean: `rk_related`, `rk_not_preserved`, `rk_no_element` in `OR/Sieber/HeadCall/Dual.lean`, for every $`k \ge 1`$).** Let $`a_1,\dots,a_k \in D_2`$ with $`k\ge 2`$, and let $`P`$ be a set of pairs $`\{i,j\}`$ such that $`a_i`$ and $`a_j`$ have a common upper bound in $`D_{τ_1}`$. Suppose no choice of $`φ_1,\dots,φ_k \in D_1`$ with $`a_i(φ_i)\neq\bot`$ is pairwise compatible on $`P`$. Let
 
 ```math
 R_K = S^{k+1}_{\{1,\dots,k\},\{0,\dots,k\}} \cap \bigcap_{\{i,j\}\in P} S^{k+1}_{\{i,j\},\{i,j\}} .

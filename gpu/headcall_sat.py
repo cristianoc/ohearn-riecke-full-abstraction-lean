@@ -50,6 +50,10 @@ class HeadCall:
         'unsat' (no such psi: h is not definable) or 'unknown'.  One persistent
         solver: the support of h enters as assumptions, cuts are kept."""
         t0 = time.time(); M, N = self.D1.shape[0], self.A.shape[0]
+        # an invariant psi does not depend on h: reuse any earlier one that converges on supp(h)
+        supp = np.nonzero(h)[0]
+        for psi in getattr(self, "pool", []):
+            if (self.A[supp, psi[supp]] != 0).all(): return "sat", psi
         s = self._solver(); p = self.p
         assume = [self.c[F] for F in np.nonzero(h)[0]]
         while True:
@@ -66,7 +70,9 @@ class HeadCall:
                 for b in np.flatnonzero(~mm[q[:, 0], q[:, 1], q[:, 2]])[:20]:
                     i, j, k = (int(v) for v in tri[b])
                     s.add(z3.Not(z3.And(p[i][int(psi[i])], p[j][int(psi[j])], p[k][int(psi[k])]))); new += 1
-            if new == 0: return "sat", psi
+            if new == 0:
+                self.pool = getattr(self, "pool", []) + [psi]
+                return "sat", psi
 
 if __name__ == "__main__":
     t00 = time.time()
