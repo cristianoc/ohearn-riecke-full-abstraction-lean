@@ -8,11 +8,17 @@ import os, sys
 from itertools import product
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import m4, arity4_h3
+import arity4_h3
 
 W = 4
 GT = list(product(range(3), repeat=W))
-A = m4.A; D1 = np.array(m4.D1, dtype=np.uint8); N, M = A.shape
+# m4's tables (its numbering of D2), cached: importing m4 takes ~20 s per process
+_TABLES = os.environ.get("M4_TABLES", os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "m4_tables.npz"))
+if not os.path.exists(_TABLES):
+    import m4
+    np.savez(_TABLES, A=m4.A, D1=np.array(m4.D1, dtype=np.uint8))
+_z = np.load(_TABLES)
+A = _z["A"]; D1 = _z["D1"]; N, M = A.shape
 REPS = sorted(arity4_h3.canonical_tests())
 _rel1 = {}
 _h = None
@@ -85,8 +91,26 @@ def falsify(h, order, budget, first=True):
     return found, done == len(seq) and not (first and found)
 
 
+def falsify_subprocess(h, order, budget):
+    """Run falsify in a fresh interpreter (safe from any caller, including one
+    whose __main__ must not be re-imported by spawned workers)."""
+    import json, subprocess, tempfile
+    with tempfile.TemporaryDirectory() as d:
+        hp = os.path.join(d, "h.npy"); np.save(hp, h); jp = os.path.join(d, "out.json")
+        # result via a file: multiprocessing helpers can keep inherited pipes open
+        subprocess.run([sys.executable, os.path.abspath(__file__), hp, str(budget), "--json=" + jp] +
+                       [hex(m) for m in order], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        r = json.load(open(jp))
+    return [(int(m, 16), t) for m, t in r["found"]], r["complete"]
+
+
 if __name__ == "__main__":
-    import time
+    import json, time
     h = np.load(sys.argv[1]); t = time.time()
-    f, complete = falsify(h, [], float(sys.argv[2]))
-    print(f"violations {f}, complete={complete}, {time.time()-t:.1f}s")
+    order = [int(a, 16) for a in sys.argv[3:] if a.startswith("0x")]
+    f, complete = falsify(h, order, float(sys.argv[2]))
+    jp = next((a[len("--json="):] for a in sys.argv if a.startswith("--json=")), None)
+    if jp:
+        json.dump({"found": [[hex(m), tup] for m, tup in f], "complete": complete}, open(jp, "w"))
+    else:
+        print(f"violations {f}, complete={complete}, {time.time()-t:.1f}s")
