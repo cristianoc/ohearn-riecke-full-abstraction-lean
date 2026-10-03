@@ -207,3 +207,22 @@ the tuples made related only by world extension. Maps into the extension world r
 The per-case record, one entry per relation including those with $`E=\emptyset`$, is `data/kripke_separator_all.json`; `data/kripke_separator.json` lists only the cases with $`E\neq\emptyset`$.
 
 In other words $`K_{D_2}(w)\subseteq R^{\mathrm{ord}}_{D_2}(w)`$ in every case, and $`K_{D_1}(w)\subseteq R^{\mathrm{ord}}_{D_1}(w)`$ as well. The reverse inclusion $`R^{\mathrm{ord}}_{D_2}(w)\subseteq K_{D_2}(w)`$ holds in 636 cases and fails in 40 (test indices 1 and 3); in 33 of those $`K_{D_1}(w)`$ is already strictly smaller, and in the other 7 the reindexing condition alone removes tuples. The Kripke relation is therefore equal to the ordinary lift or strictly smaller, and no separation is possible with these worlds.
+
+## Non-definability cores and the tests that kill them
+
+A **core** is a set $`K \subseteq D_2`$ such that no head call $`\psi : D_2 \to D_1`$ that is monotone and preserves the tests of arity $`\le 3`$ has $`F(\psi_F)`$ defined for every $`F \in K`$. A definable non-constant table has such a head call (HEADCALL.md, Lemma 4; Lean: `OR/Sieber/HeadCall.lean`), and adding support only adds constraints on $`\psi`$, so every non-constant table defined on a core is not definable. A non-constant monotone table is $`\bot`$ at the least element $`\bot`$ of $`D_2`$.
+
+**Head-call test (`headcall_sat.py`, computed).** z3 searches for such a $`\psi`$, adding arity-3 constraints lazily. It reports no head call for $`h_3`$ and for the 20-cone table, and finds one for the definable control $`F \mapsto F(\bot tf)`$ and for a table with 27 support points and no total column among the 4,233 of M4. `cores.py` shrinks the 20 minimal points of the 20-cone table to the core $`\{129, 272, 321\}`$, the core of $`h_3`$.
+
+**The core of $`h_3`$ is killed at arity 4 (computed).** `core4.py 55 129 272 321` asks for a non-constant monotone table defined on 129, 272 and 321 that preserves every test of arity $`\le 4`$, with arity-3 and arity-4 constraints added lazily as related tuples (each related tuple forbids every output pattern outside the test). The answer is UNSAT after one arity-4 constraint: the tuple $`(\bot, 129, 272, 323)`$, with $`323 \ge 321`$, is related for a test that excludes every pattern $`(\bot, u, v, w)`$ with $`u, v, w`$ defined.
+
+**Small cores die at arity $`|K|+1`$ (computed).** `core_kills.py 55` enumerates the cores of Theorem 6's kind (pairwise compatibility on pairs with a common upper bound) of size 2 and the minimal ones of size 3:
+
+| Cores | Number | Killed through a tuple $`(\bot, K)`$ at arity $`\lvert K\rvert+1`$ |
+|---|---|---|
+| size 2 | 1,036 | 1,036, at arity 3 |
+| size 3, containing no core of size 2 | 39,488 | 39,488, at arity 4 |
+
+In each case a test of arity $`|K|+1`$ relates $`(\bot, K)`$ (in some order) and excludes every pattern that is $`\bot`$ at $`\bot`$'s position and defined at the others, so no table defined on $`K`$ lies in Sieber's model.
+
+**Conjecture P.** For every core $`K`$, some test of arity $`|K|+1`$ relates a tuple formed by $`\bot`$ and elements above the points of $`K`$ and excludes every pattern that is $`\bot`$ at the first coordinate and defined elsewhere. With an inductive version for the states of `universality.py`, Conjecture P would make $`τ_0`$ universal, and would place the non-definable elements given by `SIEBER.md` Lemma 13 at other order-3 types.

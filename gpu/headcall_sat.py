@@ -28,26 +28,34 @@ class HeadCall:
             mm = np.zeros((M, M, M), bool)
             for a, b, c in r1: mm[a, b, c] = True
             self.mem1.append(mm)
-        self.cuts = []          # violated triples, kept across calls (they hold for every h)
+
+    def _solver(self):
+        if getattr(self, "s", None) is None:
+            A, M, N = self.A, self.D1.shape[0], self.A.shape[0]
+            s = z3.SolverFor("QF_FD")
+            self.p = p = [[z3.Bool(f"p{F}_{a}") for a in range(M)] for F in range(N)]
+            for F in range(N): s.add(z3.PbEq([(v, 1) for v in p[F]], 1))
+            for i, j in self.hasse:
+                for a in range(M):
+                    s.add(z3.Implies(p[i][a], z3.Or([p[j][b] for b in range(M) if self.LE1[a, b]])))
+            # c[F]: "F is in supp(h)", passed as an assumption; then the head call converges at F
+            self.c = [z3.Bool(f"c{F}") for F in range(N)]
+            for F in range(N):
+                s.add(z3.Implies(self.c[F], z3.Or([p[F][a] for a in range(M) if A[F, a] != 0])))
+            self.s = s
+        return self.s
 
     def find(self, h, budget):
         """Return (status, psi): status 'sat' (psi preserves the arity-<=3 tests),
-        'unsat' (no such psi: h is not definable) or 'unknown'."""
-        t0 = time.time(); A, M, N = self.A, self.D1.shape[0], self.A.shape[0]
-        s = z3.SolverFor("QF_FD")
-        p = [[z3.Bool(f"p{F}_{a}") for a in range(M)] for F in range(N)]
-        for F in range(N): s.add(z3.PbEq([(v, 1) for v in p[F]], 1))
-        for i, j in self.hasse:
-            for a in range(M):
-                s.add(z3.Implies(p[i][a], z3.Or([p[j][b] for b in range(M) if self.LE1[a, b]])))
-        for F in np.nonzero(h)[0]:
-            s.add(z3.Or([p[F][a] for a in range(M) if A[F, a] != 0]))
-        for (i, a), (j, b), (k, c) in self.cuts:
-            s.add(z3.Not(z3.And(p[i][a], p[j][b], p[k][c])))
+        'unsat' (no such psi: h is not definable) or 'unknown'.  One persistent
+        solver: the support of h enters as assumptions, cuts are kept."""
+        t0 = time.time(); M, N = self.D1.shape[0], self.A.shape[0]
+        s = self._solver(); p = self.p
+        assume = [self.c[F] for F in np.nonzero(h)[0]]
         while True:
             left = budget - (time.time() - t0)
             if left <= 0: return "unknown", None
-            s.set("timeout", int(left * 1000)); r = s.check()
+            s.set("timeout", int(left * 1000)); r = s.check(*assume)
             if r == z3.unknown: return "unknown", None
             if r == z3.unsat: return "unsat", None
             mdl = s.model()
@@ -57,16 +65,16 @@ class HeadCall:
                 q = psi[tri]
                 for b in np.flatnonzero(~mm[q[:, 0], q[:, 1], q[:, 2]])[:20]:
                     i, j, k = (int(v) for v in tri[b])
-                    cut = ((i, int(psi[i])), (j, int(psi[j])), (k, int(psi[k])))
-                    self.cuts.append(cut); s.add(z3.Not(z3.And(*(p[x][a] for x, a in cut)))); new += 1
+                    s.add(z3.Not(z3.And(p[i][int(psi[i])], p[j][int(psi[j])], p[k][int(psi[k])]))); new += 1
             if new == 0: return "sat", psi
-
 
 if __name__ == "__main__":
     t00 = time.time()
     tabs = np.load(os.environ.get("M4_TABLES", os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "m4_tables.npz")))
     hc = HeadCall(tabs["A"], tabs["D1"], arity3_oracle.Oracle())
     h = np.load(sys.argv[1])
+    bot = int(np.nonzero((tabs["A"] == 0).all(axis=1))[0][0])
+    if h[bot] != 0: print("h is defined at the least element: constant, Lemma 4 does not apply"); sys.exit()
     st, psi = hc.find(h, float(sys.argv[2]))
     print(f"{st} ({time.time()-t00:.0f}s)" + (": h is not definable" if st == "unsat" else ""))
     if st == "sat": np.save(os.path.join(os.path.dirname(os.path.abspath(sys.argv[1])), "headcall_psi.npy"), psi)
