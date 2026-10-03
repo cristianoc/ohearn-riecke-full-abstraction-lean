@@ -88,6 +88,7 @@ def falsify(h, order, budget, first=True):
                     pool.terminate(); break
             if time.time() - t0 > budget:
                 pool.terminate(); break
+    falsify.done = done
     return found, done == len(seq) and not (first and found)
 
 
@@ -122,4 +123,4 @@ if __name__ == "__main__":
     if jp:
         json.dump({"found": [[hex(m), tup] for m, tup in f], "complete": complete}, open(jp, "w"))
     else:
-        print(f"violations {f}, complete={complete}, {time.time()-t:.1f}s")
+        print(f"violations {f}, complete={complete}, tests done {falsify.done}/{len(REPS)}, {time.time()-t:.1f}s")
