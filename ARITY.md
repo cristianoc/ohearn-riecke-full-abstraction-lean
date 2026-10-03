@@ -28,7 +28,7 @@ The *order* is $`\mathrm{ord}(B) = 0`$, $`\mathrm{ord}(\sigma\to\rho) = \max(\ma
 
 ### 2.1 Ground reindexing
 
-**Lemma R1 (proved).** For every map $`\pi : w \to k`$ and $`A \subseteq B \subseteq w`$,
+**Lemma R1 (proved; Lean: `Elem.pullback`, `Test.holds_pullback` in `OR/Sieber/Arity/Reindex.lean`).** For every map $`\pi : w \to k`$ and $`A \subseteq B \subseteq w`$,
 ```math
 \pi^* S^w_{A,B} = S^k_{\pi(A),\,\pi(B)} .
 ```
@@ -107,7 +107,7 @@ For a type $`\tau`$ let $`N(\tau)`$ be the least $`N`$ such that every monotone 
 
 **Proposition R0 (proved, non-constructive).** $`N(\tau)`$ is finite for every $`\tau`$. The candidates form a finite set (`SIEBER.md`, Lemma 3), each non-member fails some test, and $`N(\tau)`$ is the maximum over non-members of the least failing arity.
 
-**Theorem R6 (proved).** Let $`\tau = \sigma_1\to\cdots\to\sigma_n\to B`$ and suppose $`P_{\sigma_j} \subseteq Q_{\sigma_j}`$ for every $`j`$, every test and every surjection. If a monotone $`f`$ fails a test $`R`$ of arity $`w`$, then it fails $`\pi^*R`$ for a surjection $`\pi : w \to k`$ with
+**Theorem R6 (proved; Lean: `R6`, `R6_bound` in `OR/Sieber/Arity/Bound.lean`, for every candidate function, monotone or not).** Let $`\tau = \sigma_1\to\cdots\to\sigma_n\to B`$ and suppose $`P_{\sigma_j} \subseteq Q_{\sigma_j}`$ for every $`j`$, every test and every surjection. If a monotone $`f`$ fails a test $`R`$ of arity $`w`$, then it fails $`\pi^*R`$ for a surjection $`\pi : w \to k`$ with
 ```math
 k \le \min\Bigl(w,\ \prod_{j=1}^n |D_{\sigma_j}|\Bigr).
 ```
