@@ -1,0 +1,12 @@
+{
+ "seed": 2,
+ "tests_drawn": 7,
+ "pairs_examined": 301,
+ "pairs_with_QnotP_at_B->B": 169,
+ "D2_checked_k2_all_pairs": 49,
+ "D2_checked_k3_sampled": 120,
+ "k3_samples": 20000,
+ "P_not_subset_Q_at_D2": [],
+ "complete": false,
+ "elapsed_s": 45.2
+}
