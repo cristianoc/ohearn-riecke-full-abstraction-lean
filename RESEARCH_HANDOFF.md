@@ -11,28 +11,54 @@ details that do not belong in the PR description.  Read `SIEBER.md`,
 The parent PR/branch `sieber-not-universal` contains the checked `OR/Sieber/`
 development.  In particular its endpoints establish, under explicit external hypotheses:
 
-* `sieber_not_universal`: Loader-style non-universality of the ordinary Sieber model.
+* `sieber_not_universal`: non-universality of the ordinary Boolean Sieber model, assuming
+  `Loader`.
 * `natural_sieber_not_inequationally_fully_abstract`: failure of inequational full
-  abstraction for the direct ordinary natural Sieber model, assuming Loader, Milner's
-  compact-definability theorem and Müller's Game Term Theorem.
+  abstraction for the direct ordinary natural Sieber model $`D^N`$, assuming `Loader`,
+  `NS.MilnerPlotkin` and `MullerGameTermTheorem`.
+
+The hypotheses, exactly (details in `SIEBER.md` §6 and §4.1):
+
+* `Loader` is non-computability of `ObsEquivCode`, observational equivalence on term codes
+  defined through values in the standard set-theoretic model.  That this agrees with
+  Loader's operational equivalence (normal form = standard-model value) is argued only in
+  the module docstring of `OR/Sieber/Standard.lean`.
+* `NS.MilnerPlotkin` is Milner's theorem instantiated at $`D^N`$ alone; its premises
+  other than full abstraction are proved and discharged.
+* `MullerGameTermTheorem` is Müller's Theorem 4.12 at grade 1 only, transcribed into the
+  repository's PCF.  Equivalence there is observed by call-by-name head reduction, while
+  Müller uses unrestricted reduction; the agreement is a standardisation argument outside
+  Lean.
 
 The O'Hearn--Riecke Kripke development, including `finiteTest`, is also kernel checked.
 
 ### Mathematical/source-audited on this branch, not newly Lean-checked
 
-`SIEBER.md` records order-local consequences:
+`SIEBER.md` §4.6–4.7 records order-local consequences, with a dependency audit in §4.7.5:
 
-* ordinary-Sieber universality holds through order 2 and fails somewhere at exact order 3;
-* equational full abstraction of the direct natural model holds through order 3 and first
-  fails at exact order 4, assuming Loader's order-3 result, Müller's Game Term Theorem and
-  Stoughton's compact-definability construction;
-* failure propagates to every higher exact order by a definable retract;
+* Lemma 13: assuming Loader's order-3 equation lemma (cited via Ong--Tzevelekos), the
+  Boolean model $`D^B`$ has a non-definable element at some type of order at most 3.
+* Theorem C, part 1: assuming in addition Müller's Game Term Theorem and an order-local
+  reading of Stoughton's compact-definability proof (Streicher, Lemma 13.2; the order
+  bookkeeping is a reading of the proof, not a cited theorem), equational full abstraction
+  of $`D^N`$ fails at some type of order at most 4.
+* Lower bounds, conditional: Sieber's 1992 results concern invariant elements of the
+  standard/continuous hierarchy, which `SIEBER.md` does not identify with $`D^B`$/$`D^N`$
+  (§4.1, hypotheses (I) and (I') in §4.7).  Under (I), universality of $`D^B`$ holds
+  through order 2, so the first non-universal order is exactly 3 (Theorem U).  Under (I'),
+  which also needs O'Hearn--Riecke's "rank three" convention read as order at most 3, the
+  first equational failure of $`D^N`$ is exactly order 4 (Theorem C, part 2).  A proof
+  that the direct models coincide with Sieber's presentation at those orders, or a direct
+  proof of the positive results for $`D^B`$/$`D^N`$, discharges them.
+* inequational failure propagates to every higher exact order by a definable retract
+  (Lemma 12);
 * Loader's guaranteed order-3 obstruction can be localized to an explicit family
   `T_|W0| -> U1 -> U2 -> U3 -> B^(2n+2) -> B` using a fixed three-rule accessibility
   system.
 
 These are mathematical arguments using published Loader/Ong--Tzevelekos,
-Sieber/Stoughton/Müller results plus the checked infrastructure.  Do not describe these as
+Sieber/Stoughton/Müller results, under the hypotheses above, plus the checked
+infrastructure.  Do not describe these as
 Lean theorems unless they are separately formalized.
 
 ### Computational discoveries on this branch
@@ -101,7 +127,8 @@ complete.
 ## 4. Kripke separator search already performed
 
 See `gpu/kripke_separator.py` (the search), `gpu/search_kripke_two_world.py` (the relation
-generator) and `gpu/data/kripke_separator.json`.
+generator), and `gpu/data/kripke_separator_all.json`, the per-case record of every relation
+searched.  `gpu/data/kripke_separator.json` lists only the cases with E nonempty.
 
 Smallest case searched:
 
@@ -215,5 +242,9 @@ would be qualitatively new evidence.
 * The three-cone and 20-cone non-definable tables are explicitly rejected at arity 4.
 * The checked O'Hearn--Riecke `finiteTest` is not an effective finite enumerator of
   higher-order Kripke tests.
-* The order-3/order-4 sharpenings documented on this branch are not currently new Lean
-  endpoints.
+* The order-3/order-4 sharpenings documented on this branch are not Lean endpoints.
+* The exact-order statements ("holds through order 2/3") are conditional on identifying
+  $`D^B`$/$`D^N`$ with Sieber's presentation; do not state them unconditionally.
+* No priority beyond `SIEBER.md`'s "Relation to the literature": the results combine
+  O'Hearn--Riecke's p. 15 effective-presentation remark, Loader 2001 and (for Theorem B)
+  Milner and Müller, made explicit and Lean-checked under stated hypotheses.

@@ -84,7 +84,7 @@ A positive control passes: random tables are killed, and their witnesses are ver
 
 ## Why M4 cannot be done as specified
 
-Lemma 13 of [`SIEBER.md`](../SIEBER.md) uses Loader's equation-solvability problem, which is undecidable already at order 3 (Ong–Tzevelekos, *Functional Reachability*). The same argument rules out a uniform exact M4:
+Lemma 13 of [`SIEBER.md`](../SIEBER.md) uses Loader's equation-solvability problem, which is undecidable already at order 3 (Ong–Tzevelekos, *Functional Reachability*, Lemma 6 / Corollary 7, attributing the order-3 statement to Loader). The same argument rules out a uniform exact M4:
 1. Suppose some algorithm decided, for any order-3 type and any table, whether the table is PCF-definable.
 2. Every carrier's monotone function space is finite and computable. So we could list the candidates for the unknown, keep the definable ones, and check the equations.
 3. That would decide Loader's order-3 problem. Hence **no such algorithm exists**.
@@ -203,5 +203,7 @@ the tuples made related only by world extension. Maps into the extension world r
 **Result.** $`E=\emptyset`$ for all 676 relations with worlds $`w`$ of arity 2 and $`w^+`$ of arity 3:
 - $`R(w)`$ ranges over the arity-2 tests and $`R(w^+)`$ over the arity-3 tests;
 - the maps $`w^+\to w`$ are, up to symmetry, a constant map, a map with fibre sizes 2 and 1, or all surjections.
+
+The per-case record, one entry per relation including those with $`E=\emptyset`$, is `data/kripke_separator_all.json`; `data/kripke_separator.json` lists only the cases with $`E\neq\emptyset`$.
 
 In other words $`K_{D_2}(w)\subseteq R^{\mathrm{ord}}_{D_2}(w)`$ in every case; the reverse inclusion was not checked. The likely mechanism is that the extension shrinks the relation at $`D_1`$, while the condition it adds at $`D_2`$ (the reindexed $`G\circ p`$ must be related at $`w^+`$) removes the new pairs. No separation is possible with these worlds.
