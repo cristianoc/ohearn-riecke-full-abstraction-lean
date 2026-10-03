@@ -221,3 +221,17 @@ suffices because $`Ψ`$ is monotone and $`m\le m'`$ gives $`m'(Ψ(m'))\ge m(Ψ(m
 of the relations gives a sound test, since dropping constraints only enlarges the set of
 admissible $`Ψ`$. `gpu/root_obstruction.py` decides this form with all arity-3 tests, adding
 them lazily.
+
+## 6. Compatibility obstructions are seen by Sieber's tests
+
+**Theorem 7 (proved).** Let $`a_1,\dots,a_k \in D_2`$ with $`k\ge 2`$, and let $`P`$ be a set of pairs $`\{i,j\}`$ such that $`a_i`$ and $`a_j`$ have a common upper bound in $`D_{τ_1}`$. Suppose no choice of $`φ_1,\dots,φ_k \in D_1`$ with $`a_i(φ_i)\neq\bot`$ is pairwise compatible on $`P`$. Let
+
+```math
+R_K = S^{k+1}_{\{1,\dots,k\},\{0,\dots,k\}} \cap \bigcap_{\{i,j\}\in P} S^{k+1}_{\{i,j\},\{i,j\}} .
+```
+
+Then $`(\bot, a_1, \dots, a_k)`$ is $`R_K`$-related at $`τ_1`$, and no $`h : D_2 \to B`$ with $`h(\bot) = \bot`$ and every $`h(a_i)`$ defined preserves $`R_K`$.
+
+*Proof.* Let $`(φ_0,\dots,φ_k)`$ be $`R_K`$-related at $`B\to B`$ and $`\{i,j\}\in P`$. For $`k \ge 3`$ the ground tuple with $`u`$ at $`i`$ and $`j`$ and $`\bot`$ elsewhere lies in $`R_K`$; for $`k = 2`$ the tuple $`(u,u,u)`$ does. Its image lies in $`S_{\{i,j\},\{i,j\}}`$, so $`φ_i(u)`$ and $`φ_j(u)`$ agree when both are defined: $`φ_i`$ and $`φ_j`$ are compatible. By hypothesis not every $`a_i(φ_i)`$ is defined, so the image of the related tuple under $`(\bot, a_1, \dots, a_k)`$ lies in $`S_{\{1..k\},\{0..k\}}`$. For $`\{i,j\}\in P`$ with common upper bound $`u`$, if $`a_i(φ_i)`$ and $`a_j(φ_j)`$ are both defined then, with $`ψ = φ_i \sqcup φ_j`$ and monotonicity, $`a_i(φ_i) = u(φ_i) = u(ψ) = u(φ_j) = a_j(φ_j)`$, so the image lies in $`S_{\{i,j\},\{i,j\}}`$. Hence the tuple is related. Its image under $`h`$ is $`\bot`$ at position 0 and defined at $`1,\dots,k`$, which lies outside $`S_{\{1..k\},\{0..k\}}`$. $`\square`$
+
+So every table that Theorem 6 shows non-definable fails a test of arity $`|K|+1`$ and is not in Sieber's model: Theorem 6 cannot produce a counterexample to universality. A non-definable element of Sieber's model at $`τ_0`$, if one exists, has a monotone head call that is pairwise compatible on its support but none that preserves the tests (§5.3). `gpu/REPORT.md` ("Non-definability cores") computes the instances: all 1,036 pair cores, all 39,488 minimal triple cores and the core of $`h_3`$ are related as in Theorem 7.
