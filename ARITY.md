@@ -99,7 +99,7 @@ Every file records the first explicit instance of $`Q\not\subseteq P`$ with its 
 
 By R3.2, a pair $`(R,\pi)`$ with $`Q_{B\to B} \subseteq P_{B\to B}`$ gives $`P_{D_2} \subseteq Q_{D_2}`$ for free. The informative $`D_2`$ checks are therefore the pairs with $`Q_{B\to B} \not\subseteq P_{B\to B}`$: 126 of the 516 arity-3 pairs (all checked exhaustively over pairs of $`D_2`$) and the 169 arity-4 pairs of `arity_focus.json`. In none of them does $`P_{D_2} \not\subseteq Q_{D_2}`$ occur. There is no instance with $`P \not\subseteq Q`$ at any level checked.
 
-**Conjecture R7.** $`P_{D_2} \subseteq Q_{D_2}`$ for every test and every surjection. Evidence: the table above. R3.2 does not prove it, because its hypothesis $`Q_{B\to B} \subseteq P_{B\to B}`$ fails (R5).
+**Conjecture R7 (false).** $`P_{D_2} \subseteq Q_{D_2}`$ for every test and every surjection. It holds for every test of arity at most 3 (the table above, with `R7.md` M2–M3) and fails at arity 4: `R7.md` §4 gives a test of arity 4, a single merge $`\pi : 4 \to 3`$ and a triple in $`P_{D_2} \setminus Q_{D_2}`$ (computed). The random arity-4 sample above does not contain that test.
 
 ## 3. Arity bounds for the diagonal
 
@@ -126,16 +126,15 @@ Since $`D_\sigma`$ at order $`\le 1`$ is computed by finitely many tests, $`\tau
 
 ## 4. The type $`\tau_0 = ((B\to B)\to B)\to B`$
 
-R6 applies to $`\tau_0`$ with the single argument $`\sigma = (B\to B)\to B`$ exactly when $`P_{D_2} \subseteq Q_{D_2}`$ for all tests and surjections, which is Conjecture R7.
+R6 applies to $`\tau_0`$ with the single argument $`\sigma = (B\to B)\to B`$ exactly when $`P_{D_2} \subseteq Q_{D_2}`$ for all tests and surjections, which is Conjecture R7. R7 fails (`R7.md` §4), so R6 gives no bound at $`\tau_0`$.
 
 - **Proved.** $`N(\tau_0)`$ is finite (R0).
 - **Proved, from a computation.** $`N(\tau_0) \ge 4`$. The table $`h_3`$ is not in $`D_{\tau_0}`$ but preserves every test of arity $`\le 3`$. Both facts are computed in `gpu/REPORT.md`: preservation by `gpu/verify_candidate.py`, exhaustive over all 107,189,017 related triples of $`D_2`$; failure by `gpu/arity4_h3.py`, with the test $`R = S^4_{\{0\},\{0123\}}\cap S^4_{\{1,2\},\{1,2\}}\cap S^4_{\{1,3\},\{1,3\}}\cap S^4_{\{1,2,3\},\{0123\}}`$ and the related tuple $`(12,129,323,276)`$ of $`D_2`$, whose image $`(\bot,\mathsf{ff},\mathsf{ff},\mathsf{ff})`$ is outside $`R`$. The witness is re-checked with `arity_lib.related` (command below). Its four entries are distinct, so no reindexing lowers its arity.
-- **Conditional (proved from Conjecture R7).** $`N(\tau_0) \le |D_2| = 355`$.
-- **Open.** Conjecture R7, and any unconditional upper bound on $`N(\tau_0)`$.
+- **Open.** Any upper bound on $`N(\tau_0)`$ beyond finiteness. The counterexample to R7 shows that R6's proof does not transfer; it does not show that $`N(\tau_0) > 355`$.
 
-**Where the argument stops.** The route to R7 through R3.2 needs $`Q_{B\to B} \subseteq P_{B\to B}`$, and R5 refutes it: $`(R_{B\to B})`$ is defined by ground tuples that are not constant on the blocks of $`\pi`$. One level up, $`Q_{D_2} \subseteq P_{D_2}`$ fails as well (R5′), through argument tuples at $`D_{B\to B}`$ that are not constant on the blocks. By Corollary R4 this second failure blocks R3.2 for every type whose argument is $`\tau_0`$ itself, so the same route gives nothing at order 4 either. For $`\tau_0`$, the computations find the inclusion $`P_{D_2} \subseteq Q_{D_2}`$ true in every checked case, although its inductive justification fails.
+**Where the argument stops.** The route to R7 through R3.2 needs $`Q_{B\to B} \subseteq P_{B\to B}`$, and R5 refutes it: $`(R_{B\to B})`$ is defined by ground tuples that are not constant on the blocks of $`\pi`$. One level up, $`Q_{D_2} \subseteq P_{D_2}`$ fails as well (R5′), through argument tuples at $`D_{B\to B}`$ that are not constant on the blocks. By Corollary R4 this second failure blocks R3.2 for every type whose argument is $`\tau_0`$ itself, so the same route gives nothing at order 4 either. For $`\tau_0`$ the inclusion $`P_{D_2} \subseteq Q_{D_2}`$ holds at arity at most 3 and fails at arity 4 (`R7.md` §4).
 
-**Interpretation (not a theorem).** The tuples that $`R`$ admits and $`R\cap E_\pi`$ excludes are those that distinguish coordinates which $`\pi`$ identifies. In O'Hearn–Riecke's Kripke relations a world extension with a reindexing map plays the same role: the arrow clause at the smaller world also quantifies over tuples available only in the extended world. `gpu/REPORT.md` (Kripke-vs-ordinary separators) finds that, for the two-world relations tried, these extra tuples do not enlarge the relation at $`D_2`$. R7 is the analogous statement for ordinary tests under reindexing.
+**Interpretation (not a theorem).** The tuples that $`R`$ admits and $`R\cap E_\pi`$ excludes are those that distinguish coordinates which $`\pi`$ identifies. In O'Hearn–Riecke's Kripke relations a world extension with a reindexing map plays the same role: the arrow clause at the smaller world also quantifies over tuples available only in the extended world. `gpu/REPORT.md` (Kripke-vs-ordinary separators) finds that, for the two-world relations tried, these extra tuples do not enlarge the relation at $`D_2`$. R7 is the analogous statement for ordinary tests under reindexing, and it fails at arity 4.
 
 **Relation to the $`h_3`$ pattern (conjectured).** `gpu/REPORT.md` conjectures that $`k`$ mutually "parallel" cones are first killed at arity $`k+1`$. Together with width 80 of $`D_2`$ this would suggest that $`N(\tau_0)`$ grows with the largest family of such cones. No such family beyond $`k = 3`$ is known.
 

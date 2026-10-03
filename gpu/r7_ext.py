@@ -34,6 +34,7 @@ def elementary_supersets(R):
 tests = [L.from_mask(m, w) for m in L.all_tests(w)]
 checked = fails = 0
 report = []
+failing_cases = set(); tests_done = 0
 for R in tests:
     RD1 = D1lev.lifted(R)                       # all related w-tuples (indices)
     sups = elementary_supersets(R)
@@ -68,10 +69,12 @@ for R in tests:
                             if ok: break
                         checked += 1
                         if not ok:
+                            failing_cases.add((int(L.all_tests(w).index(0) if False else 0), tuple(pi), R.tobytes()))
                             fails += 1
                             if len(report) < 5:
                                 report.append((R.sum(), pi, sorted(A), sorted(B), u, [D1[f] for f in y]))
                 if time.time() > deadline:
-                    print(f"DEADLINE: checked={checked} fails={fails}"); print(report); sys.exit()
-print(f"done w={w}: checked={checked} fails={fails}")
+                    print(f"DEADLINE: tests_done={tests_done}/{len(tests)} checked={checked} fails={fails} failing_cases={len(failing_cases)}"); sys.exit()
+    tests_done += 1
+print(f"done w={w}: checked={checked} fails={fails} failing_cases={len(failing_cases)}")
 for r in report: print(r)

@@ -188,9 +188,9 @@ lifting machinery).
 A counterexample must preserve ordinary tests of every arity, and a search can only check
 finitely many arities.  `ARITY.md` reduces this to a finite check whenever the pullback
 inclusion `π*(R_σ) ⊆ (π*R)_σ` holds at every argument type σ (Lemma R6).  This holds at every
-type of order at most 2.  At `τ0 = ((B->B)->B)->B` it is Conjecture R7, which would bound
-the needed arity by 355; the arity needed there is at least 4.  Proving R7, or a computable
-arity bound at each type, turns candidate certification into a finite computation, and a
+type of order at most 2.  At `τ0 = ((B->B)->B)->B` it is Conjecture R7, which is false at
+arity 4 (`R7.md` §4), so R6 gives no bound there; the arity needed there is at least 4.  A
+computable arity bound at each type turns candidate certification into a finite computation, and a
 bound at every type would also settle equational full abstraction of the finitary model
 (ARITY.md, L1-L2).
 
@@ -224,6 +224,7 @@ would be qualitatively new evidence.
 * `gpu/search_kripke_two_world.py`, `gpu/kripke_separator.py` -- smallest computable
   Kripke-vs-ordinary separator search; per-case record in `gpu/data/kripke_separator_all.json`.
 * `ARITY.md` -- arity reduction for ordinary tests (R1-R6), Conjecture R7 at τ0.
+* `R7.md` -- reductions of R7 and its counterexample at arity 4.
 * `gpu/arity_lib.py`, `gpu/arity_reindex.py`, `gpu/arity_focus.py` -- numerical checks of the
   pullback inclusions.
 * `HEADCALL.md` -- head-call lemma and the first-call non-definability criterion.
