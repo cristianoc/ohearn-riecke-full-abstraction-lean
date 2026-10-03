@@ -6,7 +6,7 @@ This document states and proves the lemma behind the non-definability arguments 
 [`gpu/root_obstruction.py`](gpu/root_obstruction.py), and the first-call compatibility test that
 follows from it.
 
-**Lean.** `OR/Sieber/HeadCall.lean` proves Lemma 4 (`headCall`), Corollary 5 (`firstCall`) and Theorem 6 (`firstCall_compat`) for the Y-free language, in Sieber's model, which is the model a counterexample lives in. The proofs use only strictness of the conditional, soundness of normalisation and monotonicity. $`D_2`$ is a parameter there (any set of elements of $`D_{τ_1}`$ containing $`\bot`$), and the common upper bounds in Theorem 6 may be any elements of $`D_{τ_1}`$. Lemma 1 and the application to $`h_3`$ (§5.2) are not formalised.
+**Lean.** `OR/Sieber/HeadCall.lean` proves Lemma 4 (`headCall`), Corollary 5 (`firstCall`) and Theorem 6 (`firstCall_compat`) for the Y-free language, in Sieber's model, which is the model a counterexample lives in. The proofs use only strictness of the conditional, soundness of normalisation and monotonicity. $`D_2`$ is a parameter there (any set of elements of $`D_{τ_1}`$ containing $`\bot`$), and the common upper bounds in Theorem 6 may be any elements of $`D_{τ_1}`$. `OR/Sieber/HeadCall/H3.lean` applies Theorem 6 to $`h_3`$ (§5.2): `not_definable` states that no closed term denotes $`h_3`$, with the five points given as denotations of closed terms. Lemma 1 is not formalised.
 
 ## 1. Language and model
 
